@@ -13,3 +13,4 @@ export const colorPalette = {
 
 
 export const imgSrc = "/robofly.png"
+export const videoSrc = "/videos/drone.mp4";
