@@ -12,5 +12,5 @@ export const colorPalette = {
 };
 
 
-export const imgSrc = "/robofly.png"
+export const imgSrc = "/images/robofly.png"
 export const videoSrc = "/videos/drone.mp4";
