@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
 import { colorPalette, imgSrc } from '@/utils/variables';
-import ContactButton from '@/components/ContactButton';
+import ContactButton from '@/components/global/ContactButton';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 
