@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { Poppins } from 'next/font/google';
 import { colorPalette, imgSrc } from '@/utils/variables';
 import ContactButton from '@/components/global/ContactButton';
+import { motion } from 'framer-motion'; // ✅ Import added
+// import ContactButton from '@/components/global/ContactButton';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 
@@ -16,7 +18,11 @@ interface SocialLinkProps {
 
 export default function Footer() {
   return (
-    <footer
+    <motion.footer // ✅ Changed from <footer> to <motion.footer>
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      viewport={{ once: true }}
       className={`relative text-white py-16 mt-16 ${poppins.className} overflow-hidden`}
       style={{ 
         background: `linear-gradient(135deg, ${colorPalette.green1} 0%, ${colorPalette.green2} 100%)`,
@@ -167,7 +173,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }
 
