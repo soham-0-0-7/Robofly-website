@@ -11,6 +11,7 @@ const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700
 interface NavLinkProps {
   href: string;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
 export default function Navbar() {
@@ -38,7 +39,7 @@ export default function Navbar() {
       `}
       style={{
         background: colorPalette.green1,
-        borderBottom: `2px solid ${colorPalette.greenJade}`,
+        borderBottom: `2px solid ${colorPalette.green5}`,
         color: colorPalette.white,
       }}
     >
@@ -49,10 +50,11 @@ export default function Navbar() {
             src={imgSrc}
             alt="Robofly Logo"
             className="w-10 h-10 border-2"
+            style={{ borderRadius: 12, borderColor: colorPalette.green5 }}
           />
           <span
             className="text-2xl font-bold tracking-wide transition-colors"
-            style={{ color: colorPalette.whiteSoft }}
+            style={{ color: colorPalette.white }}
           >
             Robofly
           </span>
@@ -66,11 +68,12 @@ export default function Navbar() {
           <NavLink href="/catalog">Catalog</NavLink>
           <NavLink href="/blog">Blog</NavLink>
           <NavLink href="/contact">Contact</NavLink>
+          <NavLink href="/upcoming-services">Upcoming Services</NavLink>
         </div>
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden text-greenNeon hover:text-green6 transition-colors"
+          className="md:hidden text-green5 hover:text-green6 transition-colors"
           onClick={() => setMobileOpen(true)}
           aria-label="Open menu"
         >
@@ -84,16 +87,16 @@ export default function Navbar() {
         onClick={() => setMobileOpen(false)}
       >
         <div
-          className={`absolute top-0 right-0 w-72 h-full bg-[${colorPalette.green2}] shadow-2xl flex flex-col p-8 gap-6 transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`absolute top-0 right-0 w-72 h-full shadow-2xl flex flex-col p-8 gap-6 transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
           style={{
             background: colorPalette.green2,
             color: colorPalette.white,
-            borderLeft: `2px solid ${colorPalette.greenNeon}`,
+            borderLeft: `2px solid ${colorPalette.green5}`,
           }}
           onClick={e => e.stopPropagation()}
         >
           <button
-            className="self-end mb-4 text-greenNeon hover:text-green6 transition-colors"
+            className="self-end mb-4 text-green5 hover:text-green6 transition-colors"
             onClick={() => setMobileOpen(false)}
             aria-label="Close menu"
           >
@@ -105,22 +108,25 @@ export default function Navbar() {
           <NavLink href="/catalog" onClick={() => setMobileOpen(false)}>Catalog</NavLink>
           <NavLink href="/blog" onClick={() => setMobileOpen(false)}>Blog</NavLink>
           <NavLink href="/contact" onClick={() => setMobileOpen(false)}>Contact</NavLink>
+          <NavLink href="/upcoming-services" onClick={() => setMobileOpen(false)}>Upcoming Services</NavLink>
         </div>
       </div>
     </nav>
   );
 }
-
 // Navigation Link Component
-function NavLink({ href, children, onClick }: NavLinkProps & { onClick?: () => void }) {
+/// Navigation Link Component
+
+function NavLink({ href, children, onClick }: NavLinkProps) {
   return (
     <Link
       href={href}
       onClick={onClick}
       className={`
-        px-4 py-2 rounded-lg font-medium transition-colors duration-200
-        hover:bg-[${colorPalette.green6}] hover:text-[${colorPalette.green1}]
-        focus:outline-none focus:ring-2 focus:ring-[${colorPalette.greenNeon}]
+        px-4 py-2 rounded-lg font-medium transition-all duration-300
+        hover:bg-[${colorPalette.green4}] hover:text-[${colorPalette.green1}]
+        hover:scale-105 hover:shadow-[0_4px_12px_${colorPalette.green5}]
+        focus:outline-none focus:ring-2 focus:ring-[${colorPalette.green5}]
       `}
       style={{
         color: colorPalette.white,
@@ -130,3 +136,4 @@ function NavLink({ href, children, onClick }: NavLinkProps & { onClick?: () => v
     </Link>
   );
 }
+

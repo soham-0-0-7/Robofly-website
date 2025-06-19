@@ -125,8 +125,7 @@ const HomeProducts = () => {
                       {product.description}
                     </p>
                   </div>
-
-                  <div className="flex flex-wrap gap-4">
+l                  <div className="flex flex-wrap gap-4">
                     <Link href="/products">
                       <button
                         className="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"

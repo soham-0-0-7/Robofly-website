@@ -23,7 +23,7 @@ export default function Footer() {
       className={`relative text-white py-16 mt-16 ${poppins.className} overflow-hidden`}
       style={{
         background: colorPalette.green2,
-        borderTop: `4px solid ${colorPalette.greenJade}`,
+        borderTop: `4px solid ${colorPalette.green5}`,
         boxShadow: `0 0 60px 0 ${colorPalette.green3}33, 0 8px 32px 0 ${colorPalette.greenShadow}66`,
       }}
     >
@@ -31,7 +31,7 @@ export default function Footer() {
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-10 left-10 w-32 h-32 border-2" style={{ borderColor: colorPalette.green3, borderRadius: "9999px" }}></div>
         <div className="absolute bottom-20 right-20 w-48 h-48 border-2" style={{ borderColor: colorPalette.green6, borderRadius: "9999px" }}></div>
-        <div className="absolute top-1/2 left-1/3 w-24 h-24 border-2" style={{ borderColor: colorPalette.greenNeon, borderRadius: "9999px" }}></div>
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 border-2" style={{ borderColor: colorPalette.green5, borderRadius: "9999px" }}></div>
         <div className="absolute bottom-0 right-1/2 w-40 h-12" style={{ background: colorPalette.green7, borderRadius: "9999px", filter: "blur(16px)" }}></div>
       </div>
       
@@ -40,7 +40,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-6 group">
-              <img src="/images/robofly.png" alt="Robofly Logo" className="w-12 h-12 border-2"  />
+              <img src="/images/robofly.png" alt="Robofly Logo" className="w-12 h-12 border-2" style={{ borderRadius: 12, borderColor: colorPalette.green5 }} />
               <span className="text-2xl font-bold tracking-wide" style={{ color: colorPalette.whiteSoft }}>Robofly</span>
             </div>
             <p className="text-white/80 text-sm leading-relaxed mb-6">
@@ -128,12 +128,12 @@ function SocialLink({ href, icon, label }: SocialLinkProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-3 p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-green6/20 hover:border-greenNeon/40 transition-all duration-300 group"
+      className="flex items-center gap-3 p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-green6/20 hover:border-green5/40 transition-all duration-300 group"
       style={{
-        color: colorPalette.greenNeon,
+        color: colorPalette.green5,
       }}
     >
-      <span className="text-greenNeon group-hover:text-green6 transition-colors duration-300">
+      <span className="text-green5 group-hover:text-green6 transition-colors duration-300">
         {icon}
       </span>
       <span className="text-white/80 group-hover:text-white font-medium">
