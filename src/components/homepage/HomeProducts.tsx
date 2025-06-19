@@ -40,14 +40,34 @@ const HomeProducts = () => {
   }, []);
 
   return (
-    <section className="py-20 px-4" style={{ backgroundColor: colorPalette.green1 }}>
+    <section
+      className="py-20 px-4"
+      style={{
+        backgroundColor: colorPalette.whiteSoft, // off-white, not pure white, not green
+      }}
+    >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: colorPalette.white, fontFamily: 'Poppins, sans-serif' }}>
+          <h2
+            className="text-4xl md:text-5xl font-bold mb-6"
+            style={{
+              color: colorPalette.green2, // forest green for heading
+              fontFamily: 'Poppins, sans-serif'
+            }}
+          >
             Our Drone Products
           </h2>
-          <div className="w-20 h-1 mx-auto mb-8 rounded-full" style={{ backgroundColor: colorPalette.green6 }}></div>
-          <p className="text-lg max-w-2xl mx-auto" style={{ color: colorPalette.green4, fontFamily: 'Roboto, sans-serif' }}>
+          <div
+            className="w-20 h-1 mx-auto mb-8 rounded-full"
+            style={{ backgroundColor: colorPalette.green5 }}
+          ></div>
+          <p
+            className="text-lg max-w-2xl mx-auto"
+            style={{
+              color: colorPalette.gray, // neutral gray for subheading
+              fontFamily: 'Roboto, sans-serif'
+            }}
+          >
             Cutting-edge drone technology designed for various applications
           </p>
         </div>
@@ -57,29 +77,64 @@ const HomeProducts = () => {
             <div
               key={product.id}
               ref={el => { itemRefs.current[index] = el; }}
-              className={`group relative overflow-hidden rounded-2xl transition-all duration-500 ${visibleItems.has(index) ? 'translate-x-0 opacity-100' : index % 2 === 0 ? '-translate-x-12 opacity-0' : 'translate-x-12 opacity-0'}`}
-              style={{ backgroundColor: colorPalette.green2 }}
+              className={`group relative overflow-hidden rounded-2xl transition-all duration-500 shadow-lg ${
+                visibleItems.has(index)
+                  ? 'translate-x-0 opacity-100'
+                  : index % 2 === 0
+                  ? '-translate-x-12 opacity-0'
+                  : 'translate-x-12 opacity-0'
+              }`}
+              style={{
+                backgroundColor: colorPalette.white,
+                border: `2px solid ${colorPalette.green4}`,
+              }}
             >
               <div className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}>
                 <div className="relative lg:w-2/5 h-80 lg:h-auto overflow-hidden">
-                  <Image src={product.image} alt={product.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20"></div>
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent, #e4f1ec66)' }}></div>
                 </div>
 
                 <div className="flex-1 p-8 lg:p-12 flex flex-col justify-center">
                   <div className="mb-6">
-                    <h3 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: colorPalette.green6, fontFamily: 'Poppins, sans-serif' }}>
+                    <h3
+                      className="text-3xl lg:text-4xl font-bold mb-4"
+                      style={{
+                        color: colorPalette.green3, // medium green for product name
+                        fontFamily: 'Poppins, sans-serif'
+                      }}
+                    >
                       {product.name}
                     </h3>
-                    <div className="w-16 h-1 mb-6" style={{ backgroundColor: colorPalette.green5 }}></div>
-                    <p className="text-base lg:text-lg leading-relaxed" style={{ color: colorPalette.green4, fontFamily: 'Roboto, sans-serif' }}>
+                    <div
+                      className="w-16 h-1 mb-6"
+                      style={{ backgroundColor: colorPalette.green5 }}
+                    ></div>
+                    <p
+                      className="text-base lg:text-lg leading-relaxed"
+                      style={{
+                        color: colorPalette.green2,
+                        fontFamily: 'Roboto, sans-serif'
+                      }}
+                    >
                       {product.description}
                     </p>
                   </div>
 
                   <div className="flex flex-wrap gap-4">
                     <Link href="/products">
-                      <button className="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105" style={{ backgroundColor: colorPalette.green5, color: colorPalette.white }}>
+                      <button
+                        className="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
+                        style={{
+                          backgroundColor: colorPalette.green5, // vivid green for button
+                          color: colorPalette.white
+                        }}
+                      >
                         View Details
                       </button>
                     </Link>
@@ -87,7 +142,10 @@ const HomeProducts = () => {
                 </div>
               </div>
 
-              <div className={`absolute top-0 ${index % 2 === 0 ? 'right-0' : 'left-0'} w-1 h-full transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top`} style={{ backgroundColor: colorPalette.green5 }}></div>
+              <div
+                className={`absolute top-0 ${index % 2 === 0 ? 'right-0' : 'left-0'} w-1 h-full transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top`}
+                style={{ backgroundColor: colorPalette.green5 }}
+              ></div>
             </div>
           ))}
         </div>
