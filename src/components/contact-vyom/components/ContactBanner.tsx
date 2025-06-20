@@ -31,7 +31,7 @@ export default function ContactBanner() {
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-6">
               <Image
-                src="/robofly.png"
+                src="/images/robofly.png"
                 alt="Robofly Logo"
                 width={60}
                 height={60}
