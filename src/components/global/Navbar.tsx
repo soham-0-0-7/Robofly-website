@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Poppins } from "next/font/google";
-import { colorPalette, imgSrc } from "@/utils/variables";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Poppins } from 'next/font/google';
+import { colorPalette, imgSrc, imgSrc_h } from '@/utils/variables';
+import { FaBars, FaTimes } from 'react-icons/fa';
+import { usePathname } from 'next/navigation';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 
@@ -26,16 +27,16 @@ export default function Navbar() {
       setShow(window.scrollY < lastScrollY || window.scrollY < 50);
       setLastScrollY(window.scrollY);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
   return (
     <nav
       className={`
         fixed top-0 left-0 w-full z-50 transition-all duration-300
-        ${show ? "translate-y-0" : "-translate-y-full"}
-        ${isScrolled ? "shadow-lg" : ""}
+        ${show ? 'translate-y-0' : '-translate-y-full'}
+        ${isScrolled ? 'shadow-lg' : ''}
       `}
       style={{
         background: colorPalette.green1,
@@ -47,21 +48,15 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/home" className="flex items-center gap-3 group">
           <img
-            src={imgSrc}
+            src={imgSrc_h}
             alt="Robofly Logo"
-            className="w-10 h-10 border-2"
-            style={{ borderRadius: 12, borderColor: colorPalette.green5 }}
+            className="h-12 border-2 rounded-xl group-hover:scale-110 transition-transform duration-300 sm:h-10"
+            style={{ borderColor: colorPalette.green5 }}
           />
-          <span
-            className="text-2xl font-bold tracking-wide transition-colors"
-            style={{ color: colorPalette.white }}
-          >
-            Robofly
-          </span>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6 xl:gap-8">
           <NavLink href="/home">Home</NavLink>
           <NavLink href="/products">Products</NavLink>
           <NavLink href="/services">Services</NavLink>
@@ -73,7 +68,7 @@ export default function Navbar() {
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden text-green5 hover:text-green6 transition-colors"
+          className="lg:hidden text-green5 hover:text-green6 transition-colors"
           onClick={() => setMobileOpen(true)}
           aria-label="Open menu"
         >
@@ -83,17 +78,17 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       <div
-        className={`fixed inset-0 z-50 bg-black/60 transition-opacity duration-300 ${mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 z-50 bg-black/60 transition-opacity duration-300 ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setMobileOpen(false)}
       >
         <div
-          className={`absolute top-0 right-0 w-72 h-full shadow-2xl flex flex-col p-8 gap-6 transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`absolute top-0 right-0 w-72 max-w-full h-full shadow-2xl flex flex-col p-8 gap-6 transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}
           style={{
             background: colorPalette.green2,
             color: colorPalette.white,
             borderLeft: `2px solid ${colorPalette.green5}`,
           }}
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           <button
             className="self-end mb-4 text-green5 hover:text-green6 transition-colors"
@@ -114,26 +109,21 @@ export default function Navbar() {
     </nav>
   );
 }
-// Navigation Link Component
-/// Navigation Link Component
 
+// Navigation Link Component
 function NavLink({ href, children, onClick }: NavLinkProps) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
   return (
     <Link
       href={href}
       onClick={onClick}
-      className={`
-        px-4 py-2 rounded-lg font-medium transition-all duration-300
-        hover:bg-[${colorPalette.green4}] hover:text-[${colorPalette.green1}]
-        hover:scale-105 hover:shadow-[0_4px_12px_${colorPalette.green5}]
-        focus:outline-none focus:ring-2 focus:ring-[${colorPalette.green5}]
-      `}
-      style={{
-        color: colorPalette.white,
-      }}
+      className="relative px-4 py-2 font-medium transition-all duration-300 rounded-lg hover:text-green-200 hover:shadow-lg group text-sm sm:text-base"
     >
-      {children}
+      <span className="relative z-10">{children}</span>
+      <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+      <div className={`absolute bottom-0 left-1/2 h-0.5 bg-green-300 transition-all duration-300 transform -translate-x-1/2 ${isActive ? 'w-3/4' : 'w-0 group-hover:w-3/4'}`}></div>
     </Link>
   );
 }
-
