@@ -6,7 +6,8 @@ import TrainingForm from './forms/TrainingForm';
 import DroneProductForm from './forms/DroneProductForm';
 import CareerForm from './forms/CareerForm';
 import { colorPalette } from "@/utils/variables";
-import { MessageCircle, GraduationCap, Plane, Users, ChevronRight,Drone } from "lucide-react";
+import { MessageCircle, GraduationCap, Users, ChevronRight, Plane } from "lucide-react";
+// import { MessageCircle, GraduationCap, Plane, Users, ChevronRight,Drone } from "lucide-react";
 
 const forms = [
   {
@@ -24,7 +25,7 @@ const forms = [
   {
     label: "Drone Product",
     component: <DroneProductForm />,
-    icon: Drone,
+    icon: Plane,
     description: "Product inquiries",
   },
   {
@@ -50,7 +51,7 @@ const ContactFormsSlider = () => {
       style={{
         maxWidth: "1200px",
         margin: "0 auto",
-        padding: "20px",
+        padding: "10px",
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
@@ -65,7 +66,7 @@ const ContactFormsSlider = () => {
             letterSpacing: "-0.5px",
           }}
         >
-          Get In Touch
+          Let us know your query
         </h2>
         <p
           style={{
@@ -234,11 +235,10 @@ const ContactFormsSlider = () => {
         style={{
           background: colorPalette.white,
           borderRadius: "20px",
-          padding: "32px",
-          boxShadow: `0 8px 40px ${colorPalette.greenShadow}15, 0 2px 8px ${colorPalette.greenShadow}10`,
-          border: `1px solid ${colorPalette.green7}`,
-          position: "relative",
-          overflow: "hidden",
+           padding: "0px", // minimal padding
+            position: "relative",
+            overflow: "visible", // allow contents to flow naturally
+          // overflow: "hidden",
           minHeight: "400px",
         }}
       >

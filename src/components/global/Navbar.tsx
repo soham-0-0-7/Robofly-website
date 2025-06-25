@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
-import { colorPalette, imgSrc, imgSrc_h } from '@/utils/variables';
+import { colorPalette, imgSrc_h } from '@/utils/variables';
+// import { colorPalette, imgSrc, imgSrc_h } from '@/utils/variables';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 
