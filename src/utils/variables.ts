@@ -48,5 +48,6 @@ export const colorPalette = {
   aboutSubtle: '#bde6cf',  // matches green4
 };
 
+export const imgSrc_h= "/images/robofly_h.png";
 export const imgSrc = "/images/robofly.png";
 export const videoSrc = "/videos/drone.mp4";

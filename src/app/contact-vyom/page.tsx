@@ -1,9 +1,20 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import ContactBanner from '@/components/contact/ContactBanner';
-import ContactFormsSlider from '@/components/contact/ContactFormsSlider';
-import {colorPalette} from "@/utils/variables"
+import ContactBanner from '@/components/contact-vyom/components/ContactBanner';
+import TabFormSwitcher from '@/components/contact-vyom/components/TabFormSwitcher';
+
+const colorPalette = {
+  green1: '#002d1a',
+  green2: '#104a2f',
+  green3: '#399d6c',
+  green4: '#bde6cf',
+  green5: '#1ba100',
+  green6: '#8fe4ce',
+  green7: '#e4f1ec',
+  black: '#000000',
+  white: '#ffffff',
+};
 
 // Animation variant function
 const fadeInUp = {
@@ -53,7 +64,7 @@ export default function ContactPage() {
         custom={2}
         className="min-h-screen"
       >
-        <ContactFormsSlider />
+        <TabFormSwitcher />
       </motion.main>
 
       {/* === Bottom Separator Line === */}
