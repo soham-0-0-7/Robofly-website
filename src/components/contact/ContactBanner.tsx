@@ -2,7 +2,8 @@
 
 import { Mail, MapPin, Phone, Building2 } from "lucide-react";
 import Image from "next/image";
-import { colorPalette } from '@/utils/variables';
+import {colorPalette,imgSrc} from "@/utils/variables"
+
 
 export default function ContactBanner() {
   return (
@@ -20,7 +21,7 @@ export default function ContactBanner() {
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-6">
               <Image
-                src="/images/robofly.png"
+                src={imgSrc}
                 alt="Robofly Logo"
                 width={60}
                 height={60}

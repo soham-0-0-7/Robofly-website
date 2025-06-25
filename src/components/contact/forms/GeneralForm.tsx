@@ -33,8 +33,8 @@ export default function GeneralForm() {
   };
 
   return (
-    <div className="flex justify-center py-10 px-4" style={{ backgroundColor: colorPalette.green7, minHeight: '100vh' }}>
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl w-full p-8 rounded-xl" style={{ backgroundColor: colorPalette.white }}>
+    <div className="flex justify-center py-10 px-4" style={{ minHeight: '100vh' }}>
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl w-full rounded-xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">First Name <span className="text-red-600">*</span></label>
