@@ -1,50 +1,71 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from "react";
 import GeneralForm from './forms/GeneralForm';
-import TrainingForm from './forms/TrainingForm';
+import DroneServiceForm from './forms/DroneServiceForm';
 import DroneProductForm from './forms/DroneProductForm';
 import CareerForm from './forms/CareerForm';
 import { colorPalette } from "@/utils/variables";
 import { MessageCircle, GraduationCap, Users, ChevronRight, Plane } from "lucide-react";
-// import { MessageCircle, GraduationCap, Plane, Users, ChevronRight,Drone } from "lucide-react";
 
-const forms = [
-  {
-    label: "General Query",
-    component: <GeneralForm />,
-    icon: MessageCircle,
-    description: "Ask us anything",
-  },
-  {
-    label: "Training Request",
-    component: <TrainingForm />,
-    icon: GraduationCap,
-    description: "Professional training",
-  },
-  {
-    label: "Drone Product",
-    component: <DroneProductForm />,
-    icon: Plane,
-    description: "Product inquiries",
-  },
-  {
-    label: "Join Our Team",
-    component: <CareerForm />,
-    icon: Users,
-    description: "Career opportunities",
-  },
-];
+interface ContactFormsSliderProps {
+  type?: string;
+  id?: string;
+}
 
-const ContactFormsSlider = () => {
+const ContactFormsSlider: React.FC<ContactFormsSliderProps> = ({ type = 'general', id = '' }) => {
+  console.log("type - " + type + " id - " + id);
   const [selected, setSelected] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // This ensures hydration is complete
+  // Select form index based on type
+  useEffect(() => {
+    switch (type) {
+      case 'product':
+        setSelected(2);
+        break;
+      case 'service':
+        setSelected(1);
+        break;
+      case 'career':
+        setSelected(3);
+        break;
+      default:
+        setSelected(0); // general or empty
+    }
+  }, [type]);
+
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  const forms = [
+    {
+      label: "General Query",
+      component: <GeneralForm />,
+      icon: MessageCircle,
+      description: "Ask us anything",
+    },
+    {
+      label: "Drone Service",
+      component: <DroneServiceForm id={id || ''} />,
+      icon: GraduationCap,
+      description: "Professional training",
+    },
+    {
+      label: "Drone Product",
+      component: <DroneProductForm id={id || ''} />,
+      icon: Plane,
+      description: "Product inquiries",
+    },
+    {
+      label: "Join Our Team",
+      component: <CareerForm />,
+      icon: Users,
+      description: "Career opportunities",
+    },
+  ];
 
   return (
     <div
@@ -235,10 +256,9 @@ const ContactFormsSlider = () => {
         style={{
           background: colorPalette.white,
           borderRadius: "20px",
-           padding: "0px", // minimal padding
-            position: "relative",
-            overflow: "visible", // allow contents to flow naturally
-          // overflow: "hidden",
+          padding: "0px",
+          position: "relative",
+          overflow: "visible",
           minHeight: "400px",
         }}
       >
@@ -255,7 +275,6 @@ const ContactFormsSlider = () => {
             zIndex: 0,
           }}
         />
-
         <div
           style={{
             position: "absolute",
@@ -269,7 +288,7 @@ const ContactFormsSlider = () => {
           }}
         />
 
-        {/* Form content */}
+        {/* Actual Form */}
         <div style={{ position: "relative", zIndex: 1 }}>
           {isHydrated && forms[selected].component}
         </div>

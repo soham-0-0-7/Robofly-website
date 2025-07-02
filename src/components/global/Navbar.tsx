@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
 import { colorPalette, imgSrc_h } from '@/utils/variables';
-// import { colorPalette, imgSrc, imgSrc_h } from '@/utils/variables';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 
 interface NavLinkProps {
-  href: string;
+  href?: string;
   children: React.ReactNode;
   onClick?: () => void;
+  asButton?: boolean;
 }
 
 export default function Navbar() {
@@ -21,16 +21,34 @@ export default function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false);
+  const catalogRef = useRef<HTMLDivElement>(null);
 
+ useEffect(() => {
+  const handleScroll = () => {
+    setIsScrolled(window.scrollY > 10);
+    setShow(window.scrollY < lastScrollY || window.scrollY < 50);
+    setLastScrollY(window.scrollY);
+
+    // Close the catalog dropdown on scroll
+    setCatalogOpen(false);
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+}, [lastScrollY]);
+  // Close dropdown on outside click
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-      setShow(window.scrollY < lastScrollY || window.scrollY < 50);
-      setLastScrollY(window.scrollY);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+    function handleClickOutside(event: MouseEvent) {
+      if (catalogRef.current && !catalogRef.current.contains(event.target as Node)) {
+        setCatalogOpen(false);
+      }
+    }
+    if (catalogOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [catalogOpen]);
 
   return (
     <nav
@@ -59,9 +77,31 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-6 xl:gap-8">
           <NavLink href="/home">Home</NavLink>
-          <NavLink href="/products">Products</NavLink>
-          <NavLink href="/services">Services</NavLink>
-          <NavLink href="/catalog">Catalog</NavLink>
+          {/* Catalog Dropdown */}
+          <div className="relative" ref={catalogRef}>
+            <button
+              className="relative px-4 py-2 font-medium transition-all duration-300 rounded-lg hover:text-green-200 hover:shadow-lg group text-sm sm:text-base flex items-center gap-1"
+              style={{ background: 'none', border: 'none', outline: 'none' }}
+              onClick={() => setCatalogOpen((open) => !open)}
+              type="button"
+              aria-haspopup="true"
+              aria-expanded={catalogOpen}
+            >
+              <span className="relative z-10">Catalog</span>
+              <FaChevronDown className={`ml-1 transition-transform duration-200 ${catalogOpen ? 'rotate-180' : ''}`} size={14} />
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
+            </button>
+            {/* Dropdown Menu */}
+            {catalogOpen && (
+              <div
+                className="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black/10 z-50"
+                style={{ minWidth: 180 }}
+              >
+                <DropdownLink href="/products">Products</DropdownLink>
+                <DropdownLink href="/services">Services</DropdownLink>
+              </div>
+            )}
+          </div>
           <NavLink href="/blog">Blog</NavLink>
           <NavLink href="/contact">Contact</NavLink>
           <NavLink href="/upcoming-services">Upcoming Services</NavLink>
@@ -99,9 +139,29 @@ export default function Navbar() {
             <FaTimes size={26} />
           </button>
           <NavLink href="/home" onClick={() => setMobileOpen(false)}>Home</NavLink>
-          <NavLink href="/products" onClick={() => setMobileOpen(false)}>Products</NavLink>
-          <NavLink href="/services" onClick={() => setMobileOpen(false)}>Services</NavLink>
-          <NavLink href="/catalog" onClick={() => setMobileOpen(false)}>Catalog</NavLink>
+          {/* Catalog Dropdown for Mobile */}
+          <div className="flex flex-col">
+            <button
+              className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg hover:text-green-200 transition-colors"
+              onClick={() => setCatalogOpen((open) => !open)}
+              type="button"
+              aria-haspopup="true"
+              aria-expanded={catalogOpen}
+            >
+              <span>Catalog</span>
+              <FaChevronDown className={`transition-transform duration-200 ${catalogOpen ? 'rotate-180' : ''}`} size={14} />
+            </button>
+            {catalogOpen && (
+              <div className="flex flex-col ml-4 mt-1">
+                <NavLink href="/products" onClick={() => { setMobileOpen(false); setCatalogOpen(false); }}>
+                  Products
+                </NavLink>
+                <NavLink href="/services" onClick={() => { setMobileOpen(false); setCatalogOpen(false); }}>
+                  Services
+                </NavLink>
+              </div>
+            )}
+          </div>
           <NavLink href="/blog" onClick={() => setMobileOpen(false)}>Blog</NavLink>
           <NavLink href="/contact" onClick={() => setMobileOpen(false)}>Contact</NavLink>
           <NavLink href="/upcoming-services" onClick={() => setMobileOpen(false)}>Upcoming Services</NavLink>
@@ -112,19 +172,65 @@ export default function Navbar() {
 }
 
 // Navigation Link Component
-function NavLink({ href, children, onClick }: NavLinkProps) {
+function NavLink({ href, children, onClick, asButton }: NavLinkProps) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive = href && pathname === href;
 
+  if (asButton) {
+    return (
+      <button
+        type="button"
+        className="relative px-4 py-2 font-medium transition-all duration-300 rounded-lg hover:text-green-200 hover:shadow-lg group text-sm sm:text-base"
+        onClick={onClick}
+        style={{ background: 'none', border: 'none', outline: 'none' }}
+      >
+        <span className="relative z-10">{children}</span>
+        <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      href={href || "#"}
+      onClick={onClick}
+      className="relative px-4 py-2 font-medium transition-all duration-300 rounded-lg hover:text-green-200 hover:shadow-lg group text-sm sm:text-base"
+      tabIndex={0}
+    >
+      <span className="relative z-10">{children}</span>
+      <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
+      <div className={`absolute bottom-0 left-1/2 h-0.5 bg-green-300 transition-all duration-300 transform -translate-x-1/2 ${isActive ? 'w-3/4' : 'w-0 group-hover:w-3/4'}`}></div>
+    </Link>
+  );
+}
+
+// Dropdown Link for Catalog
+// Updated DropdownLink
+function DropdownLink({
+  href,
+  children,
+  onClick,
+}: {
+  href: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+}) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className="relative px-4 py-2 font-medium transition-all duration-300 rounded-lg hover:text-green-200 hover:shadow-lg group text-sm sm:text-base"
+      className="block px-5 py-3 transition-colors text-base font-medium rounded-lg"
+      style={{
+        color: colorPalette.green2,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = colorPalette.green4;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = 'transparent';
+      }}
     >
-      <span className="relative z-10">{children}</span>
-      <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-      <div className={`absolute bottom-0 left-1/2 h-0.5 bg-green-300 transition-all duration-300 transform -translate-x-1/2 ${isActive ? 'w-3/4' : 'w-0 group-hover:w-3/4'}`}></div>
+      {children}
     </Link>
   );
 }

@@ -12,8 +12,6 @@ interface FormData {
   city: string;
   state: string;
   linkedin: string;
-  position: string;
-  location: string;
   hearAbout: string;
   experience: string;
   education: string;
@@ -30,12 +28,25 @@ interface FormData {
 
 type FieldConfig = [keyof FormData, string];
 
+const indianStatesAndUTs = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
+  "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim",
+  "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand",
+  "West Bengal", "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+];
+
 export default function CareerForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
     firstName: '', lastName: '', gender: '', phone: '', email: '', city: '', state: '', linkedin: '',
-    position: '', location: '', hearAbout: '', experience: '', education: '', workplace: '', interest: '',
+    hearAbout: '', experience: '', education: '', workplace: '', interest: '',
     message: '', relocate: '', availability: '', currentSalary: '', expectedSalary: '', resume: null, portfolio: null
   });
+
+  const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
+  const [hasGeneralError, setHasGeneralError] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value, files } = e.target as HTMLInputElement;
@@ -43,11 +54,37 @@ export default function CareerForm(): JSX.Element {
       ...prev,
       [name]: files?.length ? files[0] : value
     }));
+    setErrors(prev => ({ ...prev, [name]: undefined }));
   };
+
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePhone = (phone: string) =>
+    /^(?:\+91|0091)?[6-9]\d{9}$/.test(phone.trim());
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    const newErrors: typeof errors = {};
+    let hasError = false;
+
+    if (!validateEmail(form.email)) {
+      newErrors.email = 'Please enter a valid email address.';
+      hasError = true;
+    }
+
+    if (!validatePhone(form.phone)) {
+      newErrors.phone = 'Please enter a valid 10-digit phone number.';
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
+      setHasGeneralError(true);
+      return;
+    }
+
+    setHasGeneralError(false);
     console.log(form);
+    alert('Form submitted successfully!');
   };
 
   const basicFields: FieldConfig[] = [
@@ -57,12 +94,10 @@ export default function CareerForm(): JSX.Element {
     ['phone', 'Phone No.'],
     ['email', 'Email ID'],
     ['city', 'City/Town/Village'],
-    ['state', 'State'],
+    ['state', 'State / UT'],
     ['linkedin', 'LinkedIn Profile URL'],
-    ['position', 'Position Applying For'],
-    ['location', 'Job Location'],
     ['hearAbout', 'How did you hear about this Job Opening?'],
-    ['experience', 'Experience'],
+    ['experience', 'Experience (in years)'],
     ['education', 'Educational Qualification'],
     ['workplace', 'Current/Previous Place of Work'],
     ['interest', 'Why are you interested in this role?']
@@ -70,7 +105,7 @@ export default function CareerForm(): JSX.Element {
 
   const additionalFields: FieldConfig[] = [
     ['relocate', 'Are you willing to relocate?'],
-    ['availability', 'Availability to join the new role'],
+    ['availability', 'Availability to join the new role (in months)'],
     ['currentSalary', 'Current Salary (INR)'],
     ['expectedSalary', 'Expected Salary']
   ];
@@ -83,21 +118,102 @@ export default function CareerForm(): JSX.Element {
           {basicFields.map(([key, label]) => (
             <div key={key}>
               <label className="block font-medium mb-1">
-                {label} <span className="text-red-600">*</span>
+                {label} {(key !== 'workplace' && key !== 'interest') && <span className="text-red-600">*</span>}
               </label>
-              <input
-                name={key}
-                required
-                type={
-                  key === 'email' ? 'email' :
-                  key === 'phone' ? 'tel' :
-                  key === 'linkedin' ? 'url' :
-                  'text'
-                }
-                value={form[key] as string}
-                onChange={handleChange}
-                className="input"
-              />
+              {key === 'gender' ? (
+                <select
+                  name={key}
+                  required
+                  value={form[key] as string}
+                  onChange={handleChange}
+                  className="input"
+                >
+                  <option value="">Select</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              ) : key === 'state' ? (
+                <select
+                  name={key}
+                  required
+                  value={form[key] as string}
+                  onChange={handleChange}
+                  className="input"
+                >
+                  <option value="">Select State / UT</option>
+                  {indianStatesAndUTs.map(state => (
+                    <option key={state} value={state}>{state}</option>
+                  ))}
+                </select>
+              ) : key === 'hearAbout' ? (
+                <select
+                  name={key}
+                  required
+                  value={form[key] as string}
+                  onChange={handleChange}
+                  className="input"
+                >
+                  <option value="">Select</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                  <option value="Company Website">Company Website</option>
+                  <option value="Friend/Colleague">Friend/Colleague</option>
+                  <option value="Job Portal">Job Portal</option>
+                  <option value="Other">Other</option>
+                </select>
+              ) : key === 'experience' ? (
+                <input
+                  name={key}
+                  required
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={form[key] as string}
+                  onChange={handleChange}
+                  className="input"
+                />
+              ) : key === 'email' ? (
+                <>
+                  <input
+                    name={key}
+                    required
+                    type="email"
+                    value={form[key] as string}
+                    onChange={handleChange}
+                    className="input"
+                  />
+                  {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+                </>
+              ) : key === 'phone' ? (
+                <>
+                  <input
+                    name={key}
+                    required
+                    type="text"
+                    value={form[key] as string}
+                    onChange={handleChange}
+                    className="input"
+                  />
+                  {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+                </>
+              ) : key === 'interest' ? (
+                <textarea
+                  name={key}
+                  rows={4}
+                  value={form[key] as string}
+                  onChange={handleChange}
+                  className="input"
+                />
+              ) : (
+                <input
+                  name={key}
+                  required={key !== 'workplace'}
+                  type={key === 'linkedin' ? 'url' : 'text'}
+                  value={form[key] as string}
+                  onChange={handleChange}
+                  className="input"
+                />
+              )}
             </div>
           ))}
         </div>
@@ -105,11 +221,10 @@ export default function CareerForm(): JSX.Element {
         {/* Message */}
         <div>
           <label className="block font-medium mb-1">
-            Your Message/Query <span className="text-red-600">*</span>
+            Your Message/Query
           </label>
           <textarea
             name="message"
-            required
             rows={4}
             value={form.message}
             onChange={handleChange}
@@ -151,17 +266,32 @@ export default function CareerForm(): JSX.Element {
           {additionalFields.map(([key, label]) => (
             <div key={key}>
               <label className="block font-medium mb-1">
-                {label} <span className="text-red-600">*</span>
+                {label} {key !== 'currentSalary' && <span className="text-red-600">*</span>}
               </label>
-              <input
-                name={key}
-                required
-                type={key.includes('Salary') ? 'number' : 'text'}
-                value={form[key] as string}
-                onChange={handleChange}
-                className="input"
-                {...(key.includes('Salary') && { min: '0', step: '1000' })}
-              />
+              {key === 'relocate' ? (
+                <select
+                  name={key}
+                  required
+                  value={form[key] as string}
+                  onChange={handleChange}
+                  className="input"
+                >
+                  <option value="">Select</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              ) : (
+                <input
+                  name={key}
+                  required={key !== 'currentSalary'}
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={form[key] as string}
+                  onChange={handleChange}
+                  className="input"
+                />
+              )}
             </div>
           ))}
         </div>
@@ -174,9 +304,15 @@ export default function CareerForm(): JSX.Element {
           >
             Submit Application
           </button>
+
+          {hasGeneralError && (
+            <p className="text-red-600 text-center mt-4">
+              There was some error in filling the form. Please recheck!
+            </p>
+          )}
         </div>
 
-        {/* Unified Input Styles */}
+        {/* Styles */}
         <style jsx>{`
           .input {
             padding: 0.75rem;

@@ -1,14 +1,43 @@
 'use client';
 
-import { useState } from 'react';
-import {colorPalette} from "@/utils/variables"
+import { useState, useEffect } from 'react';
+import { colorPalette } from "@/utils/variables";
 
+interface DroneProductFormProps {
+  id?: string;
+}
 
-export default function DroneProductForm() {
+export default function DroneProductForm({ id = '' }: DroneProductFormProps) {
   const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '', phone: '',
-    company: '', city: '', state: '', product: '', amc: ''
+    droneType: 'Unsure',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    company: '',
+    city: '',
+    state: '',
+    product: '',
+    amc: '',
   });
+
+  // Set default drone type based on ID
+  useEffect(() => {
+    const mapIdToDroneType: Record<string, string> = {
+      '1': 'Surveillance',
+      '2': 'Agricultural',
+      '3': 'Custom',      // Logistics treated as Custom
+      '4': 'FPV',
+      '5': 'Training',
+      '6': 'Custom',
+    };
+
+    if (id && mapIdToDroneType[id]) {
+      setForm((prev) => ({ ...prev, droneType: mapIdToDroneType[id] }));
+    } else {
+      setForm((prev) => ({ ...prev, droneType: 'Unsure' }));
+    }
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -23,6 +52,25 @@ export default function DroneProductForm() {
     <div className="flex justify-center py-10 px-4">
       <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl w-full rounded-xl bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Type of Drone Dropdown */}
+          <div className="md:col-span-2">
+            <label className="block font-medium mb-1">Type of Drone <span className="text-red-600">*</span></label>
+            <select
+              name="droneType"
+              required
+              value={form.droneType}
+              onChange={handleChange}
+              className="input"
+            >
+              <option value="Unsure">Unsure</option>
+              <option value="Agricultural">Agricultural Drone</option>
+              <option value="Surveillance">Surveillance Drone</option>
+              <option value="FPV">FPV Drone</option>
+              <option value="Training">Training Drone</option>
+              <option value="Custom">Custom Drone</option>
+            </select>
+          </div>
+
           <div>
             <label className="block font-medium mb-1">First Name <span className="text-red-600">*</span></label>
             <input name="firstName" required value={form.firstName} onChange={handleChange} className="input" />

@@ -1,11 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-import {colorPalette} from "@/utils/variables"
+import { useState, useEffect } from 'react';
+import { colorPalette } from "@/utils/variables";
 
+interface DroneServiceFormProps {
+  id?: string; // id as string
+}
 
-export default function TrainingForm() {
+const SERVICE_OPTIONS = [
+  {
+    id: 1,
+    title: "Agricultural Surveillance Drone Solutions",
+  },
+  {
+    id: 2,
+    title: "Drone Mapping Services (DSM, DTM, Ortho)",
+  },
+  {
+    id: 3,
+    title: "Dam Surveillance and Structural Analysis",
+  },
+  {
+    id: 4,
+    title: "Industrial & Infrastructure Inspection Services",
+  },
+  {
+    id: 5,
+    title: "Forest Fire Prediction & Eradication System",
+  },
+  {
+    id: 6,
+    title: "Post-Wildfire Biodiversity & Impact Assessment",
+  },
+];
+
+export default function DroneServiceForm({ id }: DroneServiceFormProps) {
   const [form, setForm] = useState({
+    serviceType: 'Unsure',
     firstName: '',
     lastName: '',
     email: '',
@@ -16,6 +47,15 @@ export default function TrainingForm() {
     course: '',
     reason: '',
   });
+
+  useEffect(() => {
+    const matched = SERVICE_OPTIONS.find(option => option.id.toString() === id);
+    if (matched) {
+      setForm(prev => ({ ...prev, serviceType: matched.title }));
+    } else {
+      setForm(prev => ({ ...prev, serviceType: 'Unsure' }));
+    }
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -30,6 +70,27 @@ export default function TrainingForm() {
     <div className="flex justify-center py-10 px-4 bg-green7 min-h-screen">
       <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl w-full rounded-xl bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Service Type Select */}
+          <div className="md:col-span-2">
+            <label className="block font-medium mb-1">
+              Type of Service <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="serviceType"
+              required
+              value={form.serviceType}
+              onChange={handleChange}
+              className="input"
+            >
+              <option value="Unsure">Unsure</option>
+              {SERVICE_OPTIONS.map(option => (
+                <option key={option.id} value={option.title}>
+                  {option.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label className="block font-medium mb-1">
               First Name <span className="text-red-600">*</span>

@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Agricultural Surveillance Drone Solutions",
+    "description": "Robofly provides agricultural drone surveillance services for crop health monitoring, NDVI, CVI, growth and mortality analysis—delivering real-time, accurate insights that boost yield and optimize farm management across large-scale plantations.",
+    "main-image": "https://drive.google.com/file/d/1FQkSZTcKp0CXNNOl6p-qWFStKw5iDRgX/view?usp=drive_link"
+  },
+  {
+    "id": 2,
+    "title": "Drone Mapping Services (DSM, DTM, Ortho)",
+    "description": "We offer aerial drone mapping solutions including Digital Surface Models (DSM), Digital Terrain Models (DTM), and orthomosaic maps—enabling precise land surveys, construction planning, and topographic analysis with centimeter-level accuracy.",
+    "main-image": "https://drive.google.com/file/d/1nY2gFhTdPmTJq9dcmelN5szeiJRsnSnS/view?usp=drive_link"
+  },
+  {
+    "id": 3,
+    "title": "Dam Surveillance and Structural Analysis",
+    "description": "Our drone-based dam inspection services help detect structural cracks, seepage, and erosion risks through high-resolution imagery and thermal scans—ensuring timely maintenance and disaster prevention.",
+    "main-image": "https://drive.google.com/file/d/1EAI_dichT0QVIFopD8rTV1oiZScw697f/view?usp=drive_link"
+  },
+  {
+    "id": 4,
+    "title": "Industrial & Infrastructure Inspection Services",
+    "description": "Robofly delivers custom drone inspection services for power lines, towers, pipelines, solar farms, and infrastructure—offering a safer, faster, and cost-effective alternative to manual inspections.",
+    "main-image": "https://drive.google.com/file/d/1Q_Y5LTjg3YI-eqOsGZKqxd6gX9bThDwe/view?usp=drive_link"
+  },
+  {
+    "id": 5,
+    "title": "Forest Fire Prediction & Eradication System",
+    "description": "Our AI-powered forest fire drone solution integrates machine learning with aerial surveillance to predict fire spread risk, detect early-stage fires, and support rapid response in wildfire-prone zones.",
+    "main-image": "https://drive.google.com/file/d/1Lb8rPSNzcBObjYWTfD2OG4kWLdO9nojq/view?usp=drive_link"
+  },
+  {
+    "id": 6,
+    "title": "Post-Wildfire Biodiversity & Impact Assessment",
+    "description": "We conduct post-fire drone assessments to analyze biodiversity loss and measure the environmental impact zone—helping environmental agencies and forest departments plan restoration and conservation efforts.",
+    "main-image": "https://drive.google.com/file/d/1TFWbtAtdX_REBMGiNT7G2I_Kz0oeiejN/view?usp=drive_link"
+  }
+]

@@ -1,9 +1,17 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import ContactBanner from "@/components/contact/ContactBanner";
-import ContactFormsSlider from "@/components/contact/ContactFormsSlider";
-import { colorPalette } from "@/utils/variables";
+import { useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
+import ContactBanner from '@/components/contact/ContactBanner';
+import ContactFormsSlider from '@/components/contact/ContactFormsSlider';
+import { colorPalette } from '@/utils/variables';
+
+// interface ContactPageProps {
+//   params?: {
+//     id?: string;
+//     type?: string;
+//   };
+// }
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -73,11 +81,16 @@ const childVariants = {
     },
   },
 };
-
 export default function ContactPage() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id') || '';
+  const type = searchParams.get('type') || '';
+
+  console.log('type:', type, 'id:', id);
+
   return (
     <div className="min-h-screen bg-white text-black font-sans overflow-hidden">
-      {/* Decorative Background Elements with subtle animation */}
+      {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden z-0">
         <motion.div
           className="absolute -top-48 -right-48 w-[800px] h-[800px] rounded-full opacity-5"
@@ -93,7 +106,7 @@ export default function ContactPage() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-        ></motion.div>
+        />
         <motion.div
           className="absolute -bottom-64 -left-64 w-[900px] h-[900px] rounded-full opacity-10"
           style={{
@@ -109,12 +122,12 @@ export default function ContactPage() {
             ease: "easeInOut",
             delay: 2,
           }}
-        ></motion.div>
+        />
       </div>
 
-      {/* Main Content */}
+      {/* Page Content */}
       <div className="container mx-auto px-4 py-16 relative z-10">
-        {/* Page Header */}
+        {/* Header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -126,10 +139,6 @@ export default function ContactPage() {
           <motion.h1
             className="text-5xl md:text-6xl font-bold mb-4 tracking-tight"
             style={{ color: colorPalette.green1 }}
-            whileHover={{
-              scale: 1.02,
-              transition: { duration: 0.2 },
-            }}
           >
             Get in{" "}
             <motion.span
@@ -158,9 +167,9 @@ export default function ContactPage() {
           </motion.p>
         </motion.div>
 
-        {/* Content Grid */}
+        {/* Form + Info Section */}
         <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-10 items-start mr-10">
-          {/* Left Column - Contact Form */}
+          {/* Contact Form */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -172,10 +181,10 @@ export default function ContactPage() {
               transition: { duration: 0.3, ease: "easeOut" },
             }}
           >
-            <ContactFormsSlider />
+            <ContactFormsSlider id={id} type={type} />
           </motion.div>
 
-          {/* Right Column - Contact Info + Spacer */}
+          {/* Contact Info */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -183,7 +192,6 @@ export default function ContactPage() {
             variants={slideInRight}
             className="flex flex-col h-full relative"
           >
-            {/* Contact Card */}
             <motion.div
               className="rounded-xl p-6 mb-8"
               style={{
@@ -194,7 +202,6 @@ export default function ContactPage() {
               whileHover={{
                 y: -8,
                 boxShadow: `0 20px 40px -12px ${colorPalette.greenShadow}15`,
-                transition: { duration: 0.3, ease: "easeOut" },
               }}
               animate={{
                 boxShadow: [
@@ -212,7 +219,6 @@ export default function ContactPage() {
               <ContactBanner />
             </motion.div>
 
-            {/* Additional Info */}
             <motion.div
               className="rounded-3xl p-8"
               style={{
@@ -220,18 +226,11 @@ export default function ContactPage() {
                 border: `1px solid ${colorPalette.green4}`,
               }}
               variants={scaleIn}
-              whileHover={{
-                scale: 1.02,
-                transition: { duration: 0.3, ease: "easeOut" },
-              }}
+              whileHover={{ scale: 1.02 }}
             >
               <motion.h3
                 className="text-xl font-bold mb-4"
                 style={{ color: colorPalette.green1 }}
-                whileHover={{
-                  x: 5,
-                  transition: { duration: 0.2 },
-                }}
               >
                 Office Hours & Support
               </motion.h3>
@@ -243,108 +242,40 @@ export default function ContactPage() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                <motion.div
-                  className="flex justify-between border-b pb-2"
-                  style={{ borderColor: colorPalette.green4 }}
-                  variants={childVariants}
-                  whileHover={{
-                    x: 8,
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <span style={{ color: colorPalette.green2 }}>
-                    Monday - Friday
-                  </span>
-                  <motion.span
-                    className="font-medium"
-                    style={{ color: colorPalette.green3 }}
-                    whileHover={{
-                      scale: 1.05,
-                      color: colorPalette.green1,
-                      transition: { duration: 0.2 },
-                    }}
+                {[
+                  { label: "Monday - Friday", time: "9:00 AM - 6:00 PM" },
+                  { label: "Saturday", time: "10:00 AM - 4:00 PM" },
+                  { label: "Sunday", time: "Closed" },
+                ].map((entry, idx) => (
+                  <motion.div
+                    key={idx}
+                    className="flex justify-between border-b pb-2 last:border-b-0 last:pb-0"
+                    style={{ borderColor: colorPalette.green4 }}
+                    variants={childVariants}
                   >
-                    9:00 AM - 6:00 PM
-                  </motion.span>
-                </motion.div>
-
-                <motion.div
-                  className="flex justify-between border-b pb-2"
-                  style={{ borderColor: colorPalette.green4 }}
-                  variants={childVariants}
-                  whileHover={{
-                    x: 8,
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <span style={{ color: colorPalette.green2 }}>Saturday</span>
-                  <motion.span
-                    className="font-medium"
-                    style={{ color: colorPalette.green3 }}
-                    whileHover={{
-                      scale: 1.05,
-                      color: colorPalette.green1,
-                      transition: { duration: 0.2 },
-                    }}
-                  >
-                    10:00 AM - 4:00 PM
-                  </motion.span>
-                </motion.div>
-
-                <motion.div
-                  className="flex justify-between"
-                  variants={childVariants}
-                  whileHover={{
-                    x: 8,
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <span style={{ color: colorPalette.green2 }}>Sunday</span>
-                  <motion.span
-                    className="font-medium"
-                    style={{ color: colorPalette.green3 }}
-                    whileHover={{
-                      scale: 1.05,
-                      color: colorPalette.green1,
-                      transition: { duration: 0.2 },
-                    }}
-                  >
-                    Closed
-                  </motion.span>
-                </motion.div>
+                    <span style={{ color: colorPalette.green2 }}>{entry.label}</span>
+                    <span
+                      className="font-medium"
+                      style={{ color: colorPalette.green3 }}
+                    >
+                      {entry.time}
+                    </span>
+                  </motion.div>
+                ))}
               </motion.div>
 
               <motion.div
                 className="mt-6 pt-4 border-t"
                 style={{ borderColor: colorPalette.green4 }}
                 variants={childVariants}
-                whileHover={{
-                  y: -2,
-                  transition: { duration: 0.2 },
-                }}
               >
-                <p
-                  className="flex items-start gap-2"
-                  style={{ color: colorPalette.green2 }}
-                >
-                  <motion.span
-                    className="font-medium"
-                    whileHover={{
-                      color: colorPalette.green1,
-                      transition: { duration: 0.2 },
-                    }}
-                  >
-                    Note:
-                  </motion.span>
-                  <span>
-                    Our support team typically responds within 24 hours on
-                    business days
-                  </span>
+                <p className="flex items-start gap-2" style={{ color: colorPalette.green2 }}>
+                  <span className="font-medium">Note:</span>
+                  <span>Our support team typically responds within 24 hours on business days.</span>
                 </p>
               </motion.div>
             </motion.div>
 
-            {/* Dynamic Spacer Animation */}
             <motion.div
               className="mt-6 h-20 w-full"
               initial={{ height: 0, opacity: 0 }}
@@ -374,7 +305,7 @@ export default function ContactPage() {
         </div>
       </div>
 
-      {/* Floating Contact Elements with enhanced animations */}
+      {/* Floating Email */}
       <motion.div
         className="fixed right-6 bottom-6 z-20 flex flex-col gap-3"
         initial={{ opacity: 0, x: 100 }}
@@ -393,11 +324,9 @@ export default function ContactPage() {
             scale: 1.15,
             rotate: 5,
             boxShadow: `0 8px 30px ${colorPalette.greenShadow}40`,
-            transition: { duration: 0.2, ease: "easeOut" },
           }}
           whileTap={{
             scale: 0.95,
-            transition: { duration: 0.1 },
           }}
           animate={{
             y: [0, -8, 0],
@@ -414,32 +343,12 @@ export default function ContactPage() {
             className="h-5 w-5 text-white"
             viewBox="0 0 20 20"
             fill="currentColor"
-            whileHover={{
-              scale: 1.1,
-              transition: { duration: 0.2 },
-            }}
           >
             <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
             <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
           </motion.svg>
         </motion.a>
       </motion.div>
-
-      {/* Subtle pulse animation for visual interest */}
-      <motion.div
-        className="absolute top-1/2 left-1/2 w-2 h-2 bg-green-200 rounded-full opacity-20"
-        style={{ transform: "translate(-50%, -50%)" }}
-        animate={{
-          scale: [1, 20, 1],
-          opacity: [0.2, 0, 0.2],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 4,
-        }}
-      />
     </div>
   );
 }
