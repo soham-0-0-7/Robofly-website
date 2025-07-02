@@ -67,7 +67,7 @@ export default function DroneProductForm() {
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center pt-2">
           <button
             type="submit"
             className="bg-[#1ba100] hover:bg-[#104a2f] hover:cursor-pointer text-white py-2 px-8 rounded-full transition"

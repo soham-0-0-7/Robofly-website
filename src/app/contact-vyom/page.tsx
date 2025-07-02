@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import ContactBanner from '@/components/contact-vyom/components/ContactBanner';
 import TabFormSwitcher from '@/components/contact-vyom/components/TabFormSwitcher';
+import CallingAnimation from '@/components/contact/CallingAnimation';
 
 const colorPalette = {
   green1: '#002d1a',
@@ -33,6 +34,17 @@ const fadeInUp = {
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white text-black font-sans">
+      {/* === Contact Banner === */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        custom={0}
+      >
+        <CallingAnimation />
+      </motion.div>
+
       {/* === Contact Banner === */}
       <motion.div
         initial="hidden"
