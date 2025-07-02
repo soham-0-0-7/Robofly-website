@@ -167,12 +167,12 @@ export default function CareerForm(): JSX.Element {
         </div>
 
         {/* Submit */}
-        <div className="text-center">
+        <div className="text-center pt-2">
           <button
             type="submit"
             className="bg-[#1ba100] hover:bg-[#104a2f] text-white py-2 px-8 rounded-full transition hover:scale-105"
           >
-            Submit Application
+            Submit
           </button>
         </div>
 
