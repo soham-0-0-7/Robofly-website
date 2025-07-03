@@ -60,7 +60,7 @@ export default function ContactFormsSlider() {
     switch (activeTab) {
       case 'general':
         return <GeneralForm />;
-      case 'training':
+      case 'service':
         return <DroneServiceForm />;
       case 'drone':
         return <DroneProductForm />;
@@ -122,7 +122,7 @@ export default function ContactFormsSlider() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -30 }}
           transition={{ duration: 0.4 }}
-          className="mt-10 p-6 rounded-lg"
+          className="mt-10 p-6 rounded-lg -ml-10 -mr-10"
         >
           {renderForm()}
         </motion.div>
