@@ -7,6 +7,17 @@ interface DroneProductFormProps {
   id?: string;
 }
 
+const indianStatesAndUTs = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
+  "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim",
+  "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand",
+  "West Bengal", "Andaman and Nicobar Islands", "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir",
+  "Ladakh", "Lakshadweep", "Puducherry"
+];
+
 export default function DroneProductForm({ id = '' }: DroneProductFormProps) {
   const [form, setForm] = useState({
     droneType: 'Unsure',
@@ -96,13 +107,20 @@ export default function DroneProductForm({ id = '' }: DroneProductFormProps) {
             <input name="city" required value={form.city} onChange={handleChange} className="input" />
           </div>
           <div>
-            <label className="block font-medium mb-1">State <span className="text-red-600">*</span></label>
-            <select name="state" required value={form.state} onChange={handleChange} className="input">
-              <option value="">Select State</option>
-              <option value="Gujarat">Gujarat</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Tamil Nadu">Tamil Nadu</option>
-              <option value="Maharashtra">Maharashtra</option>
+            <label className="block font-medium mb-1">
+              State / UT <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="state"
+              required
+              value={form.state}
+              onChange={handleChange}
+              className="input"
+            >
+              <option value="">Select State / UT</option>
+              {indianStatesAndUTs.map((state) => (
+                <option key={state} value={state}>{state}</option>
+              ))}
             </select>
           </div>
           <div>
