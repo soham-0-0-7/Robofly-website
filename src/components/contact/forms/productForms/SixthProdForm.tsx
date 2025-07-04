@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, ChangeEvent, FormEvent, JSX } from 'react';
@@ -80,10 +79,10 @@ export default function SixthProdForm(): JSX.Element {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="flex justify-center py-10 px-4">
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">Custom Drone Inquiry Form</h2>
-        
+    <div className="flex justify-center py-0 px-0">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-0">
+        <h2 className="text-2xl font-bold text-center mb-4">Custom Drone Inquiry Form</h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
@@ -98,7 +97,7 @@ export default function SixthProdForm(): JSX.Element {
               className="form-input"
             />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Organization Name
@@ -128,7 +127,7 @@ export default function SixthProdForm(): JSX.Element {
             />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Contact Number <span className="text-red-600">*</span>
@@ -163,44 +162,6 @@ export default function SixthProdForm(): JSX.Element {
           </select>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Environmental Conditions <span className="text-red-600">*</span>
-            </label>
-            <select
-              name="environmentalConditions"
-              required
-              value={form.environmentalConditions}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select conditions</option>
-              {environmentalConditions.map(condition => (
-                <option key={condition} value={condition}>{condition}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block font-medium mb-1">
-              Flight Controller Preference <span className="text-red-600">*</span>
-            </label>
-            <select
-              name="flightControllerPreference"
-              required
-              value={form.flightControllerPreference}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select preference</option>
-              {flightControllerPreferences.map(pref => (
-                <option key={pref} value={pref}>{pref}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
         <div>
           <label className="block font-medium mb-1">
             Payload Requirements
@@ -227,6 +188,44 @@ export default function SixthProdForm(): JSX.Element {
             className="form-input"
             placeholder="Describe range and endurance requirements..."
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block font-medium mb-1">
+              Environmental Conditions <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="environmentalConditions"
+              required
+              value={form.environmentalConditions}
+              onChange={handleChange}
+              className="form-input"
+            >
+              <option value="">Select conditions</option>
+              {environmentalConditions.map(condition => (
+                <option key={condition} value={condition}>{condition}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">
+              Flight Controller Preference <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="flightControllerPreference"
+              required
+              value={form.flightControllerPreference}
+              onChange={handleChange}
+              className="form-input"
+            >
+              <option value="">Select preference</option>
+              {flightControllerPreferences.map(pref => (
+                <option key={pref} value={pref}>{pref}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div>
@@ -261,7 +260,7 @@ export default function SixthProdForm(): JSX.Element {
               ))}
             </select>
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Expected Delivery Timeline <span className="text-red-600">*</span>
@@ -302,7 +301,7 @@ export default function SixthProdForm(): JSX.Element {
 
           {hasGeneralError && (
             <p className="text-red-600 text-center mt-4">
-              There was some error in filling the form. Please recheck!
+              Phone or Email is invalid. Please check and try again.
             </p>
           )}
         </div>

@@ -6,37 +6,69 @@ import { colorPalette, validateEmail, validatePhone } from "@/utils/variables";
 
 interface FormData {
   fullName: string;
-  farmName: string;
+  organizationName: string;
   email: string;
   phone: string;
-  cropTypes: string;
-  tankCapacity: string;
-  customAutomation: string;
-  existingDroneUsage: string;
-  additionalNotes: string;
+  surveillanceType: string;
+  surveillanceTypeOther: string;
+  flightTime: number | '';
+  cameraType: string;
+  cameraTypeOther: string;
+  transmissionRange: number | '';
+  useFrequency: string;
+  operatingEnvironment: string;
+  regulatoryPermissions: string;
+  specialRequirements: string;
 }
 
-const tankCapacities = ['10', '16'];
+const surveillanceTypes = [
+  'Perimeter monitoring',
+  'Infrastructure surveillance',
+  'Crowd monitoring',
+  'Other'
+];
+
+const cameraTypes = [
+  'Thermal',
+  'Optical',
+  'Night Vision',
+  'Zoom',
+  'Multispectral',
+  'Other'
+];
+
+const useFrequencies = ['Daily', 'Weekly', 'Emergency Only'];
+const operatingEnvironments = ['Urban', 'Forest', 'Coastal', 'Desert'];
 
 export default function SecondProdForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
     fullName: '',
-    farmName: '',
+    organizationName: '',
     email: '',
     phone: '',
-    cropTypes: '',
-    tankCapacity: '',
-    customAutomation: '',
-    existingDroneUsage: '',
-    additionalNotes: ''
+    surveillanceType: '',
+    surveillanceTypeOther: '',
+    flightTime: '',
+    cameraType: '',
+    cameraTypeOther: '',
+    transmissionRange: '',
+    useFrequency: '',
+    operatingEnvironment: '',
+    regulatoryPermissions: '',
+    specialRequirements: ''
   });
 
   const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    
+    if (type === 'number') {
+      setForm(prev => ({ ...prev, [name]: value === '' ? '' : Number(value) }));
+    } else {
+      setForm(prev => ({ ...prev, [name]: value }));
+    }
     setErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
@@ -63,13 +95,13 @@ export default function SecondProdForm(): JSX.Element {
 
     setHasGeneralError(false);
     console.log(form);
-    alert('Agricultural spraying drone inquiry submitted successfully!');
+    alert('Surveillance drone inquiry submitted successfully!');
   };
 
   return (
-    <div className="flex justify-center py-10 px-4">
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">Agricultural Spraying Drone Inquiry Form</h2>
+    <div className="flex justify-center py-0 px-0">
+  <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-0">
+      <h2 className="text-2xl font-bold text-center mb-4">Surveillance Drone Inquiry Form</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -88,13 +120,13 @@ export default function SecondProdForm(): JSX.Element {
           
           <div>
             <label className="block font-medium mb-1">
-              Farm/Organization Name <span className="text-red-600">*</span>
+              Company/Organization <span className="text-red-600">*</span>
             </label>
             <input
-              name="farmName"
+              name="organizationName"
               required
               type="text"
-              value={form.farmName}
+              value={form.organizationName}
               onChange={handleChange}
               className="form-input"
             />
@@ -119,7 +151,7 @@ export default function SecondProdForm(): JSX.Element {
           
           <div>
             <label className="block font-medium mb-1">
-              Phone <span className="text-red-600">*</span>
+              Phone Number <span className="text-red-600">*</span>
             </label>
             <input
               name="phone"
@@ -135,59 +167,134 @@ export default function SecondProdForm(): JSX.Element {
 
         <div>
           <label className="block font-medium mb-1">
-            Type of Crops <span className="text-red-600">*</span>
-          </label>
-          <textarea
-            name="cropTypes"
-            required
-            rows={3}
-            value={form.cropTypes}
-            onChange={handleChange}
-            className="form-input"
-            placeholder="Please describe the types of crops you grow..."
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">
-            Preferred Tank Capacity <span className="text-red-600">*</span>
+            Type of Surveillance
           </label>
           <select
-            name="tankCapacity"
-            required
-            value={form.tankCapacity}
+            name="surveillanceType"
+            value={form.surveillanceType}
             onChange={handleChange}
             className="form-input"
           >
-            <option value="">Select tank capacity</option>
-            {tankCapacities.map(capacity => (
-              <option key={capacity} value={capacity}>{capacity} Liters</option>
+            <option value="">Select surveillance type</option>
+            {surveillanceTypes.map(type => (
+              <option key={type} value={type}>{type}</option>
             ))}
           </select>
+          {form.surveillanceType === 'Other' && (
+            <input
+              name="surveillanceTypeOther"
+              type="text"
+              placeholder="Please specify..."
+              value={form.surveillanceTypeOther}
+              onChange={handleChange}
+              className="form-input mt-2"
+            />
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block font-medium mb-1">
+              Required Flight Time (minutes)
+            </label>
+            <input
+              name="flightTime"
+              type="number"
+              min="0"
+              value={form.flightTime}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
+          
+          <div>
+            <label className="block font-medium mb-1">
+              Required Transmission Range (metres)
+            </label>
+            <input
+              name="transmissionRange"
+              type="number"
+              min="0"
+              value={form.transmissionRange}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
         </div>
 
         <div>
           <label className="block font-medium mb-1">
-            Custom Automation Needs (Optional)
-          </label>
-          <textarea
-            name="customAutomation"
-            rows={3}
-            value={form.customAutomation}
-            onChange={handleChange}
-            className="form-input"
-            placeholder="Describe any specific automation requirements..."
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">
-            Any Existing Drone Usage? <span className="text-red-600">*</span>
+            Preferred Camera Type
           </label>
           <select
-            name="existingDroneUsage"
+            name="cameraType"
+            value={form.cameraType}
+            onChange={handleChange}
+            className="form-input"
+          >
+            <option value="">Select camera type</option>
+            {cameraTypes.map(type => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+          {form.cameraType === 'Other' && (
+            <input
+              name="cameraTypeOther"
+              type="text"
+              placeholder="Please specify..."
+              value={form.cameraTypeOther}
+              onChange={handleChange}
+              className="form-input mt-2"
+            />
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block font-medium mb-1">
+              Expected Use Frequency <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="useFrequency"
+              required
+              value={form.useFrequency}
+              onChange={handleChange}
+              className="form-input"
+            >
+              <option value="">Select frequency</option>
+              {useFrequencies.map(freq => (
+                <option key={freq} value={freq}>{freq}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block font-medium mb-1">
+              Operating Environment <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="operatingEnvironment"
+              required
+              value={form.operatingEnvironment}
+              onChange={handleChange}
+              className="form-input"
+            >
+              <option value="">Select environment</option>
+              {operatingEnvironments.map(env => (
+                <option key={env} value={env}>{env}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">
+            Any Regulatory Permissions Already Acquired? <span className="text-red-600">*</span>
+          </label>
+          <select
+            name="regulatoryPermissions"
             required
-            value={form.existingDroneUsage}
+            value={form.regulatoryPermissions}
             onChange={handleChange}
             className="form-input"
           >
@@ -199,15 +306,14 @@ export default function SecondProdForm(): JSX.Element {
 
         <div>
           <label className="block font-medium mb-1">
-            Additional Notes
+            Special Requirements
           </label>
           <textarea
-            name="additionalNotes"
+            name="specialRequirements"
             rows={4}
-            value={form.additionalNotes}
+            value={form.specialRequirements}
             onChange={handleChange}
             className="form-input"
-            placeholder="Any additional information or specific requirements..."
           />
         </div>
 

@@ -269,7 +269,7 @@ const ProductsPage: React.FC = () => {
                     whileTap="tap"
                   >
                     <Link
-                      href={`/contact?type=product&id=${product.id}`}
+                      href={`/contact?type=drone&id=${product.id}`}
                       className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
                       style={{ 
                         backgroundColor: 'transparent',
@@ -330,7 +330,7 @@ const ProductsPage: React.FC = () => {
               whileTap="tap"
             >
               <Link
-                href="/contact"
+                href="/contact?type=drone"
                 className="inline-flex items-center px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full transition-all duration-300"
                 style={{ 
                   backgroundColor: colorPalette.white,

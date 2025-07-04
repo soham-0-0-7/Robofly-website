@@ -1,10 +1,11 @@
 'use client';
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import ContactBanner from "@/components/contact/ContactBanner";
 import ContactFormsSlider from "@/components/contact/ContactFormsSlider";
 import CallingAnimation from "@/components/contact/CallingAnimation";
 import { colorPalette } from "@/utils/variables";
+import { useSearchParams } from "next/navigation";
 
 // Animation variants
 const fadeInUp = {
@@ -33,6 +34,18 @@ const slideIn = (direction: "left" | "right") => ({
 });
 
 export default function ContactPage() {
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type") || "";
+  const id = searchParams.get("id") || "";
+
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (type && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [type]);
+
   return (
     <div className="min-h-screen bg-white text-black font-sans overflow-hidden relative -mb-36">
       {/* Decorative Background Circles */}
@@ -86,13 +99,14 @@ export default function ContactPage() {
 
         {/* Contact Form Section */}
         <motion.div
+          ref={formRef}
           className="w-full -mt-10"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
           variants={slideIn("left")}
         >
-          <ContactFormsSlider />
+          <ContactFormsSlider type={type} id={id} />
         </motion.div>
       </div>
 

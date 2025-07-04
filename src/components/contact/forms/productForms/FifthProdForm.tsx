@@ -76,9 +76,9 @@ export default function FifthProdForm(): JSX.Element {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="flex justify-center py-10 px-4">
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">Training Drone (Educational) Inquiry Form</h2>
+    <div className="flex justify-center py-0 px-0">
+  <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-0">
+   <h2 className="text-2xl font-bold text-center mb-4">Training Drone (Educational) Inquiry Form</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>

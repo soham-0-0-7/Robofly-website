@@ -2,15 +2,6 @@
 
 import { useState, ChangeEvent, FormEvent, JSX } from 'react';
 import { colorPalette } from "@/utils/variables";
-interface FormData {
-  fullName: string;
-  organizationName: string;
-  email: string;
-  phone: string;
-  queryType: string;
-  state: string;
-  additionalInfo: string;
-}
 
 const indianStatesAndUTs = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh",
@@ -19,6 +10,20 @@ const indianStatesAndUTs = [
   "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir", "Lakshadweep", "Puducherry", "Ladakh"
 ];
 
+// const MULTI_SELECT_OPTIONS = [
+//   { title: "Agricultural Drone" },
+//   { title: "Surveillance Drone" },
+//   { title: "Logistics Package Dropping Drone" },
+//   { title: "FPV Drone" },
+//   { title: "Training Drone" },
+//   { title: "Custom Drone" },
+//   { title: "Agricultural Surveillance Drone Solutions" },
+//   { title: "Drone Mapping Services (DSM, DTM, Ortho)" },
+//   { title: "Dam Surveillance and Structural Analysis" },
+//   { title: "Industrial & Infrastructure Inspection Services" },
+//   { title: "Forest Fire Prediction & Eradication System" },
+//   { title: "Post-Wildfire Biodiversity & Impact Assessment" }
+// ];
 
 interface FormData {
   fullName: string;
@@ -26,24 +31,40 @@ interface FormData {
   email: string;
   phone: string;
   queryType: string;
+  city: string;
+  address: string;
   state: string;
+  concerns: string[];
   additionalInfo: string;
 }
 
 export default function GenForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
-    fullName: '', organizationName: '', email: '', phone: '', queryType: '',
-    state: '', additionalInfo: ''
+    fullName: '',
+    organizationName: '',
+    email: '',
+    phone: '',
+    queryType: '',
+    city: '',
+    address: '',
+    state: '',
+    concerns: [],
+    additionalInfo: ''
   });
 
   const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
     setErrors(prev => ({ ...prev, [name]: undefined }));
   };
+
+  // const handleMultiSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+  //   setForm(prev => ({ ...prev, concerns: selectedOptions }));
+  // };
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePhone = (phone: string) => /^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone.trim());
@@ -77,66 +98,32 @@ export default function GenForm(): JSX.Element {
   return (
     <div className="flex justify-center py-10 px-4">
       <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">General Query Form</h2>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
               Full Name <span className="text-red-600">*</span>
             </label>
-            <input
-              name="fullName"
-              required
-              type="text"
-              value={form.fullName}
-              onChange={handleChange}
-              className="input"
-            />
+            <input name="fullName" required value={form.fullName} onChange={handleChange} className="input" />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
-              Organization Name <span className="text-red-600">*</span>
+              Organization Name
             </label>
-            <input
-              name="organizationName"
-              required
-              type="text"
-              value={form.organizationName}
-              onChange={handleChange}
-              className="input"
-            />
+            <input name="organizationName" value={form.organizationName} onChange={handleChange} className="input" />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block font-medium mb-1">
-              Email <span className="text-red-600">*</span>
-            </label>
-            <input
-              name="email"
-              required
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              className="input"
-            />
+            <label className="block font-medium mb-1">Email <span className="text-red-600">*</span></label>
+            <input name="email" required type="email" value={form.email} onChange={handleChange} className="input" />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
-          
+
           <div>
-            <label className="block font-medium mb-1">
-              Phone <span className="text-red-600">*</span>
-            </label>
-            <input
-              name="phone"
-              required
-              type="text"
-              value={form.phone}
-              onChange={handleChange}
-              className="input"
-            />
+            <label className="block font-medium mb-1">Phone <span className="text-red-600">*</span></label>
+            <input name="phone" required value={form.phone} onChange={handleChange} className="input" />
             {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
           </div>
         </div>
@@ -156,23 +143,57 @@ export default function GenForm(): JSX.Element {
           />
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block font-medium mb-1">
+              City / Town / Village <span className="text-red-600">*</span>
+            </label>
+            <input name="city" required value={form.city} onChange={handleChange} className="input" />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">
+              State <span className="text-red-600">*</span>
+            </label>
+            <select name="state" required value={form.state} onChange={handleChange} className="input">
+              <option value="">Select State</option>
+              {indianStatesAndUTs.map(state => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         <div>
           <label className="block font-medium mb-1">
-            State <span className="text-red-600">*</span>
+            Address <span className="text-red-600">*</span>
           </label>
-          <select
-            name="state"
+          <textarea
+            name="address"
             required
-            value={form.state}
+            rows={3}
+            value={form.address}
             onChange={handleChange}
             className="input"
+          />
+        </div>
+
+        {/* <div>
+          <label className="block font-medium mb-1">
+            Select the fields your query might concern <span className="text-red-600">*</span>
+          </label>
+          <select
+            name="concerns"
+            multiple
+            value={form.concerns}
+            onChange={handleMultiSelect}
+            className="input h-40"
           >
-            <option value="">Select State</option>
-            {indianStatesAndUTs.map(state => (
-              <option key={state} value={state}>{state}</option>
+            {MULTI_SELECT_OPTIONS.map(option => (
+              <option key={option.title} value={option.title}>{option.title}</option>
             ))}
           </select>
-        </div>
+        </div> */}
 
         <div>
           <label className="block font-medium mb-1">
