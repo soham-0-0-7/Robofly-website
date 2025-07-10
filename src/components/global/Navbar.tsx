@@ -104,7 +104,7 @@ export default function Navbar() {
           </div>
           <NavLink href="/blog">Blog</NavLink>
           <NavLink href="/contact">Contact</NavLink>
-          <NavLink href="/upcoming-services">Upcoming Services</NavLink>
+          <NavLink href="/upcoming_services">Upcoming Services</NavLink>
         </div>
 
         {/* Mobile Hamburger */}
