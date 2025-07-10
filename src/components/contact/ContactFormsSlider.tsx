@@ -70,7 +70,7 @@ export default function ContactFormsSlider({ type, id }: ContactFormsSliderProps
       case 'drone':
         return <DroneProductForm id={id} />;
       case 'career':
-        return <CareerForm id={id} />;
+        return <CareerForm />;
       default:
         return <GeneralForm />;
     }

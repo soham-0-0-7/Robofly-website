@@ -1,0 +1,115 @@
+Date : 2025-07-04 21:15:40
+Directory : c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src
+Total : 60 files,  9305 codes, 220 comments, 844 blanks, all 10369 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| TypeScript JSX |         56 |      9,179 |        211 |        831 |     10,221 |
+| JSON           |          2 |         76 |          0 |          0 |         76 |
+| TypeScript     |          1 |         48 |          8 |         12 |         68 |
+| PostCSS        |          1 |          2 |          1 |          1 |          4 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                           | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                              |         60 |      9,305 |        220 |        844 |     10,369 |
+| app                                                                                                                                            |         18 |      1,432 |         66 |        128 |      1,626 |
+| app (Files)                                                                                                                                    |          5 |        209 |         16 |         25 |        250 |
+| app\blog                                                                                                                                       |          1 |          9 |          0 |          3 |         12 |
+| app\contact                                                                                                                                    |          1 |        114 |          6 |         11 |        131 |
+| app\contact-soham                                                                                                                              |          1 |        142 |          4 |         10 |        156 |
+| app\contact-vyom                                                                                                                               |          2 |        139 |         11 |         14 |        164 |
+| app\home                                                                                                                                       |          4 |        127 |         11 |         22 |        160 |
+| app\home (Files)                                                                                                                               |          2 |         39 |          4 |         11 |         54 |
+| app\home\@videosection                                                                                                                         |          2 |         88 |          7 |         11 |        106 |
+| app\products                                                                                                                                   |          1 |        323 |          9 |         18 |        350 |
+| app\products-tentative                                                                                                                         |          1 |         15 |          0 |          4 |         19 |
+| app\services                                                                                                                                   |          1 |        345 |          9 |         18 |        372 |
+| app\upcoming_services                                                                                                                          |          1 |          9 |          0 |          3 |         12 |
+| components                                                                                                                                     |         39 |      7,749 |        146 |        704 |      8,599 |
+| components\contact                                                                                                                             |         21 |      4,966 |         58 |        523 |      5,547 |
+| components\contact (Files)                                                                                                                     |          3 |        418 |         15 |         37 |        470 |
+| components\contact-soham                                                                                                                       |          5 |        618 |         14 |         34 |        666 |
+| components\contact-vyom                                                                                                                        |          6 |        607 |          6 |         54 |        667 |
+| components\contact-vyom\components                                                                                                             |          6 |        607 |          6 |         54 |        667 |
+| components\contact-vyom\components (Files)                                                                                                     |          2 |        143 |          6 |         13 |        162 |
+| components\contact-vyom\components\forms                                                                                                       |          4 |        464 |          0 |         41 |        505 |
+| components\contact\forms                                                                                                                       |         18 |      4,548 |         43 |        486 |      5,077 |
+| components\contact\forms (Files)                                                                                                               |          4 |        682 |         40 |         76 |        798 |
+| components\contact\forms\productForms                                                                                                          |          7 |      2,055 |          0 |        215 |      2,270 |
+| components\contact\forms\serviceForms                                                                                                          |          7 |      1,811 |          3 |        195 |      2,009 |
+| components\global                                                                                                                              |          3 |        420 |         35 |         34 |        489 |
+| components\homepage                                                                                                                            |          4 |      1,138 |         33 |         59 |      1,230 |
+| utils                                                                                                                                          |          3 |        124 |          8 |         12 |        144 |
++------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                                                                       | language       | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\blog\page.tsx                                             | TypeScript JSX |          9 |          0 |          3 |         12 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\contact-soham\page.tsx                                    | TypeScript JSX |        142 |          4 |         10 |        156 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\contact-vyom\loading.tsx                                  | TypeScript JSX |         69 |          6 |          6 |         81 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\contact-vyom\page.tsx                                     | TypeScript JSX |         70 |          5 |          8 |         83 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\contact\page.tsx                                          | TypeScript JSX |        114 |          6 |         11 |        131 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\error.tsx                                                 | TypeScript JSX |        138 |          6 |         11 |        155 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\globals.css                                               | PostCSS        |          2 |          1 |          1 |          4 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\home\@videosection\loading.tsx                            | TypeScript JSX |          9 |          1 |          2 |         12 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\home\@videosection\page.tsx                               | TypeScript JSX |         79 |          6 |          9 |         94 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\home\layout.tsx                                           | TypeScript JSX |          8 |          0 |          1 |          9 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\home\page.tsx                                             | TypeScript JSX |         31 |          4 |         10 |         45 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\layout.tsx                                                | TypeScript JSX |         26 |          0 |          4 |         30 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\loading.tsx                                               | TypeScript JSX |         39 |          9 |          7 |         55 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\page.tsx                                                  | TypeScript JSX |          4 |          0 |          2 |          6 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\products-tentative\page.tsx                               | TypeScript JSX |         15 |          0 |          4 |         19 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\products\page.tsx                                         | TypeScript JSX |        323 |          9 |         18 |        350 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\services\page.tsx                                         | TypeScript JSX |        345 |          9 |         18 |        372 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\upcoming_services\page.tsx                                | TypeScript JSX |          9 |          0 |          3 |         12 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\ContactFormsSlider.tsx               | TypeScript JSX |        259 |          8 |         14 |        281 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\DroneProductForm.tsx                 | TypeScript JSX |         76 |          2 |          5 |         83 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\GeneralQueryForm.tsx                 | TypeScript JSX |         79 |          0 |          5 |         84 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\JoinTeamForm.tsx                     | TypeScript JSX |        128 |          2 |          5 |        135 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\TrainingRequestForm.tsx              | TypeScript JSX |         76 |          2 |          5 |         83 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\ContactBanner.tsx          | TypeScript JSX |         71 |          4 |          5 |         80 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\TabFormSwitcher.tsx        | TypeScript JSX |         72 |          2 |          8 |         82 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\forms\CareerForm.tsx       | TypeScript JSX |        123 |          0 |         11 |        134 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\forms\DroneProductForm.tsx | TypeScript JSX |         98 |          0 |          8 |        106 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\forms\GeneralForm.tsx      | TypeScript JSX |        113 |          0 |         12 |        125 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\forms\TrainingForm.tsx     | TypeScript JSX |        130 |          0 |         10 |        140 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\CallingAnimation.tsx                       | TypeScript JSX |        241 |          6 |         18 |        265 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\ContactBanner.tsx                          | TypeScript JSX |         57 |          4 |          6 |         67 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\ContactFormsSlider.tsx                     | TypeScript JSX |        120 |          5 |         13 |        138 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\CareerForm.tsx                       | TypeScript JSX |        305 |          6 |         22 |        333 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\DroneProductForm.tsx                 | TypeScript JSX |         97 |          0 |         13 |        110 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\DroneServiceForm.tsx                 | TypeScript JSX |         97 |          0 |         13 |        110 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\GeneralForm.tsx                      | TypeScript JSX |        183 |         34 |         28 |        245 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\FifthProdForm.tsx       | TypeScript JSX |        245 |          0 |         29 |        274 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\FirstProdForm.tsx       | TypeScript JSX |        221 |          0 |         26 |        247 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\FourthProdForm.tsx      | TypeScript JSX |        242 |          0 |         27 |        269 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\GenForm.tsx             | TypeScript JSX |        420 |          0 |         40 |        460 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\SecondProdForm.tsx      | TypeScript JSX |        321 |          0 |         32 |        353 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\SixthProdForm.tsx       | TypeScript JSX |        297 |          0 |         30 |        327 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\ThirdProdForm.tsx       | TypeScript JSX |        309 |          0 |         31 |        340 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\FifthServiceForm.tsx    | TypeScript JSX |        310 |          0 |         30 |        340 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\FirstServiceForm.tsx    | TypeScript JSX |        193 |          0 |         30 |        223 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\FourthServiceForm.tsx   | TypeScript JSX |        333 |          0 |         31 |        364 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\GenForm.tsx             | TypeScript JSX |        227 |          3 |         24 |        254 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\SecondServiceForm.tsx   | TypeScript JSX |        259 |          0 |         27 |        286 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\SixthServiceForm.tsx    | TypeScript JSX |        269 |          0 |         28 |        297 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\ThirdServiceForm.tsx    | TypeScript JSX |        220 |          0 |         25 |        245 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\global\ContactButton.tsx                           | TypeScript JSX |         83 |         16 |         10 |        109 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\global\Footer.tsx                                  | TypeScript JSX |        128 |          7 |          9 |        144 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\global\Navbar.tsx                                  | TypeScript JSX |        209 |         12 |         15 |        236 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\homepage\HomeAbout.tsx                             | TypeScript JSX |        430 |         15 |         17 |        462 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\homepage\HomeApplications.tsx                      | TypeScript JSX |        426 |         14 |         18 |        458 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\homepage\HomeProducts.tsx                          | TypeScript JSX |        144 |          0 |         12 |        156 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\homepage\RecognitionSection.tsx                    | TypeScript JSX |        138 |          4 |         12 |        154 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\utils\products.json                                           | JSON           |         38 |          0 |          0 |         38 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\utils\services.json                                           | JSON           |         38 |          0 |          0 |         38 |
+| c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\utils\variables.ts                                            | TypeScript     |         48 |          8 |         12 |         68 |
+| Total                                                                                                                                          |                |      9,305 |        220 |        844 |     10,369 |
++------------------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
