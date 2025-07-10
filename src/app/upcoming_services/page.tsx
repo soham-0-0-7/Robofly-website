@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Factory, Settings, Users, CheckCircle, Clock, Shield, Star, ArrowDown } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
-
+import Link from "next/link"
 const Page = () => {
   const [activeSection, setActiveSection] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -233,7 +233,7 @@ const Page = () => {
                   <div className={`${section.color} text-white px-8 py-4 rounded-t-xl font-bold text-center w-full max-w-sm shadow-lg`}>
                     <h3 className="text-lg">{section.title}</h3>
                   </div>
-                  
+
                   {/* Steps */}
                   <div className="border-2 border-t-0 border-green-200 rounded-b-xl w-full max-w-sm shadow-lg bg-white">
                     {section.steps.map((step, stepIndex) => (
@@ -269,11 +269,7 @@ const Page = () => {
               <Button
                 key={section.title}
                 onClick={() => setActiveSection(activeSection === index ? null : index)}
-                className={`px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 ${
-                  activeSection === index
-                    ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'bg-white text-green-600 border-2 border-green-500 hover:bg-green-50'
-                }`}
+                className='px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 bg-green-600 text-white hover:bg-green-700'
               >
                 {activeSection === index ? 'Hide Details' : `View ${section.title} Details`}
               </Button>
@@ -334,19 +330,15 @@ const Page = () => {
             Whether you&apos;re a manufacturer, service center, or drone owner, Robofly&apos;s ecosystem is designed to serve you better.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-green-700 hover:bg-gray-100 px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              Get Started Today
-            </Button>
+            <Link href="/contact">
             <Button 
               size="lg" 
               variant="outline" 
-              className="border-white text-white hover:bg-white hover:text-green-700 px-8 py-3 rounded-full transition-all duration-300"
+              className="border-white text-white hover:bg-white hover:text-green-700 px-8 py-3 rounded-full font-semibold"
             >
               Contact Us
             </Button>
+            </Link>
           </div>
         </div>
       </section>
