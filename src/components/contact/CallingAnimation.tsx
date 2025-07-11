@@ -169,7 +169,7 @@ export default function CallingAnimation() {
                 className="space-y-4 rounded-lg transition-transform duration-300 h-full pl-4 pr-4 pb-4"
               >
                 <h3 className="text-xl text-emerald-300 font-semibold flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-emerald-300" /> Robofly Technologies
+                  <Building2 className="w-5 h-5 text-emerald-300" /> Robofly Technology
                 </h3>
                 <div className="text-gray-300 space-y-2">
                   <motion.a
