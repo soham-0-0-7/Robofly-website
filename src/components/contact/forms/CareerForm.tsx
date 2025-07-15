@@ -22,8 +22,8 @@ interface FormData {
   availability: string;
   currentSalary: string;
   expectedSalary: string;
-  resume: File | null;
-  portfolio: File | null;
+  resume: string | null;
+  portfolio: string | null;
 }
 
 type FieldConfig = [keyof FormData, string];
@@ -49,11 +49,8 @@ export default function CareerForm(): JSX.Element {
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
-    const { name, value, files } = e.target as HTMLInputElement;
-    setForm(prev => ({
-      ...prev,
-      [name]: files?.length ? files[0] : value
-    }));
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
     setErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
@@ -116,7 +113,7 @@ export default function CareerForm(): JSX.Element {
         {/* Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {basicFields.map(([key, label]) => (
-            <div key={key}>
+            <div key={key} className={key === 'interest' ? 'md:col-span-2' : ''}>
               <label className="block font-medium mb-1">
                 {label} {(key !== 'workplace' && key !== 'interest') && <span className="text-red-600">*</span>}
               </label>
@@ -203,6 +200,7 @@ export default function CareerForm(): JSX.Element {
                   value={form[key] as string}
                   onChange={handleChange}
                   className="input"
+                  placeholder="Why are you interested in this role?"
                 />
               ) : (
                 <input
@@ -232,29 +230,31 @@ export default function CareerForm(): JSX.Element {
           />
         </div>
 
-        {/* Resume and Portfolio */}
+        {/* Resume and Portfolio as URL */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
-              Resume/CV <span className="text-red-600">*</span>
+              Resume/CV (Drive link) <span className="text-red-600">*</span>
             </label>
             <input
-              type="file"
+              type="url"
               name="resume"
               required
-              accept=".pdf,.doc,.docx"
+              placeholder="make your file in drive public"
+              value={form.resume || ''}
               onChange={handleChange}
               className="input"
             />
           </div>
           <div>
             <label className="block font-medium mb-1">
-              Upload Portfolio (if applicable)
+              Upload Portfolio (Drive link, optional)
             </label>
             <input
-              type="file"
+              type="url"
               name="portfolio"
-              accept=".pdf,.jpg,.png,.pptx"
+              placeholder="make your file in drive public"
+              value={form.portfolio || ''}
               onChange={handleChange}
               className="input"
             />
@@ -304,7 +304,6 @@ export default function CareerForm(): JSX.Element {
           >
             Submit Application
           </button>
-
           {hasGeneralError && (
             <p className="text-red-600 text-center mt-4">
               There was some error in filling the form. Please recheck!

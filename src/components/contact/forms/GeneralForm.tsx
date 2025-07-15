@@ -1,42 +1,76 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ChangeEvent, FormEvent, JSX } from 'react';
 import { colorPalette } from "@/utils/variables";
 
 const indianStatesAndUTs = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
-  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
-  "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim",
-  "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand",
-  "West Bengal", "Andaman and Nicobar Islands", "Chandigarh",
-  "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir",
-  "Ladakh", "Lakshadweep", "Puducherry"
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh",
+  "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha",
+  "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttarakhand", "Uttar Pradesh", "West Bengal",
+  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir", "Lakshadweep", "Puducherry", "Ladakh"
 ];
 
-export default function GeneralForm() {
-  const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '', phone: '',
-    city: '', state: '', message: '',
+// const MULTI_SELECT_OPTIONS = [
+//   { title: "Agricultural Drone" },
+//   { title: "Surveillance Drone" },
+//   { title: "Logistics Package Dropping Drone" },
+//   { title: "FPV Drone" },
+//   { title: "Training Drone" },
+//   { title: "Custom Drone" },
+//   { title: "Agricultural Surveillance Drone Solutions" },
+//   { title: "Drone Mapping Services (DSM, DTM, Ortho)" },
+//   { title: "Dam Surveillance and Structural Analysis" },
+//   { title: "Industrial & Infrastructure Inspection Services" },
+//   { title: "Forest Fire Prediction & Eradication System" },
+//   { title: "Post-Wildfire Biodiversity & Impact Assessment" }
+// ];
+
+interface FormData {
+  fullName: string;
+  organizationName: string;
+  email: string;
+  phone: string;
+  queryType: string;
+  city: string;
+  address: string;
+  state: string;
+  concerns: string[];
+  additionalInfo: string;
+}
+
+export default function GenForm(): JSX.Element {
+  const [form, setForm] = useState<FormData>({
+    fullName: '',
+    organizationName: '',
+    email: '',
+    phone: '',
+    queryType: '',
+    city: '',
+    address: '',
+    state: '',
+    concerns: [],
+    additionalInfo: ''
   });
 
-  const [droneType, setDroneType] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
+  const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm(prev => ({ ...prev, [name]: value }));
     setErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
+  // const handleMultiSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+  //   setForm(prev => ({ ...prev, concerns: selectedOptions }));
+  // };
+
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhone = (phone: string) =>
-    /^(?:\+91|0091)?[6-9]\d{9}$/.test(phone.trim());
+  const validatePhone = (phone: string) => /^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone.trim());
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
     const newErrors: typeof errors = {};
     let hasError = false;
 
@@ -46,7 +80,7 @@ export default function GeneralForm() {
     }
 
     if (!validatePhone(form.phone)) {
-      newErrors.phone = 'Please enter a valid 10-digit phone number.';
+      newErrors.phone = 'Please enter a valid phone number.';
       hasError = true;
     }
 
@@ -57,73 +91,73 @@ export default function GeneralForm() {
     }
 
     setHasGeneralError(false);
-    console.log({ ...form, droneType });
+    console.log(form);
     alert('Form submitted successfully!');
   };
 
   return (
-    <div className="flex justify-center py-10 px-4" style={{ minHeight: '100vh' }}>
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl w-full rounded-xl">
+    <div className="flex justify-center py-10 px-4">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
-              First Name <span className="text-red-600">*</span>
+              Full Name <span className="text-red-600">*</span>
             </label>
-            <input name="firstName" required value={form.firstName} onChange={handleChange} className="input" />
+            <input name="fullName" required value={form.fullName} onChange={handleChange} className="input" />
           </div>
+
           <div>
             <label className="block font-medium mb-1">
-              Last Name <span className="text-red-600">*</span>
+              Organization Name
             </label>
-            <input name="lastName" required value={form.lastName} onChange={handleChange} className="input" />
+            <input name="organizationName" value={form.organizationName} onChange={handleChange} className="input" />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block font-medium mb-1">
-              Email ID <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              required
-              value={form.email}
-              onChange={handleChange}
-              className="input"
-            />
+            <label className="block font-medium mb-1">Email <span className="text-red-600">*</span></label>
+            <input name="email" required type="email" value={form.email} onChange={handleChange} className="input" />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
+
           <div>
-            <label className="block font-medium mb-1">
-              Phone No. <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="text"
-              name="phone"
-              required
-              value={form.phone}
-              onChange={handleChange}
-              className="input"
-            />
+            <label className="block font-medium mb-1">Phone <span className="text-red-600">*</span></label>
+            <input name="phone" required value={form.phone} onChange={handleChange} className="input" />
             {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
           </div>
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">
+            Type of Query <span className="text-red-600">*</span>
+          </label>
+          <textarea
+            name="queryType"
+            required
+            rows={3}
+            value={form.queryType}
+            onChange={handleChange}
+            className="input"
+            placeholder="Please describe your query in detail..."
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
-              City/Town/Village <span className="text-red-600">*</span>
+              City / Town / Village <span className="text-red-600">*</span>
             </label>
             <input name="city" required value={form.city} onChange={handleChange} className="input" />
           </div>
+
           <div>
             <label className="block font-medium mb-1">
-              State / UT <span className="text-red-600">*</span>
+              State <span className="text-red-600">*</span>
             </label>
-            <select
-              name="state"
-              required
-              value={form.state}
-              onChange={handleChange}
-              className="input"
-            >
-              <option value="">Select State / UT</option>
-              {indianStatesAndUTs.map((state) => (
+            <select name="state" required value={form.state} onChange={handleChange} className="input">
+              <option value="">Select State</option>
+              {indianStatesAndUTs.map(state => (
                 <option key={state} value={state}>{state}</option>
               ))}
             </select>
@@ -132,45 +166,55 @@ export default function GeneralForm() {
 
         <div>
           <label className="block font-medium mb-1">
-            Type of Drone <span className="text-red-600">*</span>
+            Address <span className="text-red-600">*</span>
+          </label>
+          <textarea
+            name="address"
+            required
+            rows={3}
+            value={form.address}
+            onChange={handleChange}
+            className="input"
+          />
+        </div>
+
+        {/* <div>
+          <label className="block font-medium mb-1">
+            Select the fields your query might concern <span className="text-red-600">*</span>
           </label>
           <select
-            name="droneType"
-            required
-            value={droneType}
-            onChange={(e) => setDroneType(e.target.value)}
-            className="input"
+            name="concerns"
+            multiple
+            value={form.concerns}
+            onChange={handleMultiSelect}
+            className="input h-40"
           >
-            <option value="">Select Type of Drone</option>
-            <option value="General">General / Other</option>
-            <option value="Agricultural">Agricultural Drone</option>
-            <option value="Surveillance">Surveillance Drone</option>
-            <option value="FPV">FPV Drone</option>
-            <option value="Training">Training Drone</option>
-            <option value="Custom">Custom Drone</option>
+            {MULTI_SELECT_OPTIONS.map(option => (
+              <option key={option.title} value={option.title}>{option.title}</option>
+            ))}
           </select>
-        </div>
+        </div> */}
 
         <div>
           <label className="block font-medium mb-1">
-            Your Message/Query <span className="text-red-600">*</span>
+            Additional Info
           </label>
           <textarea
-            name="message"
+            name="additionalInfo"
             rows={4}
-            required
-            value={form.message}
+            value={form.additionalInfo}
             onChange={handleChange}
             className="input"
+            placeholder="Please provide any additional information or specific requirements..."
           />
         </div>
 
         <div className="text-center">
           <button
             type="submit"
-            className="bg-[#1ba100] hover:bg-[#104a2f] hover:cursor-pointer text-white py-2 px-8 rounded-full transition"
+            className="bg-[#1ba100] hover:bg-[#104a2f] text-white py-3 px-8 rounded-full transition hover:scale-105"
           >
-            Submit
+            Submit Application
           </button>
 
           {hasGeneralError && (
@@ -180,18 +224,18 @@ export default function GeneralForm() {
           )}
         </div>
 
-        <style jsx>{`
+        <style>{`
           .input {
             padding: 0.75rem;
             border: 1px solid #ccc;
             border-radius: 0.5rem;
             width: 100%;
             background: ${colorPalette.whiteMint};
-            transition: border-color 0.3s ease;
+            transition: box-shadow 0.3s ease;
           }
           .input:focus {
             outline: none;
-            border-color: ${colorPalette.green3};
+            box-shadow: 0 0 0 2px ${colorPalette.green3};
           }
         `}</style>
       </form>

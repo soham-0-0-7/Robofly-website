@@ -3,144 +3,91 @@
 import { useState, useEffect } from 'react';
 import { colorPalette } from "@/utils/variables";
 
+import GenForm from '@/components/contact/forms/productForms/GenForm';
+import FirstProdForm from '@/components/contact/forms/productForms/FirstProdForm';
+import SecondProdForm from '@/components/contact/forms/productForms/SecondProdForm';
+import ThirdProdForm from '@/components/contact/forms/productForms/ThirdProdForm';
+import FourthProdForm from '@/components/contact/forms/productForms/FourthProdForm';
+import FifthProdForm from '@/components/contact/forms/productForms/FifthProdForm';
+import SixthProdForm from '@/components/contact/forms/productForms/SixthProdForm';
+
 interface DroneProductFormProps {
   id?: string;
 }
 
-const indianStatesAndUTs = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
-  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
-  "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim",
-  "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand",
-  "West Bengal", "Andaman and Nicobar Islands", "Chandigarh",
-  "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir",
-  "Ladakh", "Lakshadweep", "Puducherry"
+const DRONE_TYPE_OPTIONS = [
+  { id: 1, title: "Agricultural Drone", value: "Agricultural" },
+  { id: 2, title: "Surveillance Drone", value: "Surveillance" },
+  { id: 3, title: "Logistics Package Dropping Drone", value: "Logistics" },
+  { id: 4, title: "FPV Drone", value: "FPV" },
+  { id: 5, title: "Training Drone", value: "Training" },
+  { id: 6, title: "Custom Drone", value: "Custom" },
 ];
 
-export default function DroneProductForm({ id = '' }: DroneProductFormProps) {
-  const [form, setForm] = useState({
-    droneType: 'Unsure',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    company: '',
-    city: '',
-    state: '',
-    product: '',
-    amc: '',
-  });
+export default function DroneProductForm({ id }: DroneProductFormProps) {
+  const [form, setForm] = useState({ droneType: 'General' });
+  const [selectedDroneId, setSelectedDroneId] = useState<number | null>(null);
 
-  // Set default drone type based on ID
   useEffect(() => {
-    const mapIdToDroneType: Record<string, string> = {
-      '1': 'Surveillance',
-      '2': 'Agricultural',
-      '3': 'Custom',      // Logistics treated as Custom
-      '4': 'FPV',
-      '5': 'Training',
-      '6': 'Custom',
-    };
-
-    if (id && mapIdToDroneType[id]) {
-      setForm((prev) => ({ ...prev, droneType: mapIdToDroneType[id] }));
+    const matched = DRONE_TYPE_OPTIONS.find(option => option.id.toString() === id);
+    if (matched) {
+      setForm({ droneType: matched.value });
+      setSelectedDroneId(matched.id);
     } else {
-      setForm((prev) => ({ ...prev, droneType: 'Unsure' }));
+      setForm({ droneType: 'General' });
+      setSelectedDroneId(null);
     }
   }, [id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setForm({ droneType: value });
+
+    if (value === 'General') {
+      setSelectedDroneId(null);
+    } else {
+      const matched = DRONE_TYPE_OPTIONS.find(opt => opt.value === value);
+      setSelectedDroneId(matched?.id ?? null);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(form);
+  const renderProductForm = () => {
+    if (form.droneType === 'General') return <GenForm />;
+    switch (selectedDroneId) {
+      case 1: return <FirstProdForm />;
+      case 2: return <SecondProdForm />;
+      case 3: return <ThirdProdForm />;
+      case 4: return <FourthProdForm />;
+      case 5: return <FifthProdForm />;
+      case 6: return <SixthProdForm />;
+      default: return null;
+    }
   };
 
   return (
     <div className="flex justify-center py-10 px-4">
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl w-full rounded-xl bg-white">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Type of Drone Dropdown */}
-          <div className="md:col-span-2">
-            <label className="block font-medium mb-1">Type of Drone <span className="text-red-600">*</span></label>
-            <select
-              name="droneType"
-              required
-              value={form.droneType}
-              onChange={handleChange}
-              className="input"
-            >
-              <option value="Unsure">Unsure</option>
-              <option value="Agricultural">Agricultural Drone</option>
-              <option value="Surveillance">Surveillance Drone</option>
-              <option value="FPV">FPV Drone</option>
-              <option value="Training">Training Drone</option>
-              <option value="Custom">Custom Drone</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">First Name <span className="text-red-600">*</span></label>
-            <input name="firstName" required value={form.firstName} onChange={handleChange} className="input" />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Last Name <span className="text-red-600">*</span></label>
-            <input name="lastName" required value={form.lastName} onChange={handleChange} className="input" />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Email ID <span className="text-red-600">*</span></label>
-            <input name="email" required value={form.email} onChange={handleChange} className="input" />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Phone No. <span className="text-red-600">*</span></label>
-            <input name="phone" required value={form.phone} onChange={handleChange} className="input" />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Company Name</label>
-            <input name="company" value={form.company} onChange={handleChange} className="input" />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">City/Town/Village <span className="text-red-600">*</span></label>
-            <input name="city" required value={form.city} onChange={handleChange} className="input" />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">
-              State / UT <span className="text-red-600">*</span>
-            </label>
-            <select
-              name="state"
-              required
-              value={form.state}
-              onChange={handleChange}
-              className="input"
-            >
-              <option value="">Select State / UT</option>
-              {indianStatesAndUTs.map((state) => (
-                <option key={state} value={state}>{state}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Drone Product of Interest <span className="text-red-600">*</span></label>
-            <input name="product" required value={form.product} onChange={handleChange} className="input" />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Drone Product Part or AMC of Interest <span className="text-red-600">*</span></label>
-            <input name="amc" required value={form.amc} onChange={handleChange} className="input" />
-          </div>
-        </div>
-
-        <div className="text-center">
-          <button
-            type="submit"
-            className="bg-[#1ba100] hover:bg-[#104a2f] hover:cursor-pointer text-white py-2 px-8 rounded-full transition"
+      <div className="space-y-6 max-w-3xl w-full rounded-xl bg-white p-0">
+        <div className="md:col-span-2">
+          <label className="block font-medium mb-1">
+            Type of Drone <span className="text-red-600">*</span>
+          </label>
+          <select
+            name="droneType"
+            required
+            value={form.droneType}
+            onChange={handleChange}
+            className="input"
           >
-            Submit
-          </button>
+            <option value="General">General</option>
+            {DRONE_TYPE_OPTIONS.map(option => (
+              <option key={option.id} value={option.value}>
+                {option.title}
+              </option>
+            ))}
+          </select>
         </div>
+
+        {renderProductForm()}
 
         <style jsx>{`
           .input {
@@ -156,7 +103,7 @@ export default function DroneProductForm({ id = '' }: DroneProductFormProps) {
             box-shadow: 0 0 0 2px ${colorPalette.green3};
           }
         `}</style>
-      </form>
+      </div>
     </div>
   );
 }

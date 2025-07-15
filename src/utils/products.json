@@ -1,15 +1,15 @@
   [
     {
       "id": 1,
-      "title": "Surveillance Drone",
-      "description": "Robofly's advanced surveillance drones for security and inspection offer high-definition aerial footage, thermal imaging, and autonomous flight modes—ideal for border patrol, industrial monitoring, and real-time threat detection.",
-      "main-image": "https://drive.google.com/file/d/1hdVRJXCYYmwzN7xZs5zN_pWCI1DNSLvl/view?usp=drive_link"
-    },
-    {
-      "id": 2,
       "title": "Agricultural Spraying Drone",
       "description": "Our agricultural spraying drones for crop protection deliver precision pesticide and fertilizer application, covering large farmlands quickly and reducing chemical use—maximizing crop yield and promoting sustainable farming.",
       "main-image": "https://drive.google.com/file/d/1FQkSZTcKp0CXNNOl6p-qWFStKw5iDRgX/view?usp=drive_link"
+    },
+    {
+      "id": 2,
+      "title": "Surveillance Drone",
+      "description": "Robofly's advanced surveillance drones for security and inspection offer high-definition aerial footage, thermal imaging, and autonomous flight modes—ideal for border patrol, industrial monitoring, and real-time threat detection.",
+      "main-image": "https://drive.google.com/file/d/1hdVRJXCYYmwzN7xZs5zN_pWCI1DNSLvl/view?usp=drive_link"
     },
     {
       "id": 3,

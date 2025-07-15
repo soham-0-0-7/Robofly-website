@@ -1,0 +1,62 @@
+"filename", "language", "TypeScript JSX", "JSON", "TypeScript", "PostCSS", "comment", "blank", "total"
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\blog\page.tsx", "TypeScript JSX", 9, 0, 0, 0, 0, 3, 12
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\contact-soham\page.tsx", "TypeScript JSX", 142, 0, 0, 0, 4, 10, 156
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\contact-vyom\loading.tsx", "TypeScript JSX", 69, 0, 0, 0, 6, 6, 81
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\contact-vyom\page.tsx", "TypeScript JSX", 70, 0, 0, 0, 5, 8, 83
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\contact\page.tsx", "TypeScript JSX", 114, 0, 0, 0, 6, 11, 131
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\error.tsx", "TypeScript JSX", 138, 0, 0, 0, 6, 11, 155
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\globals.css", "PostCSS", 0, 0, 0, 2, 1, 1, 4
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\home\@videosection\loading.tsx", "TypeScript JSX", 9, 0, 0, 0, 1, 2, 12
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\home\@videosection\page.tsx", "TypeScript JSX", 79, 0, 0, 0, 6, 9, 94
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\home\layout.tsx", "TypeScript JSX", 8, 0, 0, 0, 0, 1, 9
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\home\page.tsx", "TypeScript JSX", 31, 0, 0, 0, 4, 10, 45
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\layout.tsx", "TypeScript JSX", 26, 0, 0, 0, 0, 4, 30
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\loading.tsx", "TypeScript JSX", 39, 0, 0, 0, 9, 7, 55
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\page.tsx", "TypeScript JSX", 4, 0, 0, 0, 0, 2, 6
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\products-tentative\page.tsx", "TypeScript JSX", 15, 0, 0, 0, 0, 4, 19
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\products\page.tsx", "TypeScript JSX", 323, 0, 0, 0, 9, 18, 350
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\services\page.tsx", "TypeScript JSX", 345, 0, 0, 0, 9, 18, 372
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\upcoming_services\page.tsx", "TypeScript JSX", 9, 0, 0, 0, 0, 3, 12
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\ContactFormsSlider.tsx", "TypeScript JSX", 259, 0, 0, 0, 8, 14, 281
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\DroneProductForm.tsx", "TypeScript JSX", 76, 0, 0, 0, 2, 5, 83
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\GeneralQueryForm.tsx", "TypeScript JSX", 79, 0, 0, 0, 0, 5, 84
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\JoinTeamForm.tsx", "TypeScript JSX", 128, 0, 0, 0, 2, 5, 135
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-soham\TrainingRequestForm.tsx", "TypeScript JSX", 76, 0, 0, 0, 2, 5, 83
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\ContactBanner.tsx", "TypeScript JSX", 71, 0, 0, 0, 4, 5, 80
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\TabFormSwitcher.tsx", "TypeScript JSX", 72, 0, 0, 0, 2, 8, 82
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\forms\CareerForm.tsx", "TypeScript JSX", 123, 0, 0, 0, 0, 11, 134
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\forms\DroneProductForm.tsx", "TypeScript JSX", 98, 0, 0, 0, 0, 8, 106
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\forms\GeneralForm.tsx", "TypeScript JSX", 113, 0, 0, 0, 0, 12, 125
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact-vyom\components\forms\TrainingForm.tsx", "TypeScript JSX", 130, 0, 0, 0, 0, 10, 140
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\CallingAnimation.tsx", "TypeScript JSX", 241, 0, 0, 0, 6, 18, 265
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\ContactBanner.tsx", "TypeScript JSX", 57, 0, 0, 0, 4, 6, 67
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\ContactFormsSlider.tsx", "TypeScript JSX", 120, 0, 0, 0, 5, 13, 138
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\CareerForm.tsx", "TypeScript JSX", 305, 0, 0, 0, 6, 22, 333
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\DroneProductForm.tsx", "TypeScript JSX", 97, 0, 0, 0, 0, 13, 110
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\DroneServiceForm.tsx", "TypeScript JSX", 97, 0, 0, 0, 0, 13, 110
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\GeneralForm.tsx", "TypeScript JSX", 183, 0, 0, 0, 34, 28, 245
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\FifthProdForm.tsx", "TypeScript JSX", 245, 0, 0, 0, 0, 29, 274
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\FirstProdForm.tsx", "TypeScript JSX", 221, 0, 0, 0, 0, 26, 247
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\FourthProdForm.tsx", "TypeScript JSX", 242, 0, 0, 0, 0, 27, 269
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\GenForm.tsx", "TypeScript JSX", 420, 0, 0, 0, 0, 40, 460
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\SecondProdForm.tsx", "TypeScript JSX", 321, 0, 0, 0, 0, 32, 353
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\SixthProdForm.tsx", "TypeScript JSX", 297, 0, 0, 0, 0, 30, 327
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\productForms\ThirdProdForm.tsx", "TypeScript JSX", 309, 0, 0, 0, 0, 31, 340
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\FifthServiceForm.tsx", "TypeScript JSX", 310, 0, 0, 0, 0, 30, 340
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\FirstServiceForm.tsx", "TypeScript JSX", 193, 0, 0, 0, 0, 30, 223
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\FourthServiceForm.tsx", "TypeScript JSX", 333, 0, 0, 0, 0, 31, 364
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\GenForm.tsx", "TypeScript JSX", 227, 0, 0, 0, 3, 24, 254
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\SecondServiceForm.tsx", "TypeScript JSX", 259, 0, 0, 0, 0, 27, 286
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\SixthServiceForm.tsx", "TypeScript JSX", 269, 0, 0, 0, 0, 28, 297
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\contact\forms\serviceForms\ThirdServiceForm.tsx", "TypeScript JSX", 220, 0, 0, 0, 0, 25, 245
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\global\ContactButton.tsx", "TypeScript JSX", 83, 0, 0, 0, 16, 10, 109
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\global\Footer.tsx", "TypeScript JSX", 128, 0, 0, 0, 7, 9, 144
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\global\Navbar.tsx", "TypeScript JSX", 209, 0, 0, 0, 12, 15, 236
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\homepage\HomeAbout.tsx", "TypeScript JSX", 430, 0, 0, 0, 15, 17, 462
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\homepage\HomeApplications.tsx", "TypeScript JSX", 426, 0, 0, 0, 14, 18, 458
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\homepage\HomeProducts.tsx", "TypeScript JSX", 144, 0, 0, 0, 0, 12, 156
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\components\homepage\RecognitionSection.tsx", "TypeScript JSX", 138, 0, 0, 0, 4, 12, 154
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\utils\products.json", "JSON", 0, 38, 0, 0, 0, 0, 38
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\utils\services.json", "JSON", 0, 38, 0, 0, 0, 0, 38
+"c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\utils\variables.ts", "TypeScript", 0, 0, 48, 0, 8, 12, 68
+"Total", "-", 9179, 76, 48, 2, 220, 844, 10369
