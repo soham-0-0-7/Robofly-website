@@ -179,7 +179,7 @@ const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-blue-800 via-blue-700 to-blue-600 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-r from-blue-800 via-blue-700 to-blue-600 text-white border-b-4 border-b-blue-400">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative container mx-auto px-4 py-20">
           <motion.div
@@ -188,10 +188,10 @@ const Page = () => {
             transition={{ duration: 1 }}
             className="text-center"
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 font-heading">
               Upcoming Services
             </h1>
-            <p className="text-xl md:text-2xl mb-3 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl mb-3 max-w-4xl mx-auto leading-relaxed font-subheading">
               Revolutionizing Drone Repairs: A Decentralized, Certified Service
               Ecosystem
             </p>
@@ -209,10 +209,10 @@ const Page = () => {
           className="container mx-auto px-4"
         >
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4 font-heading">
               Service Process Flow
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto font-subheading">
               A connected journey for manufacturers, service centers, and
               clients.
             </p>
@@ -228,7 +228,7 @@ const Page = () => {
                 className="relative w-full max-w-sm mx-auto flex-shrink-0"
               >
                 <div
-                  className={`${section.color} text-white px-6 py-4 rounded-t-xl font-bold text-center shadow-lg`}
+                  className={`${section.color} text-white px-6 py-4 rounded-t-xl font-bold text-center shadow-lg font-subheading`}
                 >
                   <h3>{section.title}</h3>
                 </div>
@@ -236,7 +236,7 @@ const Page = () => {
                   {section.steps.map((step, i) => (
                     <div key={i}>
                       <div className="p-6 text-center hover:bg-blue-50 transition-colors duration-200">
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-sm font-medium text-gray-700 ">
                           {step}
                         </p>
                       </div>
@@ -273,7 +273,7 @@ const Page = () => {
                 onClick={() =>
                   setActiveSection(activeSection === index ? null : index)
                 }
-                className="px-8 py-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300"
+                className="px-8 py-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 font-subheading"
               >
                 {activeSection === index
                   ? "Hide Details"
@@ -313,7 +313,7 @@ const Page = () => {
                   <Users className="text-white w-8 h-8" />
                 )}
               </div>
-              <h2 className="text-4xl font-bold text-gray-800">
+              <h2 className="text-4xl font-bold text-gray-800 font-heading">
                 {linearFlowData[activeSection].title}
               </h2>
             </div>
@@ -329,7 +329,7 @@ const Page = () => {
                       <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
                         <sub.icon className="text-blue-600 h-6 w-6" />
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-800">
+                      <h3 className="text-xl font-semibold text-gray-800 font-subheading">
                         {sub.title}
                       </h3>
                     </div>
@@ -352,10 +352,10 @@ const Page = () => {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-700 text-white -mb-20 border-t-4 border-blue-400">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-4">
+          <h2 className="text-4xl font-bold mb-4 font-heading">
             Ready to Join Our Ecosystem?
           </h2>
-          <p className="text-lg mb-6 max-w-2xl mx-auto">
+          <p className="text-lg mb-6 max-w-2xl mx-auto font-subheading">
             Whether you're a manufacturer, center, or drone owner — Robofly has
             your back.
           </p>

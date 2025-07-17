@@ -94,7 +94,7 @@ export default function RecognitionSection() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="text-2xl md:text-3xl font-bold mb-6"
+        className="text-2xl md:text-3xl font-bold mb-6 font-heading"
         style={{ color: colorPalette.aboutText }}
       >
         Recognized by
@@ -139,7 +139,7 @@ export default function RecognitionSection() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="text-2xl md:text-3xl font-bold mb-6"
+        className="text-2xl md:text-3xl font-bold mb-6 font-heading"
         style={{ color: colorPalette.aboutText }}
       >
         Supported by
