@@ -66,3 +66,4 @@ export const validatePhone = (phone: string) => /^(\+\d{1,3}[- ]?)?\d{10}$/.test
 export const imgSrc_h= "/images/robofly_h.png";
 export const imgSrc = "/images/robofly.png";
 export const videoSrc = "/videos/drone.mp4";
+export const imgSrc_h_2 = "/images/logo H-Photoroom.png";
