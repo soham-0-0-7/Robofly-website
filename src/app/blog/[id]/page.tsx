@@ -28,9 +28,10 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").replace(/&[^;]+;/g, " ");
 }
 
-export default function BlogPostPage({ params }: BlogPageProps) {
+export default async function BlogPostPage({ params }: BlogPageProps) {
   const blogs: BlogPost[] = blogData;
-  const blogId = parseInt(params.id);
+  const { id } = await params;
+  const blogId = parseInt(id, 10);
   const blog = blogs.find((b) => b.id === blogId);
 
   if (!blog) {
@@ -222,14 +223,13 @@ export async function generateStaticParams() {
 
 // Metadata for SEO
 export async function generateMetadata({ params }: BlogPageProps) {
+  const { id } = await params; // ✅ deconstruct via await
   const blogs: BlogPost[] = blogData;
-  const blogId = parseInt(params.id);
+  const blogId = parseInt(id, 10);
   const blog = blogs.find((b) => b.id === blogId);
 
   if (!blog) {
-    return {
-      title: "Blog Not Found",
-    };
+    return { title: "Blog Not Found" };
   }
 
   const description = stripHtml(blog.bodyContent).slice(0, 160) + "...";
@@ -237,10 +237,6 @@ export async function generateMetadata({ params }: BlogPageProps) {
   return {
     title: `${blog.title} | Robofly Technology`,
     description,
-    openGraph: {
-      title: blog.title,
-      description,
-      images: [blog.image],
-    },
+    openGraph: { title: blog.title, description, images: [blog.image] },
   };
 }
