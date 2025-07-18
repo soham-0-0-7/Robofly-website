@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={poppins.className}>
+      <body>
         <Navbar />
         <main className="min-h-screen pt-16">
           {children}

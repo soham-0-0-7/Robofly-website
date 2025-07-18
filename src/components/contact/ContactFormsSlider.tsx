@@ -110,7 +110,7 @@ export default function ContactFormsSlider({ type, id }: ContactFormsSliderProps
                   }`}
                 />
               </motion.div>
-              <span>{label}</span>
+              <span className='font-subheading'>{label}</span>
               {isActive && (
                 <div className="w-full h-[2px] mt-1 bg-green-600 rounded-full" />
               )}

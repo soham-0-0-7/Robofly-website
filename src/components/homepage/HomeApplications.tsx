@@ -232,7 +232,7 @@ const HomeApplications = () => {
           viewport={{ once: true }}
         >
           <motion.h2 
-            className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4" 
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 font-heading" 
             style={{ color: colorPalette.aboutText }}
             whileHover={{ 
               scale: 1.05,
@@ -256,7 +256,7 @@ const HomeApplications = () => {
             </motion.span>
           </motion.h2>
           <motion.p 
-            className="text-base sm:text-lg max-w-3xl mx-auto" 
+            className="text-base sm:text-lg max-w-3xl mx-auto font-subheading" 
             style={{ color: colorPalette.green3 }}
             variants={textVariants}
             initial="hidden"
@@ -331,7 +331,7 @@ const HomeApplications = () => {
                 </motion.div>
 
                 <motion.h3 
-                  className="text-lg sm:text-xl font-bold group-hover:scale-105 transition-transform" 
+                  className="text-lg sm:text-xl font-bold group-hover:scale-105 transition-transform font-subheading"  
                   style={{ color: colorPalette.aboutText }}
                   whileHover={{ 
                     color: colorPalette.green5,

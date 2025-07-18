@@ -154,7 +154,7 @@ export default function CallingAnimation() {
             </motion.h1>
 
             <motion.p
-              className="text-gray-300 max-w-2xl"
+              className="text-gray-300 max-w-2xl font-subheading"
               variants={fadeInUp}
               transition={{ delay: 0.2 }}
             >
@@ -168,7 +168,7 @@ export default function CallingAnimation() {
               <motion.div
                 className="space-y-4 rounded-lg transition-transform duration-300 h-full pl-4 pr-4 pb-4"
               >
-                <h3 className="text-xl text-emerald-300 font-semibold flex items-center gap-2">
+                <h3 className="text-xl text-emerald-300 font-semibold flex items-center gap-2 font-subheading">
                   <Building2 className="w-5 h-5 text-emerald-300" /> Robofly Technology
                 </h3>
                 <div className="text-gray-300 space-y-2">
@@ -203,7 +203,7 @@ export default function CallingAnimation() {
                 className="space-y-4 h-full"
                 variants={fadeInUp}
               >
-                <h3 className="text-xl text-emerald-300 font-semibold">Office Hours</h3>
+                <h3 className="text-xl text-emerald-300 font-semibold font-subheading">Office Hours</h3>
                 <div className="text-gray-300 space-y-2">
                   {["Monday - Friday", "Saturday", "Sunday"].map((day, i) => {
                     const hours = i === 0 ? "9:00 AM - 6:00 PM" : i === 1 ? "10:00 AM - 4:00 PM" : "Closed";

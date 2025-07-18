@@ -134,7 +134,7 @@ const ServicesPage: React.FC = () => {
           className="text-center mb-16 md:mb-20"
         >
           <motion.h1 
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r font-heading"
             style={{ 
               backgroundImage: `linear-gradient(135deg, ${colorPalette.greenDeep} 0%, ${colorPalette.green1} 30%, ${colorPalette.blackMuted} 70%, ${colorPalette.greenShadow} 100%)` 
             }}
@@ -144,7 +144,7 @@ const ServicesPage: React.FC = () => {
             Our Services
           </motion.h1>
           <motion.p 
-            className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4"
+            className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4 font-subheading"
             style={{ color: colorPalette.greenDeep }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -216,7 +216,7 @@ const ServicesPage: React.FC = () => {
                 viewport={{ once: true }}
               >
                 <motion.h2 
-                  className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight"
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight font-subheading"
                   style={{ color: colorPalette.green1 }}
                   whileInView={{ y: [20, 0] }}
                   transition={{ duration: 0.6, delay: 0.2 }}
@@ -335,8 +335,8 @@ const ServicesPage: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
           >
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 md:mb-4">Need a Custom Service?</h3>
-            <p className="text-base sm:text-lg md:text-xl mb-4 md:mb-6 opacity-90">Let&apos;s discuss how we can provide the perfect drone service for your specific requirements</p>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 md:mb-4 font-heading">Need a Custom Service?</h3>
+            <p className="text-base sm:text-lg md:text-xl mb-4 md:mb-6 opacity-90 ">Let&apos;s discuss how we can provide the perfect drone service for your specific requirements</p>
             <motion.div
               variants={buttonVariants}
               initial="rest"

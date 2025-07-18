@@ -68,7 +68,7 @@ const About = () => {
           transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
         >
           <motion.h2 
-            className="text-3xl md:text-5xl font-bold mb-4"
+            className="text-3xl md:text-5xl font-bold mb-4 font-heading"
             initial={{ opacity: 0, y: -30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
@@ -93,7 +93,7 @@ const About = () => {
             </motion.span>
           </motion.h2>
           <motion.p 
-            className="text-xl text-gray-300 max-w-4xl mx-auto"
+            className="text-xl text-gray-300 max-w-4xl mx-auto font-subheading"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
@@ -115,7 +115,7 @@ const About = () => {
             transition={{ duration: 1.2, ease: 'easeOut' }}
           >
             <motion.h3 
-              className="text-2xl md:text-3xl font-bold mb-6 text-green-400"
+              className="text-2xl md:text-3xl font-bold mb-6 text-green-400 font-subheading"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.3 }}
@@ -349,7 +349,7 @@ const About = () => {
                 </div>
                 
                 <motion.h4 
-                  className="text-xl font-bold text-white mb-2"
+                  className="text-xl font-bold text-white mb-2 font-subheading"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
