@@ -181,7 +181,7 @@ const ProductsPage: React.FC = () => {
                     whileHover="hover"
                     whileTap="tap"
                   >
-                    <Link
+                    {/* <Link
                       href=""
                       className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
                       style={{
@@ -191,7 +191,7 @@ const ProductsPage: React.FC = () => {
                       }}
                     >
                       Know More
-                    </Link>
+                    </Link> */}
                   </motion.div>
 
                   <motion.div

@@ -99,7 +99,6 @@ export default function ContactPage() {
 
         {/* Contact Form Section */}
         <motion.div
-          suppressHydrationWarning
           ref={formRef}
           className="w-full -mt-10"
           initial="hidden"
@@ -135,7 +134,7 @@ export default function ContactPage() {
         transition={{ delay: 2, duration: 0.8, ease: "easeOut" }}
       >
         <motion.a
-          href="mailto:arpana@roboflytech.com"
+          href="https://mail.google.com/mail/?view=cm&to=arpana@roboflytech.com"
           className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
           style={{
             background: colorPalette.green5,
