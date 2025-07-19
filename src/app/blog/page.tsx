@@ -27,7 +27,9 @@ export default function BlogPage() {
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
           <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 text-center animate-bounce-in">
+
             OUR <span className="text-green-600 animate-pulse">BLOGS</span>
+
           </h1>
           <p className="text-gray-600 text-center mt-4 max-w-3xl mx-auto text-lg lg:text-xl animate-slide-in-up">
             Discover insights, innovations, and stories from the world of drone
