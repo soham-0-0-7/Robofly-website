@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
@@ -99,6 +99,7 @@ export default function ContactPage() {
 
         {/* Contact Form Section */}
         <motion.div
+          suppressHydrationWarning
           ref={formRef}
           className="w-full -mt-10"
           initial="hidden"

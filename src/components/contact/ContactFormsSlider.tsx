@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import GeneralForm from './forms/GeneralForm';
-import DroneServiceForm from './forms/DroneServiceForm';
-import DroneProductForm from './forms/DroneProductForm';
-import CareerForm from './forms/CareerForm';
+import GeneralForm from "./forms/GeneralForm";
+import DroneServiceForm from "./forms/DroneServiceForm";
+import DroneProductForm from "./forms/DroneProductForm";
+import CareerForm from "./forms/CareerForm";
 
-import { MessageSquareText, Wrench, Users } from 'lucide-react';
+import { MessageSquareText, Wrench, Users } from "lucide-react";
 
 type ContactFormsSliderProps = {
   type?: string;
@@ -43,38 +43,48 @@ const DroneIcon = ({ className }: { className?: string }) => (
 
 // Tabs configuration
 const tabs = [
-  { id: 'general', label: 'General Query', icon: MessageSquareText },
-  { id: 'service', label: 'Drone Service', icon: Wrench },
-  { id: 'drone', label: 'Drone Product', icon: DroneIcon },
-  { id: 'career', label: 'Join our Team (Career)', icon: Users },
+  { id: "general", label: "General Query", icon: MessageSquareText },
+  { id: "service", label: "Drone Service", icon: Wrench },
+  { id: "drone", label: "Drone Product", icon: DroneIcon },
+  { id: "career", label: "Join our Team (Career)", icon: Users },
 ];
 
-export default function ContactFormsSlider({ type, id }: ContactFormsSliderProps) {
-  const defaultTab = tabs.find(tab => tab.id === type) ? type! : 'general';
+export default function ContactFormsSlider({
+  type,
+  id,
+}: ContactFormsSliderProps) {
+  //   const [mounted, setMounted] = useState(false);
+  // useEffect(() => {
+  //   setMounted(true);
+  // }, []);
+
+  const defaultTab = tabs.find((tab) => tab.id === type) ? type! : "general";
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
-  const [clickedTab, setClickedTab] = useState<string>('');
+  const [clickedTab, setClickedTab] = useState<string>("");
 
   // Sync prop `type` changes to internal state (optional: you can remove this if type is static)
   useEffect(() => {
-    const validTab = tabs.find(tab => tab.id === type);
+    const validTab = tabs.find((tab) => tab.id === type);
     if (validTab) setActiveTab(type!);
-    else setActiveTab('general');
+    else setActiveTab("general");
   }, [type]);
 
   const renderForm = () => {
     switch (activeTab) {
-      case 'general':
+      case "general":
         return <GeneralForm />;
-      case 'service':
+      case "service":
         return <DroneServiceForm id={id} />;
-      case 'drone':
+      case "drone":
         return <DroneProductForm id={id} />;
-      case 'career':
+      case "career":
         return <CareerForm />;
       default:
         return <GeneralForm />;
     }
   };
+
+  // if (!mounted) return null;
 
   return (
     <div className="max-w-6xl mx-auto px-0 py-0">
@@ -86,31 +96,32 @@ export default function ContactFormsSlider({ type, id }: ContactFormsSliderProps
 
           return (
             <button
+            suppressHydrationWarning
               key={id}
               onClick={() => {
                 setClickedTab(id);
                 setActiveTab(id);
               }}
               className={`flex flex-col items-center justify-center text-center text-sm font-medium py-2 transition duration-300 ${
-                isActive ? 'text-green-600' : 'text-gray-500 hover:text-green-500'
+                isActive
+                  ? "text-green-600"
+                  : "text-gray-500 hover:text-green-500"
               }`}
             >
               <motion.div
                 key={isClicked ? `${id}-clicked` : `${id}-static`}
                 animate={
-                  isClicked
-                    ? { rotate: [0, 15, -15, 10, -10, 5, 0] }
-                    : {}
+                  isClicked ? { rotate: [0, 15, -15, 10, -10, 5, 0] } : {}
                 }
                 transition={{ duration: 0.5 }}
               >
                 <Icon
                   className={`w-6 h-6 mb-1 ${
-                    isActive ? 'stroke-green-600' : 'stroke-gray-400'
+                    isActive ? "stroke-green-600" : "stroke-gray-400"
                   }`}
                 />
               </motion.div>
-              <span className='font-subheading'>{label}</span>
+              <span className="font-subheading">{label}</span>
               {isActive && (
                 <div className="w-full h-[2px] mt-1 bg-green-600 rounded-full" />
               )}

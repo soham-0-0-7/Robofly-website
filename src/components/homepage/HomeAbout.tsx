@@ -52,7 +52,7 @@ const About = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4 font-heading">
-            About <span className="text-green-400">ROBOFLY</span>
+            ABOUT <span className="text-green-400">ROBOFLY</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-4xl mx-auto font-subheading">
             Engineering custom-made precision drones that serve the fields,

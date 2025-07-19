@@ -5,7 +5,13 @@ import TrainingRequestForm from "./TrainingRequestForm";
 import DroneProductForm from "./DroneProductForm";
 import JoinTeamForm from "./JoinTeamForm";
 import { colorPalette } from "@/utils/variables";
-import { MessageCircle, GraduationCap, Plane, Users, ChevronRight } from "lucide-react";
+import {
+  MessageCircle,
+  GraduationCap,
+  Plane,
+  Users,
+  ChevronRight,
+} from "lucide-react";
 
 const forms = [
   {

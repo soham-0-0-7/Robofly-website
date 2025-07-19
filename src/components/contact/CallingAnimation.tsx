@@ -26,32 +26,31 @@ export default function CallingAnimation() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-300">
           <div className="space-y-4">
             <h3 className="text-xl text-emerald-300 font-semibold flex items-center gap-2">
-              <Building2 className="w-5 h-5" /> Robofly Technology
+              <Building2 className="w-5 h-5" /> Robofly Technologies
             </h3>
             <div className="space-y-2">
               <a
-                href="https://maps.google.com?q=A-123+Innovation+Park,+Robotics+Road,+Innovation+City"
+                href="https://www.google.com/maps?ll=25.551135,85.15283&z=15&t=m&hl=en&gl=IN&mapclient=embed&cid=17456484356961713230"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-2 hover:text-emerald-300"
               >
                 <MapPin className="w-4 h-4 mt-1 text-emerald-400" />
-                A-123 Innovation Park, Robotics Road, Innovation City, IN
-                400001, India
+                H523+F44, Udaini - Sampatchak Rd, Udaini, Bhelaura, Bihar
               </a>
               <a
-                href="mailto:contact@roboflytech.com"
+                href="https://mail.google.com/mail/?view=cm&to=arpana@roboflytech.com"
                 className="flex items-start gap-2 hover:text-emerald-300"
               >
                 <Mail className="w-4 h-4 mt-1 text-emerald-400" />{" "}
-                contact@roboflytech.com
+                arpana@roboflytech.com
               </a>
               <a
-                href="tel:+919876543210"
+                href="tel:+917407583193"
                 className="flex items-start gap-2 hover:text-emerald-300"
               >
-                <Phone className="w-4 h-4 mt-1 text-emerald-400" />{" "}
-                +91-9876543210
+                <Phone className="w-4 h-4 mt-1 text-emerald-400" />
+                +91-7407583193
               </a>
             </div>
           </div>

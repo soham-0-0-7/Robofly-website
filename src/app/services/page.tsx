@@ -92,7 +92,7 @@ const ServicesPage: React.FC = () => {
               backgroundImage: `linear-gradient(135deg, ${colorPalette.greenDeep} 0%, ${colorPalette.green1} 30%, ${colorPalette.blackMuted} 70%, ${colorPalette.greenShadow} 100%)`,
             }}
           >
-            Our Services
+            OUR SERVICES
           </h1>
           <p
             className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4 font-subheading"

@@ -259,7 +259,7 @@ const Page = () => {
             className="text-center"
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 font-heading">
-              Upcoming Services
+              UPCOMING SERVICES
             </h1>
             <p className="text-xl md:text-2xl mb-3 max-w-4xl mx-auto leading-relaxed font-subheading">
               Revolutionizing Drone Repairs: A Decentralized, Certified Service
@@ -285,7 +285,7 @@ const Page = () => {
             animate={isFlowchartInView ? "visible" : "hidden"}
           >
             <motion.h2
-              className="text-5xl font-bold text-slate-800 mb-6 font-heading"
+              className="text-6xl font-bold text-slate-800 mb-6 font-heading"
               variants={itemVariants}
             >
               Service Process Flow
@@ -312,7 +312,7 @@ const Page = () => {
                 <div
                   className={`${section.color} text-white px-6 py-5 rounded-t-xl font-bold text-center shadow-lg font-subheading`}
                 >
-                  <h3 className="text-xl">{section.title}</h3>
+                  <h3 className="text-2xl">{section.title}</h3>
                 </div>
                 <div className="border-2 border-t-0 border-teal-300 rounded-b-xl shadow-lg bg-white">
                   {section.steps.map((step, i) => (

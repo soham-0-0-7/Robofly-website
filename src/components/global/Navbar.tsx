@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
-import { colorPalette, imgSrc_h } from "@/utils/variables";
+import { colorPalette, imgSrc_h_2 } from "@/utils/variables";
 import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 
@@ -73,7 +73,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/home" className="flex items-center gap-3 group">
           <img
-            src={imgSrc_h}
+            src={imgSrc_h_2}
             alt="Robofly Logo"
             className="h-16 group-hover:scale-110 transition-transform duration-300 sm:h-14"
             style={{

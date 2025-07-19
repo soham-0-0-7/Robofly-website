@@ -95,7 +95,7 @@ const ProductsPage: React.FC = () => {
               backgroundImage: `linear-gradient(135deg, ${colorPalette.green2} 0%, ${colorPalette.green3} 50%, ${colorPalette.greenJade} 100%)`,
             }}
           >
-            Our Products
+            OUR PRODUCTS
           </motion.h1>
           <motion.p
             className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4 font-subheading"
