@@ -27,11 +27,6 @@ const Page = () => {
     margin: "-100px",
   });
 
-  const isDetailsInView = useInView(detailsRef, {
-    once: true,
-    margin: "-50px",
-  });
-
   const isCtaInView = useInView(ctaRef, {
     once: true,
     margin: "-100px",
@@ -184,14 +179,13 @@ const Page = () => {
     steps: f.subPoints.map((s) => s.title),
   }));
 
-  // Enhanced animation variants
+  // Simplified animation variants - keeping only essential ones
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.2,
+        staggerChildren: 0.1,
       },
     },
   };
@@ -202,9 +196,7 @@ const Page = () => {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12,
+        duration: 0.5,
       },
     },
   };
@@ -212,107 +204,48 @@ const Page = () => {
   const cardVariants = {
     hidden: {
       opacity: 0,
-      scale: 0.8,
-      rotateX: -15,
+      y: 20,
     },
     visible: {
       opacity: 1,
-      scale: 1,
-      rotateX: 0,
+      y: 0,
       transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-        duration: 0.6,
-      },
-    },
-  };
-
-  const arrowVariants = {
-    hidden: { scale: 0, rotate: -180 },
-    visible: {
-      scale: 1,
-      rotate: 0,
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 15,
-        delay: 0.5,
-      },
-    },
-  };
-
-  const pulseVariants = {
-    initial: { scale: 1 },
-    animate: {
-      scale: [1, 1.05, 1],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const floatingVariants = {
-    animate: {
-      y: [0, -10, 0],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const slideInVariants = {
-    hidden: {
-      x: -100,
-      opacity: 0,
-    },
-    visible: {
-      x: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 20,
+        duration: 0.5,
       },
     },
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-teal-50">
-      {/* Hero Section */}
+      {/* Hero Section - Simplified */}
       <section className="relative overflow-hidden bg-gradient-to-r from-teal-800 via-cyan-700 to-blue-800 text-white border-b-4 border-b-teal-400">
         <motion.div
           className="absolute inset-0 bg-black/20"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
+          transition={{ duration: 1 }}
         ></motion.div>
 
-        {/* Floating background elements */}
+        {/* Reduced background elements from 6 to 2 */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(2)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute rounded-full bg-white/10"
               style={{
-                width: Math.random() * 100 + 50,
-                height: Math.random() * 100 + 50,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
+                width: 80,
+                height: 80,
+                left: `${20 + i * 60}%`,
+                top: `${30 + i * 40}%`,
               }}
               animate={{
-                y: [0, -20, 0],
-                x: [0, 10, 0],
-                opacity: [0.3, 0.6, 0.3],
+                y: [0, -15, 0],
+                opacity: [0.3, 0.5, 0.3],
               }}
               transition={{
-                duration: 4 + Math.random() * 2,
+                duration: 6,
                 repeat: Infinity,
-                delay: Math.random() * 2,
+                delay: i * 2,
               }}
             />
           ))}
@@ -320,44 +253,29 @@ const Page = () => {
 
         <div className="relative container mx-auto px-4 py-20">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
+            transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <motion.h1
-              className="text-5xl md:text-6xl font-bold mb-6 font-heading"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 100,
-                damping: 15,
-                delay: 0.7,
-              }}
-            >
-              Upcoming Services
-            </motion.h1>
-            <motion.p
-              className="text-xl md:text-2xl mb-3 max-w-4xl mx-auto leading-relaxed font-subheading"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 0.8 }}
-            >
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 font-heading">
+              UPCOMING SERVICES
+            </h1>
+            <p className="text-xl md:text-2xl mb-3 max-w-4xl mx-auto leading-relaxed font-subheading">
               Revolutionizing Drone Repairs: A Decentralized, Certified Service
               Ecosystem
-            </motion.p>
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Flowchart Section */}
+      {/* Flowchart Section - Simplified */}
       <section className="py-20">
         <motion.div
           ref={flowchartRef}
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={isFlowchartInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           className="container mx-auto px-4"
         >
           <motion.div
@@ -367,7 +285,7 @@ const Page = () => {
             animate={isFlowchartInView ? "visible" : "hidden"}
           >
             <motion.h2
-              className="text-5xl font-bold text-slate-800 mb-6 font-heading"
+              className="text-6xl font-bold text-slate-800 mb-6 font-heading"
               variants={itemVariants}
             >
               Service Process Flow
@@ -388,87 +306,43 @@ const Page = () => {
                 variants={cardVariants}
                 initial="hidden"
                 animate={isFlowchartInView ? "visible" : "hidden"}
-                transition={{ delay: index * 0.3 }}
-                whileHover={{
-                  y: -5,
-                  transition: { type: "spring", stiffness: 300, damping: 20 },
-                }}
+                transition={{ delay: index * 0.2 }}
                 className="relative w-full max-w-sm mx-auto flex-shrink-0"
               >
-                <motion.div
+                <div
                   className={`${section.color} text-white px-6 py-5 rounded-t-xl font-bold text-center shadow-lg font-subheading`}
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <h3 className="text-lg">{section.title}</h3>
-                </motion.div>
+                  <h3 className="text-2xl">{section.title}</h3>
+                </div>
                 <div className="border-2 border-t-0 border-teal-300 rounded-b-xl shadow-lg bg-white">
                   {section.steps.map((step, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isFlowchartInView ? { opacity: 1, x: 0 } : {}}
-                      transition={{ delay: index * 0.3 + i * 0.1 + 0.5 }}
-                    >
-                      <motion.div
-                        className="p-7 text-center hover:bg-teal-50 transition-colors duration-200"
-                        whileHover={{ backgroundColor: "rgb(240 253 250)" }}
-                      >
-                        <p className="text-base font-medium text-slate-700 leading-relaxed">
+                    <div key={i}>
+                      <div className="p-7 text-center hover:bg-teal-50 transition-colors duration-200">
+                        <p className="text-lg font-medium text-slate-700 leading-relaxed">
                           {step}
                         </p>
-                      </motion.div>
+                      </div>
                       {i < section.steps.length - 1 && (
                         <div className="flex justify-center py-2">
-                          <motion.div
-                            variants={arrowVariants}
-                            initial="hidden"
-                            animate={isFlowchartInView ? "visible" : "hidden"}
-                            transition={{ delay: index * 0.3 + i * 0.1 + 0.7 }}
-                          >
-                            <ArrowDown className="h-6 w-6 text-teal-500" />
-                          </motion.div>
+                          <ArrowDown className="h-6 w-6 text-teal-500" />
                         </div>
                       )}
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
                 {index < linearFlowData.length - 1 && (
-                  <motion.div
-                    className="hidden lg:block absolute -right-6 top-1/2 transform -translate-y-1/2 z-10"
-                    variants={arrowVariants}
-                    initial="hidden"
-                    animate={isFlowchartInView ? "visible" : "hidden"}
-                    transition={{ delay: index * 0.3 + 1 }}
-                  >
-                    <motion.div
-                      className="bg-white border-2 border-teal-300 p-3 rounded-full shadow-lg"
-                      variants={pulseVariants}
-                      initial="initial"
-                      animate="animate"
-                      whileHover={{ scale: 1.1 }}
-                    >
+                  <div className="hidden lg:block absolute -right-6 top-1/2 transform -translate-y-1/2 z-10">
+                    <div className="bg-white border-2 border-teal-300 p-3 rounded-full shadow-lg">
                       <ArrowRight className="h-7 w-7 text-teal-600" />
-                    </motion.div>
-                  </motion.div>
+                    </div>
+                  </div>
                 )}
                 {index < linearFlowData.length - 1 && (
-                  <motion.div
-                    className="lg:hidden flex justify-center -mt-4"
-                    variants={arrowVariants}
-                    initial="hidden"
-                    animate={isFlowchartInView ? "visible" : "hidden"}
-                    transition={{ delay: index * 0.3 + 1 }}
-                  >
-                    <motion.div
-                      className="bg-white border-2 border-teal-300 p-3 rounded-full shadow"
-                      variants={pulseVariants}
-                      initial="initial"
-                      animate="animate"
-                    >
+                  <div className="lg:hidden flex justify-center -mt-4">
+                    <div className="bg-white border-2 border-teal-300 p-3 rounded-full shadow">
                       <ArrowDown className="h-6 w-6 text-teal-600" />
-                    </motion.div>
-                  </motion.div>
+                    </div>
+                  </div>
                 )}
               </motion.div>
             ))}
@@ -484,15 +358,10 @@ const Page = () => {
               <motion.button
                 key={section.title}
                 variants={itemVariants}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-                }}
-                whileTap={{ scale: 0.95 }}
                 onClick={() =>
                   setActiveSection(activeSection === index ? null : index)
                 }
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 font-subheading text-base font-medium shadow-lg hover:shadow-xl"
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white hover:from-teal-700 hover:to-cyan-700 transition-all duration-200 font-subheading text-base font-medium shadow-lg hover:shadow-xl"
               >
                 {activeSection === index
                   ? "Hide Details"
@@ -503,42 +372,25 @@ const Page = () => {
         </motion.div>
       </section>
 
-      {/* Detail Section with Animation */}
+      {/* Detail Section - Simplified */}
       <AnimatePresence mode="wait">
         {activeSection !== null && (
           <motion.div
             key={activeSection}
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.9 }}
-            transition={{
-              duration: 0.6,
-              ease: "easeOut",
-              type: "spring",
-              stiffness: 100,
-              damping: 15,
-            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
             className="py-20 -mt-24"
           >
             <motion.section
               ref={detailsRef}
               className="container mx-auto px-4 border-teal-300 border-2 py-8 rounded-lg shadow-lg"
               style={{ background: "radial-gradient(circle,#ffffff,#f0fdfa)" }}
-              initial={{ borderRadius: 0 }}
-              animate={{ borderRadius: "0.5rem" }}
-              transition={{ delay: 0.3 }}
             >
-              <motion.div
-                className="text-center mb-12"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <motion.div
+              <div className="text-center mb-12">
+                <div
                   className={`${linearFlowData[activeSection].color} w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg`}
-                  variants={floatingVariants}
-                  animate="animate"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
                 >
                   {activeSection === 0 && (
                     <Factory className="text-white w-10 h-10" />
@@ -549,16 +401,11 @@ const Page = () => {
                   {activeSection === 2 && (
                     <Users className="text-white w-10 h-10" />
                   )}
-                </motion.div>
-                <motion.h2
-                  className="text-4xl font-bold text-slate-800 font-heading"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
-                >
+                </div>
+                <h2 className="text-4xl font-bold text-slate-800 font-heading">
                   {linearFlowData[activeSection].title}
-                </motion.h2>
-              </motion.div>
+                </h2>
+              </div>
 
               <motion.div
                 className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto"
@@ -570,50 +417,26 @@ const Page = () => {
                   <motion.div
                     key={idx}
                     variants={cardVariants}
-                    whileHover={{
-                      y: -5,
-                      boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="hover:shadow-lg transition-shadow duration-200"
                   >
-                    <Card className="hover:shadow-xl transition-all duration-300 border-teal-200 h-full">
+                    <Card className="border-teal-200 h-full">
                       <CardContent className="p-8">
-                        <motion.div
-                          className="flex items-center mb-6"
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.1 + 0.5 }}
-                        >
-                          <motion.div
-                            className="bg-gradient-to-br from-teal-100 to-cyan-100 w-14 h-14 rounded-lg flex items-center justify-center mr-4"
-                            whileHover={{ rotate: 360 }}
-                            transition={{ duration: 0.5 }}
-                          >
+                        <div className="flex items-center mb-6">
+                          <div className="bg-gradient-to-br from-teal-100 to-cyan-100 w-14 h-14 rounded-lg flex items-center justify-center mr-4">
                             <sub.icon className="text-teal-600 h-7 w-7" />
-                          </motion.div>
+                          </div>
                           <h3 className="text-xl font-semibold text-slate-800 font-subheading">
                             {sub.title}
                           </h3>
-                        </motion.div>
+                        </div>
                         <ul className="space-y-3">
                           {sub.details.map((detail, i) => (
-                            <motion.li
-                              key={i}
-                              className="flex items-start"
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: idx * 0.1 + i * 0.05 + 0.7 }}
-                            >
-                              <motion.div
-                                whileHover={{ scale: 1.2, rotate: 360 }}
-                                transition={{ duration: 0.3 }}
-                              >
-                                <CheckCircle className="text-teal-500 w-5 h-5 mr-3 mt-1 flex-shrink-0" />
-                              </motion.div>
+                            <li key={i} className="flex items-start">
+                              <CheckCircle className="text-teal-500 w-5 h-5 mr-3 mt-1 flex-shrink-0" />
                               <span className="text-slate-600 text-base leading-relaxed">
                                 {detail}
                               </span>
-                            </motion.li>
+                            </li>
                           ))}
                         </ul>
                       </CardContent>
@@ -626,77 +449,54 @@ const Page = () => {
         )}
       </AnimatePresence>
 
-      {/* CTA Section */}
+      {/* CTA Section - Simplified */}
       <motion.section
         ref={ctaRef}
         className="py-20 bg-gradient-to-r from-teal-700 via-cyan-700 to-blue-700 text-white -mb-20 border-t-4 border-teal-400 relative overflow-hidden"
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={isCtaInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.6 }}
       >
-        {/* Animated background elements */}
+        {/* Reduced background elements from 8 to 3 */}
         <div className="absolute inset-0">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute rounded-full bg-white/10"
               style={{
-                width: Math.random() * 80 + 20,
-                height: Math.random() * 80 + 20,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
+                width: 60,
+                height: 60,
+                left: `${20 + i * 30}%`,
+                top: `${20 + i * 30}%`,
               }}
               animate={{
-                y: [0, -30, 0],
-                opacity: [0.2, 0.5, 0.2],
-                scale: [1, 1.2, 1],
+                y: [0, -20, 0],
+                opacity: [0.2, 0.4, 0.2],
               }}
               transition={{
-                duration: 5 + Math.random() * 3,
+                duration: 8,
                 repeat: Infinity,
-                delay: Math.random() * 3,
+                delay: i * 2,
               }}
             />
           ))}
         </div>
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.h2
-            className="text-4xl font-bold mb-4 font-heading"
-            variants={slideInVariants}
-            initial="hidden"
-            animate={isCtaInView ? "visible" : "hidden"}
-          >
+          <h2 className="text-4xl font-bold mb-4 font-heading">
             Ready to Join Our Ecosystem?
-          </motion.h2>
-          <motion.p
-            className="text-lg mb-6 max-w-2xl mx-auto font-subheading"
-            variants={slideInVariants}
-            initial="hidden"
-            animate={isCtaInView ? "visible" : "hidden"}
-            transition={{ delay: 0.2 }}
-          >
+          </h2>
+          <p className="text-lg mb-6 max-w-2xl mx-auto font-subheading">
             Whether you&apos;re a manufacturer, center, or drone owner — Robofly
             has your back.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isCtaInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
-          >
+          </p>
+          <div>
             <Link href="/contact">
-              <motion.button
-                className="px-8 py-3 rounded-full font-semibold bg-white text-teal-700 hover:bg-teal-50 transition-all duration-300 shadow-lg hover:shadow-xl"
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <button className="px-8 py-3 rounded-full font-semibold bg-white text-teal-700 hover:bg-teal-50 transition-all duration-200 shadow-lg hover:shadow-xl">
                 Contact Us
-              </motion.button>
+              </button>
             </Link>
-          </motion.div>
+          </div>
         </div>
       </motion.section>
     </div>

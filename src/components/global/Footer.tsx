@@ -5,7 +5,10 @@ import { colorPalette } from "@/utils/variables";
 import Link from "next/link";
 import { FaInstagram, FaLinkedin, FaYoutube, FaEnvelope } from "react-icons/fa";
 
-const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 interface SocialLinkProps {
   href: string;
@@ -29,22 +32,49 @@ export default function Footer() {
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 border-2" style={{ borderColor: colorPalette.green3, borderRadius: "9999px" }}></div>
-        <div className="absolute bottom-20 right-20 w-48 h-48 border-2" style={{ borderColor: colorPalette.green6, borderRadius: "9999px" }}></div>
-        <div className="absolute top-1/2 left-1/3 w-24 h-24 border-2" style={{ borderColor: colorPalette.green5, borderRadius: "9999px" }}></div>
-        <div className="absolute bottom-0 right-1/2 w-40 h-12" style={{ background: colorPalette.green7, borderRadius: "9999px", filter: "blur(16px)" }}></div>
+        <div
+          className="absolute top-10 left-10 w-32 h-32 border-2"
+          style={{ borderColor: colorPalette.green3, borderRadius: "9999px" }}
+        ></div>
+        <div
+          className="absolute bottom-20 right-20 w-48 h-48 border-2"
+          style={{ borderColor: colorPalette.green6, borderRadius: "9999px" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/3 w-24 h-24 border-2"
+          style={{ borderColor: colorPalette.green5, borderRadius: "9999px" }}
+        ></div>
+        <div
+          className="absolute bottom-0 right-1/2 w-40 h-12"
+          style={{
+            background: colorPalette.green7,
+            borderRadius: "9999px",
+            filter: "blur(16px)",
+          }}
+        ></div>
       </div>
-      
+
       <div className="relative max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand Section */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-6 group">
-              <img src="/images/robofly.png" alt="Robofly Logo" className="w-12 h-12 border-2" style={{ borderRadius: 12, borderColor: colorPalette.green5 }} />
-              <span className="text-2xl font-bold tracking-wide" style={{ color: colorPalette.whiteSoft }}>Robofly</span>
+              <img
+                src="/images/robofly.png"
+                alt="Robofly Logo"
+                className="w-12 h-12 border-2"
+                style={{ borderRadius: 12, borderColor: colorPalette.green5 }}
+              />
+              <span
+                className="text-2xl font-bold tracking-wide"
+                style={{ color: colorPalette.whiteSoft }}
+              >
+                Robofly Technologies
+              </span>
             </div>
             <p className="text-white/80 text-sm leading-relaxed mb-6">
-              Your trusted tech solutions provider, delivering innovative robotics and automation solutions for the future.
+              Your trusted tech solutions provider, delivering innovative
+              robotics and automation solutions for the future.
             </p>
             <div className="flex items-center gap-2 text-xs text-white/60">
               <span>&copy; {new Date().getFullYear()} Robofly</span>
@@ -55,30 +85,94 @@ export default function Footer() {
 
           {/* Address Section */}
           <div>
-            <h4 className="text-lg font-semibold mb-4" style={{ color: colorPalette.green6 }}>Contact</h4>
-            <div className="text-white/80 text-sm mb-2">123 Tech Avenue</div>
-            <div className="text-white/80 text-sm mb-2">Innovation City, IN 400001</div>
+            <h4
+              className="text-lg font-semibold mb-4"
+              style={{ color: colorPalette.green6 }}
+            >
+              Contact
+            </h4>
+            <div className="text-white/80 text-sm mb-2">
+              H523+F44, Udaini - Sampatchak Rd,
+            </div>
+            <div className="text-white/80 text-sm mb-2">
+              Udaini, Bhelaura, Bihar
+            </div>
             <div className="text-white/80 text-sm mb-2">India</div>
-            <div className="text-white/80 text-sm mb-2">Email: <a href="mailto:info@robofly.com" className="underline hover:text-green-200 transition">{'info@robofly.com'}</a></div>
-            <div className="text-white/80 text-sm">Phone: <a href="tel:+911234567890" className="underline hover:text-green-200 transition">{'+91 12345 67890'}</a></div>
+            <div className="text-white/80 text-sm mb-2">
+              Email:{" "}
+              <a
+                href="https://mail.google.com/mail/?view=cm&to=arpana@roboflytech.com"
+                className="underline hover:text-green-200 transition"
+              >
+                {"arpana@roboflytech.com"}
+              </a>
+            </div>
+            <div className="text-white/80 text-sm">
+              Phone:{" "}
+              <a
+                href="tel:+917407583193"
+                className="underline hover:text-green-200 transition"
+              >
+                {"+91-7407583193"}
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4" style={{ color: colorPalette.green6 }}>Quick Links</h4>
+            <h4
+              className="text-lg font-semibold mb-4"
+              style={{ color: colorPalette.green6 }}
+            >
+              Quick Links
+            </h4>
             <ul className="space-y-2 text-white/80 text-sm">
-              <li><Link href="/home" className="hover:text-green-200 transition">Home</Link></li>
-              <li><Link href="/products" className="hover:text-green-200 transition">Products</Link></li>
-              <li><Link href="/services" className="hover:text-green-200 transition">Services</Link></li>
-              <li><Link href="/catalog" className="hover:text-green-200 transition">Catalog</Link></li>
-              <li><Link href="/blog" className="hover:text-green-200 transition">Blog</Link></li>
-              <li><Link href="/contact" className="hover:text-green-200 transition">Contact</Link></li>
+              <li>
+                <Link href="/home" className="hover:text-green-200 transition">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  className="hover:text-green-200 transition"
+                >
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/services"
+                  className="hover:text-green-200 transition"
+                >
+                  Services
+                </Link>
+              </li>
+              {/* <li><Link href="/catalog" className="hover:text-green-200 transition">Catalog</Link></li> */}
+              <li>
+                <Link href="/blog" className="hover:text-green-200 transition">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="hover:text-green-200 transition"
+                >
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Social Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4" style={{ color: colorPalette.green6 }}>Connect</h4>
+            <h4
+              className="text-lg font-semibold mb-4"
+              style={{ color: colorPalette.green6 }}
+            >
+              Connect
+            </h4>
             <div className="flex flex-col gap-3">
               <SocialLink
                 href="https://instagram.com/"
@@ -111,8 +205,18 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} Robofly. Crafted in India.
             </span>
             <div className="flex gap-4">
-              <Link href="/privacy" className="text-xs text-white/60 hover:text-green-200 transition">Privacy Policy</Link>
-              <Link href="/terms" className="text-xs text-white/60 hover:text-green-200 transition">Terms of Service</Link>
+              <Link
+                href="/privacy"
+                className="text-xs text-white/60 hover:text-green-200 transition"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-xs text-white/60 hover:text-green-200 transition"
+              >
+                Terms of Service
+              </Link>
             </div>
           </div>
         </div>
