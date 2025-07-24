@@ -76,7 +76,7 @@ export default function Navbar() {
           <img
             src={imgSrc_h_2}
             alt="Robofly Logo"
-            className="h-16 group-hover:scale-110 transition-transform duration-300 sm:h-14"
+            className="h-10 md:h-16 group-hover:scale-110 transition-transform duration-300"
             style={{
               filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
               background: "transparent",
@@ -110,8 +110,8 @@ export default function Navbar() {
                 className="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black/10 z-50"
                 style={{ minWidth: 180 }}
               >
-                <DropdownLink href="/products">Products</DropdownLink>
-                <DropdownLink href="/services">Services</DropdownLink>
+                <DropdownLink href="/products" onClick={() => setCatalogOpen((open) => !open)}>Products</DropdownLink>
+                <DropdownLink href="/services" onClick={() => setCatalogOpen((open) => !open)}>Services</DropdownLink>
               </div>
             )}
           </div>
@@ -140,18 +140,18 @@ export default function Navbar() {
         onClick={() => setMobileOpen(false)}
       >
         <div
-          className={`absolute top-0 right-0 w-72 max-w-full h-full shadow-2xl flex flex-col p-8 gap-6 transition-transform duration-300 ${
+          className={`absolute top-0 right-0 w-72 max-w-full h-full shadow-2xl flex flex-col p-6 gap-4 transition-transform duration-300 ${
             mobileOpen ? "translate-x-0" : "translate-x-full"
           }`}
           style={{
-            background: colorPalette.green2,
-            color: colorPalette.white,
+            background: `linear-gradient(135deg, #ffffff 0%, #f8fffe 25%, ${colorPalette.green1} 100%)`,
+            color: colorPalette.green5,
             borderLeft: `2px solid ${colorPalette.green5}`,
           }}
           onClick={(e) => e.stopPropagation()}
         >
           <button
-            className="self-end mb-4 text-green5 hover:text-green6 transition-colors"
+            className="self-end mb-2 text-green5 hover:text-green6 transition-colors"
             onClick={() => setMobileOpen(false)}
             aria-label="Close menu"
           >
@@ -181,8 +181,8 @@ export default function Navbar() {
                 <NavLink
                   href="/products"
                   onClick={() => {
-                    setMobileOpen(false);
                     setCatalogOpen(false);
+                    setMobileOpen(false);                    
                   }}
                 >
                   Products
@@ -190,8 +190,8 @@ export default function Navbar() {
                 <NavLink
                   href="/services"
                   onClick={() => {
-                    setMobileOpen(false);
                     setCatalogOpen(false);
+                    setMobileOpen(false);
                   }}
                 >
                   Services
@@ -206,7 +206,7 @@ export default function Navbar() {
             Contact
           </NavLink>
           <NavLink
-            href="/upcoming-services"
+            href="/upcoming_services"
             onClick={() => setMobileOpen(false)}
           >
             Upcoming Services

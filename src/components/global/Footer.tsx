@@ -69,7 +69,7 @@ export default function Footer() {
                 className="text-2xl font-bold tracking-wide"
                 style={{ color: colorPalette.whiteSoft }}
               >
-                Robofly Technologies
+                Robofly Technology
               </span>
             </div>
             <p className="text-white/80 text-sm leading-relaxed mb-6">
@@ -183,11 +183,6 @@ export default function Footer() {
                 href="https://linkedin.com/"
                 icon={<FaLinkedin size={20} />}
                 label="LinkedIn"
-              />
-              <SocialLink
-                href="https://youtube.com/"
-                icon={<FaYoutube size={20} />}
-                label="YouTube"
               />
               <SocialLink
                 href="mailto:info@robofly.com"

@@ -93,13 +93,14 @@ const ProductsPage: React.FC = () => {
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r font-heading"
             style={{
               backgroundImage: `linear-gradient(135deg, ${colorPalette.green2} 0%, ${colorPalette.green3} 50%, ${colorPalette.greenJade} 100%)`,
+              color: colorPalette.greenDeep,
             }}
           >
             OUR PRODUCTS
           </motion.h1>
           <motion.p
-            className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4 font-subheading"
-            style={{ color: colorPalette.green2 }}
+            className="text-base font-bold sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4 font-heading "
+            style={{ color: colorPalette.green5 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
