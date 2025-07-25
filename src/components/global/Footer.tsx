@@ -180,12 +180,12 @@ export default function Footer() {
                 label="Instagram"
               />
               <SocialLink
-                href="https://linkedin.com/"
+                href="https://www.linkedin.com/company/robofly-technology/"
                 icon={<FaLinkedin size={20} />}
                 label="LinkedIn"
               />
               <SocialLink
-                href="mailto:info@robofly.com"
+                href="https://mail.google.com/mail/?view=cm&to=arpana@roboflytech.com"
                 icon={<FaEnvelope size={20} />}
                 label="Email"
               />
