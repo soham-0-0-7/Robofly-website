@@ -14,7 +14,7 @@ export default function CallingAnimation() {
               <PhoneCall className="text-white w-8 h-8" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2 font-heading -mt-4  ">
             Get in <span className="text-emerald-400">Touch</span>
           </h1>
           <p className="text-gray-300 text-center max-w-xl mb-8">
@@ -26,7 +26,7 @@ export default function CallingAnimation() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-300">
           <div className="space-y-4">
             <h3 className="text-xl text-emerald-300 font-semibold flex items-center gap-2">
-              <Building2 className="w-5 h-5" /> Robofly Technologies
+              <Building2 className="w-5 h-5" /> Robofly Technology
             </h3>
             <div className="space-y-2">
               <a
@@ -36,7 +36,7 @@ export default function CallingAnimation() {
                 className="flex items-start gap-2 hover:text-emerald-300"
               >
                 <MapPin className="w-4 h-4 mt-1 text-emerald-400" />
-                H523+F44, Udaini - Sampatchak Rd, Udaini, Bhelaura, Bihar
+                Udaini, Patna, Bihar, IN
               </a>
               <a
                 href="https://mail.google.com/mail/?view=cm&to=arpana@roboflytech.com"

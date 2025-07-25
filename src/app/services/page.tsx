@@ -95,8 +95,8 @@ const ServicesPage: React.FC = () => {
             OUR SERVICES
           </h1>
           <p
-            className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4 font-subheading"
-            style={{ color: colorPalette.greenDeep }}
+            className="text-base font-bold sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4 font-heading"
+            style={{ color: colorPalette.green5 }}
           >
             Explore Robofly&apos;s innovative drone-based service offerings
             crafted for precision, safety, and efficiency across industries
