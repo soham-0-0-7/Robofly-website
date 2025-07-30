@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { useState, ChangeEvent, FormEvent, JSX } from 'react';
+import { useState, ChangeEvent, FormEvent, JSX } from "react";
 import { colorPalette, validateEmail, validatePhone } from "@/utils/variables";
+import { MAX_LENGTHS } from "@/utils/formConstants";
 
 interface FormData {
   fullName: string;
@@ -19,49 +20,66 @@ interface FormData {
   additionalNotes: string;
 }
 
-const applicationTypes = ['Surveillance', 'Agriculture', 'Logistics', 'Mapping', 'Other'];
-const environmentalConditions = ['High Temp', 'Humidity', 'Dust', 'Wind Resistance'];
-const flightControllerPreferences = ['Pixhawk', 'Custom'];
-const batteryPreferences = ['Tattu', 'Custom'];
+const applicationTypes = [
+  "Surveillance",
+  "Agriculture",
+  "Logistics",
+  "Mapping",
+  "Other",
+];
+const environmentalConditions = [
+  "High Temp",
+  "Humidity",
+  "Dust",
+  "Wind Resistance",
+];
+const flightControllerPreferences = ["Pixhawk", "Custom"];
+const batteryPreferences = ["Tattu", "Custom"];
 
 export default function SixthProdForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
-    fullName: '',
-    organizationName: '',
-    email: '',
-    phone: '',
-    applicationType: '',
-    payloadRequirements: '',
-    rangeEndurance: '',
-    environmentalConditions: '',
-    flightControllerPreference: '',
-    cameraSensorRequirements: '',
-    batteryPreference: '',
-    deliveryTimeline: '',
-    additionalNotes: ''
+    fullName: "",
+    organizationName: "",
+    email: "",
+    phone: "",
+    applicationType: "",
+    payloadRequirements: "",
+    rangeEndurance: "",
+    environmentalConditions: "",
+    flightControllerPreference: "",
+    cameraSensorRequirements: "",
+    batteryPreference: "",
+    deliveryTimeline: "",
+    additionalNotes: "",
   });
-
-  const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
+  // Update the handleSubmit function in SixthProdForm.tsx
+  const [errors, setErrors] = useState<{
+    phone?: string;
+    email?: string;
+    submit?: string;
+  }>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ): void => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: undefined }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
     let hasError = false;
 
     if (!validateEmail(form.email)) {
-      newErrors.email = 'Please enter a valid email address.';
+      newErrors.email = "Please enter a valid email address.";
       hasError = true;
     }
 
     if (!validatePhone(form.phone)) {
-      newErrors.phone = 'Please enter a valid phone number.';
+      newErrors.phone = "Please enter a valid phone number.";
       hasError = true;
     }
 
@@ -71,17 +89,63 @@ export default function SixthProdForm(): JSX.Element {
       return;
     }
 
-    setHasGeneralError(false);
-    console.log(form);
-    alert('Custom drone inquiry submitted successfully!');
+    try {
+      const response = await fetch("/api/query/products/sixth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setHasGeneralError(true);
+        setErrors((prev) => ({ ...prev, submit: data.error }));
+        return;
+      }
+
+      setHasGeneralError(false);
+      setErrors({});
+      alert("Custom drone inquiry submitted successfully!");
+      // Reset form
+      setForm({
+        fullName: "",
+        organizationName: "",
+        email: "",
+        phone: "",
+        applicationType: "",
+        payloadRequirements: "",
+        rangeEndurance: "",
+        environmentalConditions: "",
+        flightControllerPreference: "",
+        cameraSensorRequirements: "",
+        batteryPreference: "",
+        deliveryTimeline: "",
+        additionalNotes: "",
+      });
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setHasGeneralError(true);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Error submitting form. Please try again.",
+      }));
+    }
   };
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="flex justify-center py-0 px-0">
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-0">
-        <h2 className="text-2xl font-bold text-center mb-4">Custom Drone Inquiry Form</h2>
+    <div className="flex justify-center py-10 px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8"
+      >
+        <h2 className="text-2xl font-bold text-center mb-4">
+          Custom Drone Inquiry Form
+        </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -95,19 +159,19 @@ export default function SixthProdForm(): JSX.Element {
               value={form.fullName}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.name}
             />
           </div>
 
           <div>
-            <label className="block font-medium mb-1">
-              Organization Name
-            </label>
+            <label className="block font-medium mb-1">Organization Name</label>
             <input
               name="organizationName"
               type="text"
               value={form.organizationName}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.organization}
             />
           </div>
         </div>
@@ -124,8 +188,11 @@ export default function SixthProdForm(): JSX.Element {
               value={form.email}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.email}
             />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div>
@@ -139,8 +206,11 @@ export default function SixthProdForm(): JSX.Element {
               value={form.phone}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.phone}
             />
-            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+            {errors.phone && (
+              <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
         </div>
 
@@ -156,16 +226,16 @@ export default function SixthProdForm(): JSX.Element {
             className="form-input"
           >
             <option value="">Select application type</option>
-            {applicationTypes.map(type => (
-              <option key={type} value={type}>{type}</option>
+            {applicationTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="block font-medium mb-1">
-            Payload Requirements
-          </label>
+          <label className="block font-medium mb-1">Payload Requirements</label>
           <textarea
             name="payloadRequirements"
             rows={3}
@@ -173,6 +243,7 @@ export default function SixthProdForm(): JSX.Element {
             onChange={handleChange}
             className="form-input"
             placeholder="Describe payload requirements..."
+            maxLength={MAX_LENGTHS.requirements}
           />
         </div>
 
@@ -187,6 +258,7 @@ export default function SixthProdForm(): JSX.Element {
             onChange={handleChange}
             className="form-input"
             placeholder="Describe range and endurance requirements..."
+            maxLength={MAX_LENGTHS.specifications}
           />
         </div>
 
@@ -203,15 +275,18 @@ export default function SixthProdForm(): JSX.Element {
               className="form-input"
             >
               <option value="">Select conditions</option>
-              {environmentalConditions.map(condition => (
-                <option key={condition} value={condition}>{condition}</option>
+              {environmentalConditions.map((condition) => (
+                <option key={condition} value={condition}>
+                  {condition}
+                </option>
               ))}
             </select>
           </div>
 
           <div>
             <label className="block font-medium mb-1">
-              Flight Controller Preference <span className="text-red-600">*</span>
+              Flight Controller Preference{" "}
+              <span className="text-red-600">*</span>
             </label>
             <select
               name="flightControllerPreference"
@@ -221,8 +296,10 @@ export default function SixthProdForm(): JSX.Element {
               className="form-input"
             >
               <option value="">Select preference</option>
-              {flightControllerPreferences.map(pref => (
-                <option key={pref} value={pref}>{pref}</option>
+              {flightControllerPreferences.map((pref) => (
+                <option key={pref} value={pref}>
+                  {pref}
+                </option>
               ))}
             </select>
           </div>
@@ -239,13 +316,15 @@ export default function SixthProdForm(): JSX.Element {
             onChange={handleChange}
             className="form-input"
             placeholder="Describe camera and sensor requirements..."
+            maxLength={MAX_LENGTHS.specifications}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
-              Battery or Power Preference <span className="text-red-600">*</span>
+              Battery or Power Preference{" "}
+              <span className="text-red-600">*</span>
             </label>
             <select
               name="batteryPreference"
@@ -255,8 +334,10 @@ export default function SixthProdForm(): JSX.Element {
               className="form-input"
             >
               <option value="">Select preference</option>
-              {batteryPreferences.map(pref => (
-                <option key={pref} value={pref}>{pref}</option>
+              {batteryPreferences.map((pref) => (
+                <option key={pref} value={pref}>
+                  {pref}
+                </option>
               ))}
             </select>
           </div>
@@ -278,9 +359,7 @@ export default function SixthProdForm(): JSX.Element {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">
-            Additional Notes
-          </label>
+          <label className="block font-medium mb-1">Additional Notes</label>
           <textarea
             name="additionalNotes"
             rows={4}
@@ -288,8 +367,11 @@ export default function SixthProdForm(): JSX.Element {
             onChange={handleChange}
             className="form-input"
             placeholder="Any additional information or specific requirements..."
+            maxLength={MAX_LENGTHS.comments}
           />
         </div>
+
+        <input type="hidden" name="querytype" value="product-custom-drone" />
 
         <div className="text-center">
           <button
@@ -301,12 +383,17 @@ export default function SixthProdForm(): JSX.Element {
 
           {hasGeneralError && (
             <p className="text-red-600 text-center mt-4">
-              Phone or Email is invalid. Please check and try again.
+              There was some error in filling the form. Please recheck!
             </p>
           )}
         </div>
 
-        <style>{`
+        {/* Add this inside the form, before the style jsx block */}
+{errors.submit && (
+  <p className="text-red-600 text-center mt-4">{errors.submit}</p>
+)}
+
+        <style jsx>{`
           .form-input {
             padding: 0.75rem;
             border: 1px solid #ccc;

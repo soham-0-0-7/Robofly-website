@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { useState, ChangeEvent, FormEvent, JSX } from 'react';
-import { colorPalette } from "@/utils/variables";
+import { useState, ChangeEvent, FormEvent, JSX } from "react";
+import { colorPalette, validateEmail, validatePhone } from "@/utils/variables";
+import { MAX_LENGTHS } from "@/utils/formConstants";
 
 interface FormData {
   fullName: string;
@@ -20,35 +21,49 @@ interface FormData {
 
 export default function SixthServiceForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
-    fullName: '', organizationName: '', email: '', phone: '', regionName: '',
-    affectedArea: '', analysisRequired: '', preferredSensor: '', previousSurveys: '',
-    customParameters: '', desiredTimeline: '', notes: ''
+    fullName: "",
+    organizationName: "",
+    email: "",
+    phone: "",
+    regionName: "",
+    affectedArea: "",
+    analysisRequired: "",
+    preferredSensor: "",
+    previousSurveys: "",
+    customParameters: "",
+    desiredTimeline: "",
+    notes: "",
   });
+  // Update the errors state to include submit error
+  const [errors, setErrors] = useState<{
+    phone?: string;
+    email?: string;
+    submit?: string;
+  }>({});
 
-  const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ): void => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: undefined }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhone = (phone: string) => /^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone.trim());
-
-  const handleSubmit = (e: FormEvent) => {
+  // Replace the existing handleSubmit function
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
     let hasError = false;
 
     if (!validateEmail(form.email)) {
-      newErrors.email = 'Please enter a valid email address.';
+      newErrors.email = "Please enter a valid email address.";
       hasError = true;
     }
 
     if (!validatePhone(form.phone)) {
-      newErrors.phone = 'Please enter a valid phone number.';
+      newErrors.phone = "Please enter a valid phone number.";
       hasError = true;
     }
 
@@ -58,16 +73,61 @@ export default function SixthServiceForm(): JSX.Element {
       return;
     }
 
-    setHasGeneralError(false);
-    console.log(form);
-    alert('Form submitted successfully!');
+    try {
+      const response = await fetch("/api/query/services/sixth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setHasGeneralError(true);
+        setErrors((prev) => ({ ...prev, submit: data.error }));
+        return;
+      }
+
+      setHasGeneralError(false);
+      setErrors({});
+      alert("Post-fire analysis inquiry submitted successfully!");
+      // Reset form
+      setForm({
+        fullName: "",
+        organizationName: "",
+        email: "",
+        phone: "",
+        regionName: "",
+        affectedArea: "",
+        analysisRequired: "",
+        preferredSensor: "",
+        previousSurveys: "",
+        customParameters: "",
+        desiredTimeline: "",
+        notes: "",
+      });
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setHasGeneralError(true);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Error submitting form. Please try again.",
+      }));
+    }
   };
 
   return (
-    <div className="flex justify-center py-0 px-0">
-  <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-0">
-      <h2 className="text-2xl font-bold text-center mb-4">Post-Fire Biodiversity & Impact Analysis Inquiry Form</h2>
-        
+    <div className="flex justify-center py-10 px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8"
+      >
+        <h2 className="text-2xl font-bold text-center mb-4">
+          Post-Fire Biodiversity & Impact Analysis Inquiry Form
+        </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
@@ -80,12 +140,14 @@ export default function SixthServiceForm(): JSX.Element {
               value={form.fullName}
               onChange={handleChange}
               className="input"
+              maxLength={MAX_LENGTHS.name}
             />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
-              Organization/Department Name <span className="text-red-600">*</span>
+              Organization/Department Name{" "}
+              <span className="text-red-600">*</span>
             </label>
             <input
               name="organizationName"
@@ -94,6 +156,7 @@ export default function SixthServiceForm(): JSX.Element {
               value={form.organizationName}
               onChange={handleChange}
               className="input"
+              maxLength={MAX_LENGTHS.organization}
             />
           </div>
         </div>
@@ -110,10 +173,13 @@ export default function SixthServiceForm(): JSX.Element {
               value={form.email}
               onChange={handleChange}
               className="input"
+              maxLength={MAX_LENGTHS.email}
             />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Phone <span className="text-red-600">*</span>
@@ -125,8 +191,11 @@ export default function SixthServiceForm(): JSX.Element {
               value={form.phone}
               onChange={handleChange}
               className="input"
+              maxLength={MAX_LENGTHS.phone}
             />
-            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+            {errors.phone && (
+              <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
         </div>
 
@@ -142,12 +211,14 @@ export default function SixthServiceForm(): JSX.Element {
               value={form.regionName}
               onChange={handleChange}
               className="input"
+              maxLength={MAX_LENGTHS.name}
             />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
-              Affected Forest / Region Area (sq. km) <span className="text-red-600">*</span>
+              Affected Forest / Region Area (sq. km){" "}
+              <span className="text-red-600">*</span>
             </label>
             <input
               name="affectedArea"
@@ -158,6 +229,7 @@ export default function SixthServiceForm(): JSX.Element {
               value={form.affectedArea}
               onChange={handleChange}
               className="input"
+              maxLength={MAX_LENGTHS.numbers}
             />
           </div>
         </div>
@@ -181,7 +253,7 @@ export default function SixthServiceForm(): JSX.Element {
               <option value="All">All</option>
             </select>
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Preferred Sensor <span className="text-red-600">*</span>
@@ -229,6 +301,7 @@ export default function SixthServiceForm(): JSX.Element {
             onChange={handleChange}
             className="input"
             placeholder="Please specify any custom parameters you would like to monitor..."
+            maxLength={MAX_LENGTHS.specifications}
           />
         </div>
 
@@ -240,7 +313,7 @@ export default function SixthServiceForm(): JSX.Element {
             name="desiredTimeline"
             required
             type="date"
-            min={new Date().toISOString().split('T')[0]}
+            min={new Date().toISOString().split("T")[0]}
             value={form.desiredTimeline}
             onChange={handleChange}
             className="input"
@@ -248,9 +321,7 @@ export default function SixthServiceForm(): JSX.Element {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">
-            Notes
-          </label>
+          <label className="block font-medium mb-1">Notes</label>
           <textarea
             name="notes"
             rows={4}
@@ -258,8 +329,15 @@ export default function SixthServiceForm(): JSX.Element {
             onChange={handleChange}
             className="input"
             placeholder="Please provide any additional information or special requirements..."
+            maxLength={MAX_LENGTHS.comments}
           />
         </div>
+
+        <input
+          type="hidden"
+          name="querytype"
+          value="service-post-ForestFire-analysis"
+        />
 
         <div className="text-center">
           <button
@@ -276,7 +354,11 @@ export default function SixthServiceForm(): JSX.Element {
           )}
         </div>
 
-        <style>{`
+        {/* Add this inside the form, before the style jsx block */}
+        {errors.submit && (
+          <p className="text-red-600 text-center mt-4">{errors.submit}</p>
+        )}
+        <style jsx>{`
           .input {
             padding: 0.75rem;
             border: 1px solid #ccc;

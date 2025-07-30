@@ -1,0 +1,18 @@
+export const MAX_LENGTHS = {
+  name: 50,
+  email: 100,
+  phone: 15,
+  organization: 100,
+  address: 200,
+  city: 50,
+  state: 50,
+  description: 500,
+  message: 200,
+  requirements: 300,
+  url: 2100,
+  comments: 200,
+  numbers: 10,
+  specifications: 300,
+  shortText: 100,
+  longText: 500,
+};

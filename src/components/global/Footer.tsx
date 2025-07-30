@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Poppins } from "next/font/google";
 import { colorPalette } from "@/utils/variables";
 import Link from "next/link";
-import { FaInstagram, FaLinkedin, FaYoutube, FaEnvelope } from "react-icons/fa";
+import { FaInstagram, FaLinkedin, FaEnvelope } from "react-icons/fa";
 
 const poppins = Poppins({
   subsets: ["latin"],

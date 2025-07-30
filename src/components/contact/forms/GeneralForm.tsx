@@ -70,6 +70,12 @@ interface FormData {
   additionalInfo: string;
 }
 
+interface Errors {
+  phone?: string;
+  email?: string;
+  submit?: string;
+}
+
 export default function GenForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
     fullName: "",
@@ -84,7 +90,7 @@ export default function GenForm(): JSX.Element {
     additionalInfo: "",
   });
 
-  const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
+  const [errors, setErrors] = useState<Errors>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
   const handleChange = (
@@ -105,7 +111,8 @@ export default function GenForm(): JSX.Element {
   const validatePhone = (phone: string) =>
     /^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone.trim());
 
-  const handleSubmit = (e: FormEvent) => {
+  // Update the handleSubmit function
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
     let hasError = false;
@@ -126,9 +133,47 @@ export default function GenForm(): JSX.Element {
       return;
     }
 
-    setHasGeneralError(false);
-    console.log(form);
-    alert("Form submitted successfully!");
+    try {
+      const response = await fetch("/api/query/general", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setHasGeneralError(true);
+        setErrors((prev) => ({ ...prev, submit: data.error }));
+        return;
+      }
+
+      setHasGeneralError(false);
+      setErrors({});
+      alert("Form submitted successfully!");
+      // Optionally reset form here
+      setForm({
+        fullName: "",
+        organizationName: "",
+        email: "",
+        phone: "",
+        queryType: "",
+        city: "",
+        address: "",
+        state: "",
+        concerns: [],
+        additionalInfo: "",
+      });
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setHasGeneralError(true);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Error submitting form. Please try again.",
+      }));
+    }
   };
 
   return (
@@ -143,6 +188,7 @@ export default function GenForm(): JSX.Element {
               Full Name <span className="text-red-600">*</span>
             </label>
             <input
+              maxLength={50}
               suppressHydrationWarning
               name="fullName"
               required
@@ -160,6 +206,7 @@ export default function GenForm(): JSX.Element {
               value={form.organizationName}
               onChange={handleChange}
               className="input"
+              maxLength={100}
             />
           </div>
         </div>
@@ -177,6 +224,7 @@ export default function GenForm(): JSX.Element {
               value={form.email}
               onChange={handleChange}
               className="input"
+              maxLength={100}
             />
             {errors.email && (
               <p className="text-red-600 text-sm mt-1">{errors.email}</p>
@@ -194,6 +242,7 @@ export default function GenForm(): JSX.Element {
               value={form.phone}
               onChange={handleChange}
               className="input"
+              maxLength={50}
             />
             {errors.phone && (
               <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
@@ -213,6 +262,7 @@ export default function GenForm(): JSX.Element {
             onChange={handleChange}
             className="input"
             placeholder="Please describe your query in detail..."
+            maxLength={200}
           />
         </div>
 
@@ -228,6 +278,7 @@ export default function GenForm(): JSX.Element {
               value={form.city}
               onChange={handleChange}
               className="input"
+              maxLength={80}
             />
           </div>
 
@@ -236,7 +287,7 @@ export default function GenForm(): JSX.Element {
               State <span className="text-red-600">*</span>
             </label>
             <select
-            suppressHydrationWarning
+              suppressHydrationWarning
               name="state"
               required
               value={form.state}
@@ -264,6 +315,7 @@ export default function GenForm(): JSX.Element {
             value={form.address}
             onChange={handleChange}
             className="input"
+            maxLength={200}
           />
         </div>
 
@@ -292,13 +344,15 @@ export default function GenForm(): JSX.Element {
             value={form.additionalInfo}
             onChange={handleChange}
             className="input"
-            placeholder="Please provide any additional information or specific requirements..."
+            maxLength={200}
+            placeholder="Please provide any additional information or specific requirements... (maximum 200 characters)"
           />
         </div>
+        <input type="hidden" name="querytype" value="general-form" />
 
         <div className="text-center">
           <button
-          suppressHydrationWarning
+            suppressHydrationWarning
             type="submit"
             className="bg-[#1ba100] hover:bg-[#104a2f] text-white py-3 px-8 rounded-full transition hover:scale-105"
           >
@@ -326,6 +380,10 @@ export default function GenForm(): JSX.Element {
             box-shadow: 0 0 0 2px ${colorPalette.green3};
           }
         `}</style>
+
+        {errors.submit && (
+          <p className="text-red-600 text-center mt-4">{errors.submit}</p>
+        )}
       </form>
     </div>
   );

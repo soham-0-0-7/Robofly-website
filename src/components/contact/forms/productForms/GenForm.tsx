@@ -1,8 +1,13 @@
+"use client";
 
-'use client';
-
-import { useState, ChangeEvent, FormEvent, JSX } from 'react';
-import { colorPalette, indianStatesAndUTs, validateEmail, validatePhone } from "@/utils/variables";
+import { useState, ChangeEvent, FormEvent, JSX } from "react";
+import {
+  colorPalette,
+  indianStatesAndUTs,
+  validateEmail,
+  validatePhone,
+} from "@/utils/variables";
+import { MAX_LENGTHS } from "@/utils/formConstants";
 
 interface FormData {
   fullName: string;
@@ -12,104 +17,117 @@ interface FormData {
   droneApplication: string[];
   droneApplicationOther: string;
   payloadRequirements: string;
-  flightTime: number | '';
-  payloadWeight: number | '';
-  desiredRange: number | '';
+  flightTime: number | "";
+  payloadWeight: number | "";
+  desiredRange: number | "";
   specialFeatures: string[];
   specialFeaturesOther: string;
   state: string;
   city: string;
   address: string;
   deliveryTimeline: string;
-  budgetRange: number | '';
-  droneQuantity: number | '';
+  budgetRange: number | "";
+  droneQuantity: number | "";
   additionalRequirements: string;
 }
 
 const droneApplications = [
-  'Agriculture',
-  'Surveillance/Security',
-  'Mapping & Surveying',
-  'Logistics/Delivery',
-  'Inspection (Industrial/Infrastructure)',
-  'Training/Education',
-  'Forestry/Wildfire Monitoring',
-  'Defense/FPV Racing',
-  'Other'
+  "Agriculture",
+  "Surveillance/Security",
+  "Mapping & Surveying",
+  "Logistics/Delivery",
+  "Inspection (Industrial/Infrastructure)",
+  "Training/Education",
+  "Forestry/Wildfire Monitoring",
+  "Defense/FPV Racing",
+  "Other",
 ];
 
 const specialFeaturesList = [
-  'GPS Tracking',
-  'Thermal Camera',
-  'Obstacle Avoidance',
-  'Autonomous Flight',
-  'Night Vision',
-  'AI-based Analytics',
-  'Other'
+  "GPS Tracking",
+  "Thermal Camera",
+  "Obstacle Avoidance",
+  "Autonomous Flight",
+  "Night Vision",
+  "AI-based Analytics",
+  "Other",
 ];
 
 export default function GenForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
-    fullName: '',
-    organizationName: '',
-    email: '',
-    phone: '',
+    fullName: "",
+    organizationName: "",
+    email: "",
+    phone: "",
     droneApplication: [],
-    droneApplicationOther: '',
-    payloadRequirements: '',
-    flightTime: '',
-    payloadWeight: '',
-    desiredRange: '',
+    droneApplicationOther: "",
+    payloadRequirements: "",
+    flightTime: "",
+    payloadWeight: "",
+    desiredRange: "",
     specialFeatures: [],
-    specialFeaturesOther: '',
-    state: '',
-    city: '',
-    address: '',
-    deliveryTimeline: '',
-    budgetRange: '',
-    droneQuantity: '',
-    additionalRequirements: ''
+    specialFeaturesOther: "",
+    state: "",
+    city: "",
+    address: "",
+    deliveryTimeline: "",
+    budgetRange: "",
+    droneQuantity: "",
+    additionalRequirements: "",
   });
-
-  const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
+  const [errors, setErrors] = useState<{
+    phone?: string;
+    email?: string;
+    submit?: string;
+  }>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ): void => {
     const { name, value, type } = e.target;
-    
-    if (type === 'number') {
-      setForm(prev => ({ ...prev, [name]: value === '' ? '' : Number(value) }));
+
+    if (type === "number") {
+      setForm((prev) => ({
+        ...prev,
+        [name]: value === "" ? "" : Number(value),
+      }));
     } else {
-      setForm(prev => ({ ...prev, [name]: value }));
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
-    setErrors(prev => ({ ...prev, [name]: undefined }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleCheckboxChange = (field: 'droneApplication' | 'specialFeatures', value: string) => {
-    setForm(prev => {
+  const handleCheckboxChange = (
+    field: "droneApplication" | "specialFeatures",
+    value: string
+  ) => {
+    setForm((prev) => {
       const currentArray = prev[field];
       const isChecked = currentArray.includes(value);
-      
+
       if (isChecked) {
-        return { ...prev, [field]: currentArray.filter(item => item !== value) };
+        return {
+          ...prev,
+          [field]: currentArray.filter((item) => item !== value),
+        };
       } else {
         return { ...prev, [field]: [...currentArray, value] };
       }
     });
   };
-
-    const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
     let hasError = false;
 
     if (!validateEmail(form.email)) {
-      newErrors.email = 'Please enter a valid email address.';
+      newErrors.email = "Please enter a valid email address.";
       hasError = true;
     }
 
     if (!validatePhone(form.phone)) {
-      newErrors.phone = 'Please enter a valid phone number.';
+      newErrors.phone = "Please enter a valid phone number.";
       hasError = true;
     }
 
@@ -119,19 +137,69 @@ export default function GenForm(): JSX.Element {
       return;
     }
 
-    setHasGeneralError(false);
-    setErrors({});
-    console.log(form);
-    alert('Form submitted successfully!');
-  };
+    try {
+      const response = await fetch("/api/query/products/gen", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-  const today = new Date().toISOString().split('T')[0];
+      const data = await response.json();
+
+      if (!response.ok) {
+        setHasGeneralError(true);
+        setErrors((prev) => ({ ...prev, submit: data.error }));
+        return;
+      }
+
+      setHasGeneralError(false);
+      setErrors({});
+      alert("Product inquiry submitted successfully!");
+      // Reset form
+      setForm({
+        fullName: "",
+        organizationName: "",
+        email: "",
+        phone: "",
+        droneApplication: [],
+        droneApplicationOther: "",
+        payloadRequirements: "",
+        flightTime: "",
+        payloadWeight: "",
+        desiredRange: "",
+        specialFeatures: [],
+        specialFeaturesOther: "",
+        state: "",
+        city: "",
+        address: "",
+        deliveryTimeline: "",
+        budgetRange: "",
+        droneQuantity: "",
+        additionalRequirements: "",
+      });
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setHasGeneralError(true);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Error submitting form. Please try again.",
+      }));
+    }
+  };
+  const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="flex justify-center py-0 px-0">
-  <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-0">
-    <h2 className="text-2xl font-bold text-center mb-4">General Product Form</h2>
-        
+    <div className="flex justify-center py-10 px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8"
+      >
+        <h2 className="text-2xl font-bold text-center mb-4">
+          General Product Form
+        </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
@@ -144,9 +212,10 @@ export default function GenForm(): JSX.Element {
               value={form.fullName}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.name}
             />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Company/Organization Name
@@ -157,6 +226,7 @@ export default function GenForm(): JSX.Element {
               value={form.organizationName}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.organization}
             />
           </div>
         </div>
@@ -173,10 +243,13 @@ export default function GenForm(): JSX.Element {
               value={form.email}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.email}
             />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Phone Number <span className="text-red-600">*</span>
@@ -188,29 +261,33 @@ export default function GenForm(): JSX.Element {
               value={form.phone}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.phone}
             />
-            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+            {errors.phone && (
+              <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
         </div>
 
         <div>
           <label className="block font-medium mb-2">
-            Application of Drone (Select all that apply) <span className="text-red-600">*</span>
+            Application of Drone (Select all that apply){" "}
+            <span className="text-red-600">*</span>
           </label>
           <div className="grid grid-cols-2 gap-2">
-            {droneApplications.map(app => (
+            {droneApplications.map((app) => (
               <label key={app} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   checked={form.droneApplication.includes(app)}
-                  onChange={() => handleCheckboxChange('droneApplication', app)}
+                  onChange={() => handleCheckboxChange("droneApplication", app)}
                   className="form-checkbox"
                 />
                 <span>{app}</span>
               </label>
             ))}
           </div>
-          {form.droneApplication.includes('Other') && (
+          {form.droneApplication.includes("Other") && (
             <input
               name="droneApplicationOther"
               type="text"
@@ -218,6 +295,7 @@ export default function GenForm(): JSX.Element {
               value={form.droneApplicationOther}
               onChange={handleChange}
               className="form-input mt-2"
+              maxLength={MAX_LENGTHS.shortText}
             />
           )}
         </div>
@@ -234,9 +312,10 @@ export default function GenForm(): JSX.Element {
               value={form.flightTime}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.numbers}
             />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Estimated Payload Weight (kg)
@@ -249,9 +328,10 @@ export default function GenForm(): JSX.Element {
               value={form.payloadWeight}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.numbers}
             />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Desired Range (metres)
@@ -263,14 +343,13 @@ export default function GenForm(): JSX.Element {
               value={form.desiredRange}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.numbers}
             />
           </div>
         </div>
 
         <div>
-          <label className="block font-medium mb-1">
-            Payload Requirements
-          </label>
+          <label className="block font-medium mb-1">Payload Requirements</label>
           <textarea
             name="payloadRequirements"
             rows={3}
@@ -278,27 +357,31 @@ export default function GenForm(): JSX.Element {
             onChange={handleChange}
             className="form-input"
             placeholder="Camera, Sprayer, Sensors, etc..."
+            maxLength={MAX_LENGTHS.specifications}
           />
         </div>
 
         <div>
           <label className="block font-medium mb-2">
-            Any Special Features Required? <span className="text-red-600">*</span>
+            Any Special Features Required?{" "}
+            <span className="text-red-600">*</span>
           </label>
           <div className="grid grid-cols-2 gap-2">
-            {specialFeaturesList.map(feature => (
+            {specialFeaturesList.map((feature) => (
               <label key={feature} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   checked={form.specialFeatures.includes(feature)}
-                  onChange={() => handleCheckboxChange('specialFeatures', feature)}
+                  onChange={() =>
+                    handleCheckboxChange("specialFeatures", feature)
+                  }
                   className="form-checkbox"
                 />
                 <span>{feature}</span>
               </label>
             ))}
           </div>
-          {form.specialFeatures.includes('Other') && (
+          {form.specialFeatures.includes("Other") && (
             <input
               name="specialFeaturesOther"
               type="text"
@@ -306,13 +389,14 @@ export default function GenForm(): JSX.Element {
               value={form.specialFeaturesOther}
               onChange={handleChange}
               className="form-input mt-2"
+              maxLength={MAX_LENGTHS.shortText}
             />
           )}
         </div>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Location of Operation</h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block font-medium mb-1">
@@ -326,12 +410,14 @@ export default function GenForm(): JSX.Element {
                 className="form-input"
               >
                 <option value="">Select State</option>
-                {indianStatesAndUTs.map(state => (
-                  <option key={state} value={state}>{state}</option>
+                {indianStatesAndUTs.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
                 ))}
               </select>
             </div>
-            
+
             <div>
               <label className="block font-medium mb-1">
                 City <span className="text-red-600">*</span>
@@ -343,10 +429,11 @@ export default function GenForm(): JSX.Element {
                 value={form.city}
                 onChange={handleChange}
                 className="form-input"
+                maxLength={MAX_LENGTHS.city}
               />
             </div>
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Address <span className="text-red-600">*</span>
@@ -358,6 +445,7 @@ export default function GenForm(): JSX.Element {
               value={form.address}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.address}
             />
           </div>
         </div>
@@ -377,11 +465,9 @@ export default function GenForm(): JSX.Element {
               className="form-input"
             />
           </div>
-          
+
           <div>
-            <label className="block font-medium mb-1">
-              Budget Range
-            </label>
+            <label className="block font-medium mb-1">Budget Range</label>
             <input
               name="budgetRange"
               type="number"
@@ -389,9 +475,10 @@ export default function GenForm(): JSX.Element {
               value={form.budgetRange}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.numbers}
             />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Drone Quantity <span className="text-red-600">*</span>
@@ -404,6 +491,7 @@ export default function GenForm(): JSX.Element {
               value={form.droneQuantity}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.numbers}
             />
           </div>
         </div>
@@ -418,8 +506,11 @@ export default function GenForm(): JSX.Element {
             value={form.additionalRequirements}
             onChange={handleChange}
             className="form-input"
+            maxLength={MAX_LENGTHS.comments}
           />
         </div>
+
+        <input type="hidden" name="querytype" value="product-general-form" />
 
         <div className="text-center">
           <button
@@ -436,7 +527,12 @@ export default function GenForm(): JSX.Element {
           )}
         </div>
 
-        <style>{`
+        {/* Add this inside the form, before the style jsx block */}
+        {errors.submit && (
+          <p className="text-red-600 text-center mt-4">{errors.submit}</p>
+        )}
+
+        <style jsx>{`
           .form-input {
             padding: 0.75rem;
             border: 1px solid #ccc;

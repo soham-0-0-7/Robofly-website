@@ -1,8 +1,8 @@
+"use client";
 
-'use client';
-
-import { useState, ChangeEvent, FormEvent, JSX } from 'react';
+import { useState, ChangeEvent, FormEvent, JSX } from "react";
 import { colorPalette, validateEmail, validatePhone } from "@/utils/variables";
+import { MAX_LENGTHS } from "@/utils/formConstants";
 
 interface FormData {
   fullName: string;
@@ -16,42 +16,48 @@ interface FormData {
   additionalNotes: string;
 }
 
-const tankCapacities = ['10', '16'];
+const tankCapacities = ["10", "16"];
 
 export default function FirstProdForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
-    fullName: '',
-    farmName: '',
-    email: '',
-    phone: '',
-    cropTypes: '',
-    tankCapacity: '',
-    customAutomation: '',
-    existingDroneUsage: '',
-    additionalNotes: ''
+    fullName: "",
+    farmName: "",
+    email: "",
+    phone: "",
+    cropTypes: "",
+    tankCapacity: "",
+    customAutomation: "",
+    existingDroneUsage: "",
+    additionalNotes: "",
   });
+  const [errors, setErrors] = useState<{
+    phone?: string;
+    email?: string;
+    submit?: string;
+  }>({});
 
-  const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ): void => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: undefined }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
     let hasError = false;
 
     if (!validateEmail(form.email)) {
-      newErrors.email = 'Please enter a valid email address.';
+      newErrors.email = "Please enter a valid email address.";
       hasError = true;
     }
 
     if (!validatePhone(form.phone)) {
-      newErrors.phone = 'Please enter a valid phone number.';
+      newErrors.phone = "Please enter a valid phone number.";
       hasError = true;
     }
 
@@ -61,16 +67,57 @@ export default function FirstProdForm(): JSX.Element {
       return;
     }
 
-    setHasGeneralError(false);
-    console.log(form);
-    alert('Agricultural spraying drone inquiry submitted successfully!');
-  };
+    try {
+      const response = await fetch("/api/query/products/first", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        setHasGeneralError(true);
+        setErrors((prev) => ({ ...prev, submit: data.error }));
+        return;
+      }
+
+      setHasGeneralError(false);
+      setErrors({});
+      alert("Agricultural spraying drone inquiry submitted successfully!");
+      // Reset form
+      setForm({
+        fullName: "",
+        farmName: "",
+        email: "",
+        phone: "",
+        cropTypes: "",
+        tankCapacity: "",
+        customAutomation: "",
+        existingDroneUsage: "",
+        additionalNotes: "",
+      });
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setHasGeneralError(true);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Error submitting form. Please try again.",
+      }));
+    }
+  };
   return (
-   <div className="flex justify-center py-0 px-0">
-  <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-0">
-     <h2 className="text-2xl font-bold text-center mb-4">Agricultural Spraying Drone Inquiry Form</h2>
-        
+    <div className="flex justify-center py-10 px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8"
+      >
+        <h2 className="text-2xl font-bold text-center mb-4">
+          Agricultural Spraying Drone Inquiry Form
+        </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
@@ -83,9 +130,10 @@ export default function FirstProdForm(): JSX.Element {
               value={form.fullName}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.name}
             />
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Farm/Organization Name <span className="text-red-600">*</span>
@@ -97,6 +145,7 @@ export default function FirstProdForm(): JSX.Element {
               value={form.farmName}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.organization}
             />
           </div>
         </div>
@@ -113,10 +162,13 @@ export default function FirstProdForm(): JSX.Element {
               value={form.email}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.email}
             />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
-          
+
           <div>
             <label className="block font-medium mb-1">
               Phone <span className="text-red-600">*</span>
@@ -128,8 +180,11 @@ export default function FirstProdForm(): JSX.Element {
               value={form.phone}
               onChange={handleChange}
               className="form-input"
+              maxLength={MAX_LENGTHS.phone}
             />
-            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+            {errors.phone && (
+              <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
         </div>
 
@@ -145,6 +200,7 @@ export default function FirstProdForm(): JSX.Element {
             onChange={handleChange}
             className="form-input"
             placeholder="Please describe the types of crops you grow..."
+            maxLength={MAX_LENGTHS.description}
           />
         </div>
 
@@ -160,8 +216,10 @@ export default function FirstProdForm(): JSX.Element {
             className="form-input"
           >
             <option value="">Select tank capacity</option>
-            {tankCapacities.map(capacity => (
-              <option key={capacity} value={capacity}>{capacity} Liters</option>
+            {tankCapacities.map((capacity) => (
+              <option key={capacity} value={capacity}>
+                {capacity} Liters
+              </option>
             ))}
           </select>
         </div>
@@ -177,6 +235,7 @@ export default function FirstProdForm(): JSX.Element {
             onChange={handleChange}
             className="form-input"
             placeholder="Describe any specific automation requirements..."
+            maxLength={MAX_LENGTHS.specifications}
           />
         </div>
 
@@ -198,9 +257,7 @@ export default function FirstProdForm(): JSX.Element {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">
-            Additional Notes
-          </label>
+          <label className="block font-medium mb-1">Additional Notes</label>
           <textarea
             name="additionalNotes"
             rows={4}
@@ -208,8 +265,15 @@ export default function FirstProdForm(): JSX.Element {
             onChange={handleChange}
             className="form-input"
             placeholder="Any additional information or specific requirements..."
+            maxLength={MAX_LENGTHS.comments}
           />
         </div>
+
+        <input
+          type="hidden"
+          name="querytype"
+          value="product-agricultural-spraying-drone"
+        />
 
         <div className="text-center">
           <button
@@ -226,7 +290,12 @@ export default function FirstProdForm(): JSX.Element {
           )}
         </div>
 
-        <style>{`
+        {/* Add this inside the form, before the style jsx block */}
+        {errors.submit && (
+          <p className="text-red-600 text-center mt-4">{errors.submit}</p>
+        )}
+
+        <style jsx>{`
           .form-input {
             padding: 0.75rem;
             border: 1px solid #ccc;

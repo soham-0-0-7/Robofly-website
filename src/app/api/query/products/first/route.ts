@@ -1,0 +1,73 @@
+import { dbConnect } from "@/lib/dbConnect";
+import Query from "@/models/query";
+import { NextResponse } from "next/server";
+
+export async function POST(request: Request) {
+  try {
+    await dbConnect();
+
+    const body = await request.json();
+    const {
+      fullName,
+      farmName,
+      email,
+      phone,
+      cropTypes,
+      tankCapacity,
+      customAutomation,
+      existingDroneUsage,
+      additionalNotes,
+    } = body;
+
+    // Check for existing queries
+    const existingQuery = await Query.findOne({
+      $and: [
+        { querytype: "product-agricultural-spraying-drone" },
+        {
+          $or: [{ email: email }, { phone: phone }],
+        },
+      ],
+    });
+
+    if (existingQuery) {
+      return NextResponse.json(
+        {
+          error:
+            "Query already submitted of this type with the given mail / phone",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Create data object with remaining fields
+    const data = {
+      farmName,
+      cropTypes,
+      tankCapacity,
+      customAutomation,
+      existingDroneUsage,
+      additionalNotes,
+    };
+
+    // Create new query
+    const query = await Query.create({
+      querytype: "product-agricultural-spraying-drone",
+      name: fullName,
+      email,
+      phone,
+      status: "pending",
+      data,
+    });
+
+    return NextResponse.json(
+      { message: "Agricultural drone inquiry submitted successfully", query },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error in agricultural drone form submission:", error);
+    return NextResponse.json(
+      { error: "Error submitting inquiry" },
+      { status: 500 }
+    );
+  }
+}
