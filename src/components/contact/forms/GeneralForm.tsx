@@ -63,6 +63,8 @@ interface FormData {
   email: string;
   phone: string;
   queryType: string;
+
+  querytype: string;
   city: string;
   address: string;
   state: string;
@@ -83,6 +85,7 @@ export default function GenForm(): JSX.Element {
     email: "",
     phone: "",
     queryType: "",
+    querytype: "",
     city: "",
     address: "",
     state: "",
@@ -159,6 +162,8 @@ export default function GenForm(): JSX.Element {
         organizationName: "",
         email: "",
         phone: "",
+        querytype: "",
+
         queryType: "",
         city: "",
         address: "",

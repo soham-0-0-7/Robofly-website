@@ -235,6 +235,7 @@ export default function SecondProdForm(): JSX.Element {
             value={form.surveillanceType}
             onChange={handleChange}
             className="form-input"
+            required
           >
             <option value="">Select surveillance type</option>
             {surveillanceTypes.map((type) => (
@@ -262,6 +263,7 @@ export default function SecondProdForm(): JSX.Element {
               Required Flight Time (minutes)
             </label>
             <input
+            required
               name="flightTime"
               type="number"
               min="0"
@@ -277,6 +279,7 @@ export default function SecondProdForm(): JSX.Element {
               Required Transmission Range (metres)
             </label>
             <input
+            required
               name="transmissionRange"
               type="number"
               min="0"
@@ -294,6 +297,7 @@ export default function SecondProdForm(): JSX.Element {
           </label>
           <select
             name="cameraType"
+            required
             value={form.cameraType}
             onChange={handleChange}
             className="form-input"

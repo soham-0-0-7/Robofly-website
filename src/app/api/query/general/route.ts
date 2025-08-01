@@ -1,7 +1,6 @@
 import { dbConnect } from "@/lib/dbConnect";
 import Query from "@/models/query";
 import { NextResponse } from "next/server";
-
 export async function POST(request: Request) {
   try {
     await dbConnect();
@@ -20,10 +19,13 @@ export async function POST(request: Request) {
       additionalInfo,
     } = body;
 
+    // Set a default querytype if it's not provided
+    const effectiveQuerytype = querytype || "general-form";
+
     // Check for existing queries
     const existingQuery = await Query.findOne({
       $and: [
-        { querytype: "general-form" },
+        { querytype: effectiveQuerytype },
         {
           $or: [{ email: email }, { phone: phone }],
         },
@@ -50,13 +52,13 @@ export async function POST(request: Request) {
       additionalInfo,
     };
 
-    // Create new query
+    // Create new query with the effective querytype
     const query = await Query.create({
-      querytype,
+      querytype: effectiveQuerytype,
       name: fullName,
       email,
       phone,
-      status: "employees write the progress here - pending right now",
+      status: "pending",
       data,
     });
 

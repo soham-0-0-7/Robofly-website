@@ -1,6 +1,8 @@
-import Image from "next/image";
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import blogData from "@/utils/blogs.json";
+import { CldImage } from "next-cloudinary";
+import LoadingSpinner from "@/components/global/LoadingSpinner";
 
 interface BlogPost {
   id: number;
@@ -9,17 +11,53 @@ interface BlogPost {
   bodyContent: string;
 }
 
-const convertGoogleDriveUrl = (shareUrl: string): string => {
-  const fileId = shareUrl.match(/\/d\/([a-zA-Z0-9-_]+)/)?.[1];
-  return fileId
-    ? `https://drive.google.com/uc?export=view&id=${fileId}`
-    : shareUrl;
-};
-
 export default function BlogPage() {
-  const blogs: BlogPost[] = blogData;
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch("/api/blogs/getAll");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to fetch blogs");
+        }
+
+        setBlogs(data.blogs);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+        setError("Failed to load blogs. Please try again later.");
+        setIsLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  // Determine featured blog and other blogs
   const featuredBlog = blogs.find((blog) => blog.id === 1);
   const otherBlogs = blogs.filter((blog) => blog.id !== 1);
+
+  if (isLoading) {
+    return (
+      // <div className="min-h-screen flex items-center justify-center">
+      //   <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-600"></div>
+      // </div>
+      <LoadingSpinner />
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-600 text-center text-lg">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -27,9 +65,7 @@ export default function BlogPage() {
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
           <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 text-center animate-bounce-in font-heading">
-
             OUR <span className="text-green-600 animate-pulse">BLOGS</span>
-
           </h1>
           <p className="text-gray-600 text-center mt-4 max-w-3xl mx-auto text-lg lg:text-xl animate-slide-in-up font-subheading">
             Discover insights, innovations, and stories from the world of drone
@@ -45,13 +81,17 @@ export default function BlogPage() {
             <div className="bg-gradient-to-r from-green-600 to-green-800 rounded-2xl overflow-hidden shadow-2xl hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.02] group">
               <div className="grid lg:grid-cols-2 gap-0">
                 <div className="relative overflow-hidden">
-                  <Image
-                    src={convertGoogleDriveUrl(featuredBlog.image)}
-                    alt={featuredBlog.title}
-                    width={800}
-                    height={600}
-                    className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
-                  />
+                  <div className="aspect-[4/3] relative">
+                    <CldImage
+                      src={featuredBlog.image}
+                      alt={featuredBlog.title}
+                      fill={true}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      crop="fill"
+                      priority
+                    />
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
                 <div className="p-8 lg:p-12 text-white flex flex-col justify-center">
@@ -100,13 +140,16 @@ export default function BlogPage() {
               }}
             >
               <div className="relative overflow-hidden">
-                <Image
-                  src={convertGoogleDriveUrl(blog.image)}
-                  alt={blog.title}
-                  width={600}
-                  height={450}
-                  className="w-full h-auto object-contain transition-all duration-500 group-hover:scale-110 group-hover:brightness-105"
-                />
+                <div className="aspect-[16/10] relative">
+                  <CldImage
+                    src={blog.image}
+                    alt={blog.title}
+                    fill={true}
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110 group-hover:brightness-105"
+                    crop="fill"
+                  />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <div className="p-6 relative">

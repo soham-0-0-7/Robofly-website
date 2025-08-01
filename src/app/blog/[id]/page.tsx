@@ -1,7 +1,9 @@
+"use client";
+import React, { useState, useEffect } from "react";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import blogData from "@/utils/blogs.json";
+import { useParams } from "next/navigation";
+import { CldImage } from "next-cloudinary";
 
 interface BlogPost {
   id: number;
@@ -10,35 +12,92 @@ interface BlogPost {
   bodyContent: string;
 }
 
-interface BlogPageProps {
-  params: {
-    id: string;
-  };
-}
+// interface BlogPageProps {
+//   params: {
+//     id: string;
+//   };
+// }
 
-const convertGoogleDriveUrl = (shareUrl: string): string => {
-  const fileId = shareUrl.match(/\/d\/([a-zA-Z0-9-_]+)/)?.[1];
-  return fileId
-    ? `https://drive.google.com/uc?export=view&id=${fileId}`
-    : shareUrl;
-};
+// export default function BlogPostPage({ params }: BlogPageProps) {
+export default function BlogPostPage() {
+  const [blog, setBlog] = useState<BlogPost | null>(null);
+  const [otherBlogs, setOtherBlogs] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // const { id: blogId } = React.use(params);
+  const parrams = useParams();
+  const blogId = parrams?.id as string;
 
-// Helper function to strip HTML tags and extract plain text
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, "").replace(/&[^;]+;/g, " ");
-}
+  useEffect(() => {
+    // Fetch the specific blog post
+    const fetchBlog = async () => {
+      try {
+        const response = await fetch(`/api/blogs/getById?id=${blogId}`);
+        const data = await response.json();
 
-export default async function BlogPostPage({ params }: BlogPageProps) {
-  const blogs: BlogPost[] = blogData;
-  const { id } = await params;
-  const blogId = parseInt(id, 10);
-  const blog = blogs.find((b) => b.id === blogId);
+        if (!response.ok) {
+          if (response.status === 404) {
+            notFound();
+          }
+          throw new Error(data.error || "Failed to fetch blog");
+        }
 
-  if (!blog) {
-    notFound();
+        setBlog(data.blog);
+        setIsLoading(false);
+
+        // Fetch other blogs for the "More from Our Blog" section
+        fetchOtherBlogs(data.blog.id);
+      } catch (error) {
+        console.error("Error fetching blog:", error);
+        setError("Failed to load blog. Please try again later.");
+        setIsLoading(false);
+      }
+    };
+
+    // Fetch other blogs for the related articles section
+    const fetchOtherBlogs = async (currentBlogId: number) => {
+      try {
+        const response = await fetch("/api/blogs/getAll");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to fetch related blogs");
+        }
+
+        // Filter out the current blog and take only 3
+        const filtered = data.blogs
+          .filter((b: BlogPost) => b.id !== currentBlogId)
+          .slice(0, 3);
+
+        setOtherBlogs(filtered);
+      } catch (error) {
+        console.error("Error fetching related blogs:", error);
+        // We won't set an error state here as the main blog content is more important
+      }
+    };
+
+    fetchBlog();
+  }, [blogId]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-600"></div>
+      </div>
+    );
   }
 
-  const otherBlogs = blogs.filter((b) => b.id !== blogId).slice(0, 3);
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-600 text-center text-lg">{error}</p>
+      </div>
+    );
+  }
+
+  if (!blog) {
+    return notFound();
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -74,14 +133,19 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
             </div>
           </div>
           <div className="relative z-0 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 animate-scale-in group">
-            <Image
-              src={convertGoogleDriveUrl(blog.image)}
-              alt={blog.title}
-              width={1200}
-              height={800}
-              className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
-              priority
-            />
+            <div className="aspect-[1/1.414] relative">
+              <CldImage
+                src={blog.image}
+                alt={blog.title}
+                fill={true}
+                sizes="(max-width: 768px) 100vw, 800px"
+                className="object-contain transition-transform duration-700 group-hover:scale-105"
+                crop="pad"
+                gravity="center"
+                // background="auto"
+                priority
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           </div>
         </div>
@@ -138,15 +202,6 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
                   />
                 </svg>
               </Link>
-              {/* <div className="flex items-center space-x-4 text-green-100">
-                <span>or call us at</span>
-                <a
-                  href="tel:+1234567890"
-                  className="text-white font-semibold hover:underline"
-                >
-                  +91 XXX XXX XXXX
-                </a>
-              </div> */}
             </div>
           </div>
         </div>
@@ -169,13 +224,16 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
                   }}
                 >
                   <div className="relative overflow-hidden">
-                    <Image
-                      src={convertGoogleDriveUrl(relatedBlog.image)}
-                      alt={relatedBlog.title}
-                      width={500}
-                      height={350}
-                      className="w-full h-auto object-contain group-hover:scale-110 transition-transform duration-500"
-                    />
+                    <div className="aspect-[4/3] relative">
+                      <CldImage
+                        src={relatedBlog.image}
+                        alt={relatedBlog.title}
+                        fill={true}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        crop="fill"
+                      />
+                    </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
                   <div className="p-4 relative">
@@ -210,33 +268,4 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
       </div>
     </div>
   );
-}
-
-// Generate static params
-export async function generateStaticParams() {
-  const blogs: BlogPost[] = blogData;
-
-  return blogs.map((blog) => ({
-    id: blog.id.toString(),
-  }));
-}
-
-// Metadata for SEO
-export async function generateMetadata({ params }: BlogPageProps) {
-  const { id } = await params; // ✅ deconstruct via await
-  const blogs: BlogPost[] = blogData;
-  const blogId = parseInt(id, 10);
-  const blog = blogs.find((b) => b.id === blogId);
-
-  if (!blog) {
-    return { title: "Blog Not Found" };
-  }
-
-  const description = stripHtml(blog.bodyContent).slice(0, 160) + "...";
-
-  return {
-    title: `${blog.title} | Robofly Technology`,
-    description,
-    openGraph: { title: blog.title, description, images: [blog.image] },
-  };
 }
