@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, ChangeEvent, FormEvent, JSX } from "react";
@@ -8,7 +9,14 @@ import {
   validatePhone,
 } from "@/utils/variables";
 import { MAX_LENGTHS } from "@/utils/formConstants";
-
+import ReCaptcha, { ReCaptchaRef } from "@/components/common/ReCaptcha";
+import { useRef } from "react"; // Add to existing imports
+interface Errors {
+  phone?: string;
+  email?: string;
+  captcha?: string; // Add this
+  submit?: string;
+}
 interface FormData {
   fullName: string;
   organizationName: string;
@@ -81,6 +89,11 @@ export default function GenForm(): JSX.Element {
     submit?: string;
   }>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
+  // CAPTCHA state
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [isCaptchaLoading, setIsCaptchaLoading] = useState(false);
+  const captchaRef = useRef<ReCaptchaRef>(null);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -96,6 +109,81 @@ export default function GenForm(): JSX.Element {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
     setErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  // CAPTCHA handlers
+  const handleCaptchaVerify = async (token: string | null) => {
+    console.log(
+      "CAPTCHA verification started:",
+      token ? "Token received" : "No token"
+    );
+    setErrors((prev) => ({ ...prev, captcha: undefined }));
+
+    if (!token) {
+      setIsCaptchaVerified(false);
+      setCaptchaToken(null);
+      return;
+    }
+
+    setIsCaptchaLoading(true);
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      const response = await fetch("/api/verify-captcha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ captchaToken: token }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setIsCaptchaVerified(true);
+        setCaptchaToken(token);
+        console.log("✅ CAPTCHA verified successfully");
+      } else {
+        setIsCaptchaVerified(false);
+        setCaptchaToken(null);
+        setErrors((prev) => ({
+          ...prev,
+          captcha:
+            data.error || "CAPTCHA verification failed. Please try again.",
+        }));
+        captchaRef.current?.reset();
+      }
+    } catch (error: any) {
+      setIsCaptchaVerified(false);
+      setCaptchaToken(null);
+
+      if (error.name === "AbortError") {
+        setErrors((prev) => ({
+          ...prev,
+          captcha: "CAPTCHA verification timed out. Please try again.",
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          captcha: "CAPTCHA verification error. Please try again.",
+        }));
+      }
+
+      captchaRef.current?.reset();
+    } finally {
+      setIsCaptchaLoading(false);
+    }
+  };
+
+  const handleCaptchaError = () => {
+    setIsCaptchaVerified(false);
+    setCaptchaToken(null);
+    setErrors((prev) => ({
+      ...prev,
+      captcha: "CAPTCHA error occurred. Please refresh and try again.",
+    }));
   };
 
   const handleCheckboxChange = (
@@ -511,7 +599,23 @@ export default function GenForm(): JSX.Element {
         </div>
 
         <input type="hidden" name="querytype" value="product-general-form" />
+        {/* CAPTCHA Section */}
+        <div className="space-y-3">
+          <div>
+            <label className="block font-medium mb-3">
+              Security Verification ( may take a little time to render ){" "}
+              <span className="text-red-600">*</span>
+            </label>
+            <ReCaptcha
+              ref={captchaRef}
+              onVerify={handleCaptchaVerify}
+              onError={handleCaptchaError}
+              theme="light"
+            />
+          </div>
 
+          {/* Same CAPTCHA status indicators as other forms */}
+        </div>
         <div className="text-center">
           <button
             type="submit"

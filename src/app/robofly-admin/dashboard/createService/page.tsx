@@ -321,9 +321,12 @@ export default function CreateServicePage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Enter the Cloudinary image ID (e.g., &quot;robofly/services/drone-service1&quot;)
+                 <p className="text-xs text-gray-500 mt-1">
+                  Enter the Cloudinary image ID (e.g.,
+                  &quot;robofly/blogs/blog-image-1&quot;) - Image must be hosted on admin&nbsp;s cloudinary account, none other.
                 </p>
+                 <p className="text-underlined text-blue-500"><a className=" text-blue-500" href="https://drive.google.com/file/d/11DSoTALPyBf5e_5LO28QnLoAN9bRgPH-/view?usp=drive_link">DEMO</a></p>
+               
               </div>
               <div className="flex justify-end">
                 <button

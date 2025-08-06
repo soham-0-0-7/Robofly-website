@@ -1,54 +1,86 @@
 "use client";
+// Industrial & Infrastructure Inspection Services
 
-import { useState, ChangeEvent, FormEvent, JSX } from "react";
+import { useState, ChangeEvent, FormEvent, JSX, useRef } from "react";
 import { colorPalette, validateEmail, validatePhone } from "@/utils/variables";
 import { MAX_LENGTHS } from "@/utils/formConstants";
+import ReCaptcha, { ReCaptchaRef } from "@/components/common/ReCaptcha";
 
 interface FormData {
   fullName: string;
-  organizationName: string;
+  companyName: string;
   email: string;
   phone: string;
-  assetType: string;
-  inspectionPurpose: string;
-  areaOrUnits: string;
-  requiredSensor: string;
-  inspectionFrequency: string;
-  dataOutputFormat: string;
-  regulatoryRequirements: string;
-  customDeliverables: string;
-  startDate: string;
-  endDate: string;
-  notesAttachments: string;
+  industryType: string;
+  facilityLocation: string;
+  inspectionType: string;
+  equipmentAge: string;
+  safetyRequirements: string;
+  frequencyNeeded: string;
+  reportingFormat: string;
+  additionalRequirements: string;
 }
+
+interface Errors {
+  phone?: string;
+  email?: string;
+  captcha?: string;
+  submit?: string;
+}
+
+const industryTypes = [
+  "Oil & Gas",
+  "Manufacturing",
+  "Power Generation",
+  "Chemical",
+  "Mining",
+  "Construction",
+  "Other",
+];
+
+const inspectionTypes = [
+  "Structural Inspection",
+  "Equipment Monitoring",
+  "Safety Assessment",
+  "Thermal Imaging",
+  "Pipeline Inspection",
+  "Rooftop Inspection",
+  "General Survey",
+];
+
+const frequencies = [
+  "Weekly",
+  "Monthly",
+  "Quarterly",
+  "Bi-annually",
+  "Annually",
+];
 
 export default function FourthServiceForm(): JSX.Element {
   const [form, setForm] = useState<FormData>({
     fullName: "",
-    organizationName: "",
+    companyName: "",
     email: "",
     phone: "",
-    assetType: "",
-    inspectionPurpose: "",
-    areaOrUnits: "",
-    requiredSensor: "",
-    inspectionFrequency: "",
-    dataOutputFormat: "",
-    regulatoryRequirements: "",
-    customDeliverables: "",
-    startDate: "",
-    endDate: "",
-    notesAttachments: "",
+    industryType: "",
+    facilityLocation: "",
+    inspectionType: "",
+    equipmentAge: "",
+    safetyRequirements: "",
+    frequencyNeeded: "",
+    reportingFormat: "",
+    additionalRequirements: "",
   });
 
-  // const [errors, setErrors] = useState<{ phone?: string; email?: string }>({});
-  const [errors, setErrors] = useState<{
-    phone?: string;
-    email?: string;
-    submit?: string;
-  }>({});
-
+  const [errors, setErrors] = useState<Errors>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // CAPTCHA state
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [isCaptchaLoading, setIsCaptchaLoading] = useState(false);
+  const captchaRef = useRef<ReCaptchaRef>(null);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -58,7 +90,81 @@ export default function FourthServiceForm(): JSX.Element {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  // Update handleSubmit function
+  // CAPTCHA handlers
+  const handleCaptchaVerify = async (token: string | null) => {
+    console.log(
+      "CAPTCHA verification started:",
+      token ? "Token received" : "No token"
+    );
+    setErrors((prev) => ({ ...prev, captcha: undefined }));
+
+    if (!token) {
+      setIsCaptchaVerified(false);
+      setCaptchaToken(null);
+      return;
+    }
+
+    setIsCaptchaLoading(true);
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      const response = await fetch("/api/verify-captcha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ captchaToken: token }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setIsCaptchaVerified(true);
+        setCaptchaToken(token);
+        console.log("✅ CAPTCHA verified successfully");
+      } else {
+        setIsCaptchaVerified(false);
+        setCaptchaToken(null);
+        setErrors((prev) => ({
+          ...prev,
+          captcha:
+            data.error || "CAPTCHA verification failed. Please try again.",
+        }));
+        captchaRef.current?.reset();
+      }
+    } catch (error: any) {
+      setIsCaptchaVerified(false);
+      setCaptchaToken(null);
+
+      if (error.name === "AbortError") {
+        setErrors((prev) => ({
+          ...prev,
+          captcha: "CAPTCHA verification timed out. Please try again.",
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          captcha: "CAPTCHA verification error. Please try again.",
+        }));
+      }
+
+      captchaRef.current?.reset();
+    } finally {
+      setIsCaptchaLoading(false);
+    }
+  };
+
+  const handleCaptchaError = () => {
+    setIsCaptchaVerified(false);
+    setCaptchaToken(null);
+    setErrors((prev) => ({
+      ...prev,
+      captcha: "CAPTCHA error occurred. Please refresh and try again.",
+    }));
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
@@ -74,19 +180,24 @@ export default function FourthServiceForm(): JSX.Element {
       hasError = true;
     }
 
+    if (!isCaptchaVerified || !captchaToken) {
+      newErrors.captcha = "Please complete the CAPTCHA verification.";
+      hasError = true;
+    }
+
     if (hasError) {
       setErrors(newErrors);
       setHasGeneralError(true);
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const response = await fetch("/api/query/services/fourth", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, captchaToken }),
       });
 
       const data = await response.json();
@@ -99,25 +210,26 @@ export default function FourthServiceForm(): JSX.Element {
 
       setHasGeneralError(false);
       setErrors({});
-      alert("Inspection service inquiry submitted successfully!");
-      // Reset form
+      alert("Industrial inspection service inquiry submitted successfully!");
+
+      // Reset form and CAPTCHA
       setForm({
         fullName: "",
-        organizationName: "",
+        companyName: "",
         email: "",
         phone: "",
-        assetType: "",
-        inspectionPurpose: "",
-        areaOrUnits: "",
-        requiredSensor: "",
-        inspectionFrequency: "",
-        dataOutputFormat: "",
-        regulatoryRequirements: "",
-        customDeliverables: "",
-        startDate: "",
-        endDate: "",
-        notesAttachments: "",
+        industryType: "",
+        facilityLocation: "",
+        inspectionType: "",
+        equipmentAge: "",
+        safetyRequirements: "",
+        frequencyNeeded: "",
+        reportingFormat: "",
+        additionalRequirements: "",
       });
+      setIsCaptchaVerified(false);
+      setCaptchaToken(null);
+      captchaRef.current?.reset();
     } catch (error) {
       console.error("Form submission error:", error);
       setHasGeneralError(true);
@@ -125,6 +237,8 @@ export default function FourthServiceForm(): JSX.Element {
         ...prev,
         submit: "Error submitting form. Please try again.",
       }));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -135,7 +249,7 @@ export default function FourthServiceForm(): JSX.Element {
         className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8"
       >
         <h2 className="text-2xl font-bold text-center mb-4">
-          Drone Inspection Services Inquiry Form
+          Industrial & Infrastructure Inspection Services Inquiry Form
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -149,22 +263,22 @@ export default function FourthServiceForm(): JSX.Element {
               type="text"
               value={form.fullName}
               onChange={handleChange}
-              className="form-input"
+              className="input"
               maxLength={MAX_LENGTHS.name}
             />
           </div>
 
           <div>
             <label className="block font-medium mb-1">
-              Organization/Company Name <span className="text-red-600">*</span>
+              Company Name <span className="text-red-600">*</span>
             </label>
             <input
-              name="organizationName"
+              name="companyName"
               required
               type="text"
-              value={form.organizationName}
+              value={form.companyName}
               onChange={handleChange}
-              className="form-input"
+              className="input"
               maxLength={MAX_LENGTHS.organization}
             />
           </div>
@@ -181,7 +295,7 @@ export default function FourthServiceForm(): JSX.Element {
               type="email"
               value={form.email}
               onChange={handleChange}
-              className="form-input"
+              className="input"
               maxLength={MAX_LENGTHS.email}
             />
             {errors.email && (
@@ -199,7 +313,7 @@ export default function FourthServiceForm(): JSX.Element {
               type="text"
               value={form.phone}
               onChange={handleChange}
-              className="form-input"
+              className="input"
               maxLength={MAX_LENGTHS.phone}
             />
             {errors.phone && (
@@ -211,216 +325,249 @@ export default function FourthServiceForm(): JSX.Element {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block font-medium mb-1">
-              Type of Asset <span className="text-red-600">*</span>
+              Industry Type <span className="text-red-600">*</span>
             </label>
             <select
-              name="assetType"
+              name="industryType"
               required
-              value={form.assetType}
+              value={form.industryType}
               onChange={handleChange}
-              className="form-input"
+              className="input"
             >
-              <option value="">Select Asset Type</option>
-              <option value="Solar">Solar</option>
-              <option value="Tower">Tower</option>
-              <option value="Bridge">Bridge</option>
-              <option value="Building">Building</option>
-              <option value="Powerline">Powerline</option>
-              <option value="Others">Others</option>
+              <option value="">Select Industry Type</option>
+              {industryTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
             </select>
           </div>
 
           <div>
             <label className="block font-medium mb-1">
-              Purpose of Inspection <span className="text-red-600">*</span>
-            </label>
-            <select
-              name="inspectionPurpose"
-              required
-              value={form.inspectionPurpose}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select Purpose</option>
-              <option value="Damage Assessment">Damage Assessment</option>
-              <option value="Routine Maintenance">Routine Maintenance</option>
-              <option value="Insurance">Insurance</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Area or Number of Units to Inspect{" "}
-              <span className="text-red-600">*</span>
+              Facility Location <span className="text-red-600">*</span>
             </label>
             <input
-              name="areaOrUnits"
+              name="facilityLocation"
               required
-              type="number"
-              min="0"
-              step="1"
-              value={form.areaOrUnits}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.numbers}
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">
-              Required Camera/Sensor <span className="text-red-600">*</span>
-            </label>
-            <select
-              name="requiredSensor"
-              required
-              value={form.requiredSensor}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select Sensor</option>
-              <option value="Thermal">Thermal</option>
-              <option value="RGB">RGB</option>
-              <option value="LiDAR">LiDAR</option>
-              <option value="Zoom">Zoom</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Inspection Frequency <span className="text-red-600">*</span>
-            </label>
-            <select
-              name="inspectionFrequency"
-              required
-              value={form.inspectionFrequency}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select Frequency</option>
-              <option value="One-time">One-time</option>
-              <option value="Monthly">Monthly</option>
-              <option value="Quarterly">Quarterly</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">
-              Data Output Format Preferred
-            </label>
-            <input
-              name="dataOutputFormat"
               type="text"
-              value={form.dataOutputFormat}
+              value={form.facilityLocation}
               onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.shortText}
-              placeholder="e.g., PDF, Excel, RAW images..."
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Any Regulatory Requirements{" "}
-              <span className="text-red-600">*</span>
-            </label>
-            <select
-              name="regulatoryRequirements"
-              required
-              value={form.regulatoryRequirements}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">
-              Custom Deliverables Required{" "}
-              <span className="text-red-600">*</span>
-            </label>
-            <select
-              name="customDeliverables"
-              required
-              value={form.customDeliverables}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Start Date <span className="text-red-600">*</span>
-            </label>
-            <input
-              name="startDate"
-              required
-              type="date"
-              min={new Date().toISOString().split("T")[0]}
-              value={form.startDate}
-              onChange={handleChange}
-              className="form-input"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">
-              End Date <span className="text-red-600">*</span>
-            </label>
-            <input
-              name="endDate"
-              required
-              type="date"
-              min={form.startDate || new Date().toISOString().split("T")[0]}
-              value={form.endDate}
-              onChange={handleChange}
-              className="form-input"
+              className="input"
+              maxLength={MAX_LENGTHS.address}
             />
           </div>
         </div>
 
         <div>
           <label className="block font-medium mb-1">
-            Notes or Attachments (drive or any other links)
+            Type of Inspection Required <span className="text-red-600">*</span>
+          </label>
+          <select
+            name="inspectionType"
+            required
+            value={form.inspectionType}
+            onChange={handleChange}
+            className="input"
+          >
+            <option value="">Select Inspection Type</option>
+            {inspectionTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block font-medium mb-1">
+              Equipment/Infrastructure Age{" "}
+              <span className="text-red-600">*</span>
+            </label>
+            <input
+              name="equipmentAge"
+              required
+              type="text"
+              value={form.equipmentAge}
+              onChange={handleChange}
+              className="input"
+              placeholder="e.g., 5 years, 1-3 years, etc."
+              maxLength={MAX_LENGTHS.shortText}
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">
+              Frequency Needed <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="frequencyNeeded"
+              required
+              value={form.frequencyNeeded}
+              onChange={handleChange}
+              className="input"
+            >
+              <option value="">Select Frequency</option>
+              {frequencies.map((freq) => (
+                <option key={freq} value={freq}>
+                  {freq}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">
+            Safety Requirements <span className="text-red-600">*</span>
           </label>
           <textarea
-            name="notesAttachments"
-            rows={4}
-            value={form.notesAttachments}
+            name="safetyRequirements"
+            required
+            rows={3}
+            value={form.safetyRequirements}
             onChange={handleChange}
-            className="form-input"
-            placeholder="Please provide any additional notes or links to relevant documents..."
-            maxLength={MAX_LENGTHS.url}
+            className="input"
+            placeholder="Describe safety protocols, hazardous areas, etc..."
+            maxLength={MAX_LENGTHS.specifications}
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">
+            Preferred Reporting Format <span className="text-red-600">*</span>
+          </label>
+          <input
+            name="reportingFormat"
+            required
+            type="text"
+            value={form.reportingFormat}
+            onChange={handleChange}
+            className="input"
+            placeholder="e.g., PDF Report, Live Dashboard, Images, etc."
+            maxLength={MAX_LENGTHS.shortText}
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">
+            Additional Requirements
+          </label>
+          <textarea
+            name="additionalRequirements"
+            rows={4}
+            value={form.additionalRequirements}
+            onChange={handleChange}
+            className="input"
+            placeholder="Any additional requirements or special considerations..."
+            maxLength={MAX_LENGTHS.comments}
           />
         </div>
 
         <input
           type="hidden"
           name="querytype"
-          value="service-drone-inspection"
+          value="service-industrial-inspection"
         />
+
+        {/* CAPTCHA Section */}
+        <div className="space-y-3">
+          <div>
+            <label className="block font-medium mb-3">
+              Security Verification ( may take a little time to render ){" "}
+              <span className="text-red-600">*</span>
+            </label>
+            <ReCaptcha
+              ref={captchaRef}
+              onVerify={handleCaptchaVerify}
+              onError={handleCaptchaError}
+              theme="light"
+            />
+          </div>
+
+          {isCaptchaLoading && (
+            <div className="flex items-center justify-center text-blue-600 text-sm">
+              <svg
+                className="animate-spin -ml-1 mr-2 h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Verifying CAPTCHA...
+            </div>
+          )}
+
+          {isCaptchaVerified && !isCaptchaLoading && (
+            <div className="flex items-center justify-center text-green-600 text-sm">
+              <svg
+                className="h-4 w-4 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              CAPTCHA verified successfully
+            </div>
+          )}
+
+          {errors.captcha && (
+            <p className="text-red-600 text-sm text-center">{errors.captcha}</p>
+          )}
+        </div>
 
         <div className="text-center">
           <button
             type="submit"
-            className="bg-[#1ba100] hover:bg-[#104a2f] text-white py-3 px-8 rounded-full transition hover:scale-105"
+            disabled={isSubmitting || !isCaptchaVerified}
+            className="bg-[#1ba100] hover:bg-[#104a2f] text-white py-3 px-8 rounded-full transition hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Submit Application
+            {isSubmitting ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Submitting...
+              </span>
+            ) : (
+              "Submit Inquiry"
+            )}
           </button>
 
           {hasGeneralError && (
@@ -428,15 +575,14 @@ export default function FourthServiceForm(): JSX.Element {
               There was some error in filling the form. Please recheck!
             </p>
           )}
+
+          {errors.submit && (
+            <p className="text-red-600 text-center mt-4">{errors.submit}</p>
+          )}
         </div>
 
-        {/* Add this inside the form, before the style jsx block */}
-        {errors.submit && (
-          <p className="text-red-600 text-center mt-4">{errors.submit}</p>
-        )}
-
         <style jsx>{`
-          .form-input {
+          .input {
             padding: 0.75rem;
             border: 1px solid #ccc;
             border-radius: 0.5rem;
@@ -444,7 +590,7 @@ export default function FourthServiceForm(): JSX.Element {
             background: ${colorPalette.whiteMint};
             transition: box-shadow 0.3s ease;
           }
-          .form-input:focus {
+          .input:focus {
             outline: none;
             box-shadow: 0 0 0 2px ${colorPalette.green3};
           }
