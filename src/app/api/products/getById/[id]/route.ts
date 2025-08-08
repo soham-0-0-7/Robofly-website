@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -29,7 +29,7 @@ export async function GET(
       );
     }
 
-    const p  = await params;
+    const p = await params;
 
     const productId = parseInt(p.id);
     const product = await Product.findOne({ id: productId }).select("-__v");

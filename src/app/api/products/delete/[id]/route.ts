@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -37,12 +37,9 @@ export async function DELETE(
     const { requestedBy } = requestData;
 
     const product = await Product.findOne({ id: productId });
-    
+
     if (!product) {
-      return NextResponse.json(
-        { error: "Product not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
     const productTitle = product.title;

@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -33,7 +33,7 @@ export async function GET(
     const p = await params;
 
     const queryId = p.id;
-    
+
     // Check if ID is valid
     if (!ObjectId.isValid(queryId)) {
       return NextResponse.json(
@@ -43,12 +43,9 @@ export async function GET(
     }
 
     const query = await Query.findById(queryId);
-    
+
     if (!query) {
-      return NextResponse.json(
-        { error: "Query not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Query not found" }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -60,8 +57,8 @@ export async function GET(
         querytype: query.querytype,
         status: query.status,
         data: query.data,
-        createdAt: query.createdAt
-      }
+        createdAt: query.createdAt,
+      },
     });
   } catch (error) {
     console.error("Error fetching query:", error);

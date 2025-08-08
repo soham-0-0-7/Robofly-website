@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -41,7 +41,8 @@ export async function DELETE(
       );
     }
 
-    const logId = params.id;
+    const p = await params;
+    const logId = parseInt(p.id);
 
     // Validate that the ID is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(logId)) {

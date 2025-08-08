@@ -7,7 +7,7 @@ import { ObjectId } from "mongodb";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -46,12 +46,9 @@ export async function DELETE(
     }
 
     const query = await Query.findById(queryId);
-    
+
     if (!query) {
-      return NextResponse.json(
-        { error: "Query not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Query not found" }, { status: 404 });
     }
 
     // Create log entry before deletion

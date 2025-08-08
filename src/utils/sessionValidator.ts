@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Create this file: src/utils/sessionValidator.ts
 interface SessionData {
   id: number;

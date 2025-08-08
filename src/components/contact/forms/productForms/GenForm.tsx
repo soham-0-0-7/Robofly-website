@@ -1,64 +1,52 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-
-import { useState, ChangeEvent, FormEvent, JSX } from "react";
-import {
-  colorPalette,
-  indianStatesAndUTs,
-  validateEmail,
-  validatePhone,
-} from "@/utils/variables";
+import { useState, ChangeEvent, FormEvent, JSX, useRef } from "react";
+import { colorPalette, validateEmail, validatePhone } from "@/utils/variables";
 import { MAX_LENGTHS } from "@/utils/formConstants";
 import ReCaptcha, { ReCaptchaRef } from "@/components/common/ReCaptcha";
-import { useRef } from "react"; // Add to existing imports
-interface Errors {
-  phone?: string;
-  email?: string;
-  captcha?: string; // Add this
-  submit?: string;
-}
+import OTPModal from "@/components/common/OTPModal";
+
 interface FormData {
   fullName: string;
   organizationName: string;
   email: string;
   phone: string;
-  droneApplication: string[];
-  droneApplicationOther: string;
-  payloadRequirements: string;
-  flightTime: number | "";
-  payloadWeight: number | "";
-  desiredRange: number | "";
-  specialFeatures: string[];
-  specialFeaturesOther: string;
-  state: string;
-  city: string;
-  address: string;
-  deliveryTimeline: string;
-  budgetRange: number | "";
-  droneQuantity: number | "";
-  additionalRequirements: string;
+  productInterest: string;
+  productInterestOther: string;
+  intendedUse: string;
+  specificRequirements: string;
+  quantity: number | "";
+  timeline: string;
+  budget: string;
+  additionalInfo: string;
 }
 
-const droneApplications = [
-  "Agriculture",
-  "Surveillance/Security",
-  "Mapping & Surveying",
-  "Logistics/Delivery",
-  "Inspection (Industrial/Infrastructure)",
-  "Training/Education",
-  "Forestry/Wildfire Monitoring",
-  "Defense/FPV Racing",
+interface Errors {
+  phone?: string;
+  email?: string;
+  captcha?: string;
+  submit?: string;
+}
+
+const productInterests = [
+  "Agricultural Drone",
+  "Surveillance Drone",
+  "Logistics/Package Dropping Drone",
+  "FPV Drone",
+  "Training Drone",
+  "Custom Drone Solution",
+  "Multiple Products",
   "Other",
 ];
 
-const specialFeaturesList = [
-  "GPS Tracking",
-  "Thermal Camera",
-  "Obstacle Avoidance",
-  "Autonomous Flight",
-  "Night Vision",
-  "AI-based Analytics",
-  "Other",
+const budgetRanges = [
+  "Under ₹25,000",
+  "₹25,000 - ₹50,000",
+  "₹50,000 - ₹1,00,000",
+  "₹1,00,000 - ₹2,50,000",
+  "₹2,50,000 - ₹5,00,000",
+  "Above ₹5,00,000",
+  "Budget to be discussed",
 ];
 
 export default function GenForm(): JSX.Element {
@@ -67,33 +55,30 @@ export default function GenForm(): JSX.Element {
     organizationName: "",
     email: "",
     phone: "",
-    droneApplication: [],
-    droneApplicationOther: "",
-    payloadRequirements: "",
-    flightTime: "",
-    payloadWeight: "",
-    desiredRange: "",
-    specialFeatures: [],
-    specialFeaturesOther: "",
-    state: "",
-    city: "",
-    address: "",
-    deliveryTimeline: "",
-    budgetRange: "",
-    droneQuantity: "",
-    additionalRequirements: "",
+    productInterest: "",
+    productInterestOther: "",
+    intendedUse: "",
+    specificRequirements: "",
+    quantity: "",
+    timeline: "",
+    budget: "",
+    additionalInfo: "",
   });
-  const [errors, setErrors] = useState<{
-    phone?: string;
-    email?: string;
-    submit?: string;
-  }>({});
+
+  const [errors, setErrors] = useState<Errors>({});
   const [hasGeneralError, setHasGeneralError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // CAPTCHA state
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [isCaptchaLoading, setIsCaptchaLoading] = useState(false);
   const captchaRef = useRef<ReCaptchaRef>(null);
+
+  // OTP state
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [isOTPVerified, setIsOTPVerified] = useState(false);
+  const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -186,24 +171,114 @@ export default function GenForm(): JSX.Element {
     }));
   };
 
-  const handleCheckboxChange = (
-    field: "droneApplication" | "specialFeatures",
-    value: string
-  ) => {
-    setForm((prev) => {
-      const currentArray = prev[field];
-      const isChecked = currentArray.includes(value);
+  // OTP handlers
+  const handleSendOTP = async (): Promise<boolean> => {
+    try {
+      const response = await fetch("/api/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          name: form.fullName,
+        }),
+      });
 
-      if (isChecked) {
-        return {
-          ...prev,
-          [field]: currentArray.filter((item) => item !== value),
-        };
+      const data = await response.json();
+
+      if (response.ok) {
+        return true;
       } else {
-        return { ...prev, [field]: [...currentArray, value] };
+        setErrors((prev) => ({ ...prev, submit: data.error }));
+        return false;
       }
-    });
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Failed to send OTP. Please try again.",
+      }));
+      return false;
+    }
   };
+
+  const handleVerifyOTP = async (otp: string): Promise<boolean> => {
+    setIsVerifyingOTP(true);
+
+    try {
+      const response = await fetch("/api/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email, otp }),
+      });
+
+      if (response.ok) {
+        setIsOTPVerified(true);
+        setShowOTPModal(false);
+        // Now submit the form
+        await submitFormToDatabase();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      return false;
+    } finally {
+      setIsVerifyingOTP(false);
+    }
+  };
+
+  const submitFormToDatabase = async () => {
+    try {
+      const response = await fetch("/api/query/products/gen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, captchaToken }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setHasGeneralError(true);
+        setErrors((prev) => ({ ...prev, submit: data.error }));
+        return;
+      }
+
+      setHasGeneralError(false);
+      setErrors({});
+      alert("Product inquiry submitted successfully!");
+
+      // Reset form and states
+      setForm({
+        fullName: "",
+        organizationName: "",
+        email: "",
+        phone: "",
+        productInterest: "",
+        productInterestOther: "",
+        intendedUse: "",
+        specificRequirements: "",
+        quantity: "",
+        timeline: "",
+        budget: "",
+        additionalInfo: "",
+      });
+      setIsCaptchaVerified(false);
+      setCaptchaToken(null);
+      setIsOTPVerified(false);
+      captchaRef.current?.reset();
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setHasGeneralError(true);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Error submitting form. Please try again.",
+      }));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
@@ -219,441 +294,390 @@ export default function GenForm(): JSX.Element {
       hasError = true;
     }
 
+    if (!isCaptchaVerified || !captchaToken) {
+      newErrors.captcha = "Please complete the CAPTCHA verification.";
+      hasError = true;
+    }
+
     if (hasError) {
       setErrors(newErrors);
       setHasGeneralError(true);
       return;
     }
 
-    try {
-      const response = await fetch("/api/query/products/gen", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+    setIsSubmitting(true);
+    setHasGeneralError(false);
+    setErrors({});
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setHasGeneralError(true);
-        setErrors((prev) => ({ ...prev, submit: data.error }));
-        return;
-      }
-
-      setHasGeneralError(false);
-      setErrors({});
-      alert("Product inquiry submitted successfully!");
-      // Reset form
-      setForm({
-        fullName: "",
-        organizationName: "",
-        email: "",
-        phone: "",
-        droneApplication: [],
-        droneApplicationOther: "",
-        payloadRequirements: "",
-        flightTime: "",
-        payloadWeight: "",
-        desiredRange: "",
-        specialFeatures: [],
-        specialFeaturesOther: "",
-        state: "",
-        city: "",
-        address: "",
-        deliveryTimeline: "",
-        budgetRange: "",
-        droneQuantity: "",
-        additionalRequirements: "",
-      });
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setHasGeneralError(true);
-      setErrors((prev) => ({
-        ...prev,
-        submit: "Error submitting form. Please try again.",
-      }));
+    // Send OTP and show modal
+    const otpSent = await handleSendOTP();
+    if (otpSent) {
+      setShowOTPModal(true);
+    } else {
+      setIsSubmitting(false);
     }
   };
+
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="flex justify-center py-10 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8"
-      >
-        <h2 className="text-2xl font-bold text-center mb-4">
-          General Product Form
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Full Name <span className="text-red-600">*</span>
-            </label>
-            <input
-              name="fullName"
-              required
-              type="text"
-              value={form.fullName}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.name}
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">
-              Company/Organization Name
-            </label>
-            <input
-              name="organizationName"
-              type="text"
-              value={form.organizationName}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.organization}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Email Address <span className="text-red-600">*</span>
-            </label>
-            <input
-              name="email"
-              required
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.email}
-            />
-            {errors.email && (
-              <p className="text-red-600 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">
-              Phone Number <span className="text-red-600">*</span>
-            </label>
-            <input
-              name="phone"
-              required
-              type="text"
-              value={form.phone}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.phone}
-            />
-            {errors.phone && (
-              <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="block font-medium mb-2">
-            Application of Drone (Select all that apply){" "}
-            <span className="text-red-600">*</span>
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {droneApplications.map((app) => (
-              <label key={app} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={form.droneApplication.includes(app)}
-                  onChange={() => handleCheckboxChange("droneApplication", app)}
-                  className="form-checkbox"
-                />
-                <span>{app}</span>
-              </label>
-            ))}
-          </div>
-          {form.droneApplication.includes("Other") && (
-            <input
-              name="droneApplicationOther"
-              type="text"
-              placeholder="Please specify..."
-              value={form.droneApplicationOther}
-              onChange={handleChange}
-              className="form-input mt-2"
-              maxLength={MAX_LENGTHS.shortText}
-            />
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Required Flight Time (minutes)
-            </label>
-            <input
-              name="flightTime"
-              type="number"
-              min="0"
-              value={form.flightTime}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.numbers}
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">
-              Estimated Payload Weight (kg)
-            </label>
-            <input
-              name="payloadWeight"
-              type="number"
-              min="0"
-              step="0.1"
-              value={form.payloadWeight}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.numbers}
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">
-              Desired Range (metres)
-            </label>
-            <input
-              name="desiredRange"
-              type="number"
-              min="0"
-              value={form.desiredRange}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.numbers}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Payload Requirements</label>
-          <textarea
-            name="payloadRequirements"
-            rows={3}
-            value={form.payloadRequirements}
-            onChange={handleChange}
-            className="form-input"
-            placeholder="Camera, Sprayer, Sensors, etc..."
-            maxLength={MAX_LENGTHS.specifications}
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-2">
-            Any Special Features Required?{" "}
-            <span className="text-red-600">*</span>
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {specialFeaturesList.map((feature) => (
-              <label key={feature} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={form.specialFeatures.includes(feature)}
-                  onChange={() =>
-                    handleCheckboxChange("specialFeatures", feature)
-                  }
-                  className="form-checkbox"
-                />
-                <span>{feature}</span>
-              </label>
-            ))}
-          </div>
-          {form.specialFeatures.includes("Other") && (
-            <input
-              name="specialFeaturesOther"
-              type="text"
-              placeholder="Please specify..."
-              value={form.specialFeaturesOther}
-              onChange={handleChange}
-              className="form-input mt-2"
-              maxLength={MAX_LENGTHS.shortText}
-            />
-          )}
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Location of Operation</h3>
+    <>
+      <div className="flex justify-center py-10 px-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 max-w-4xl w-full rounded-xl bg-white p-8"
+        >
+          <h2 className="text-2xl font-bold text-center mb-4">
+            General Product Inquiry Form
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block font-medium mb-1">
-                State <span className="text-red-600">*</span>
+                Full Name <span className="text-red-600">*</span>
               </label>
-              <select
-                name="state"
+              <input
+                name="fullName"
                 required
-                value={form.state}
+                type="text"
+                value={form.fullName}
                 onChange={handleChange}
                 className="form-input"
-              >
-                <option value="">Select State</option>
-                {indianStatesAndUTs.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
+                maxLength={MAX_LENGTHS.name}
+              />
             </div>
 
             <div>
               <label className="block font-medium mb-1">
-                City <span className="text-red-600">*</span>
+                Organization/Company <span className="text-red-600">*</span>
               </label>
               <input
-                name="city"
+                name="organizationName"
                 required
                 type="text"
-                value={form.city}
+                value={form.organizationName}
                 onChange={handleChange}
                 className="form-input"
-                maxLength={MAX_LENGTHS.city}
+                maxLength={MAX_LENGTHS.organization}
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block font-medium mb-1">
+                Email <span className="text-red-600">*</span>
+              </label>
+              <input
+                name="email"
+                required
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                className="form-input"
+                maxLength={MAX_LENGTHS.email}
+              />
+              {errors.email && (
+                <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">
+                Phone <span className="text-red-600">*</span>
+              </label>
+              <input
+                name="phone"
+                required
+                type="text"
+                value={form.phone}
+                onChange={handleChange}
+                className="form-input"
+                maxLength={MAX_LENGTHS.phone}
+              />
+              {errors.phone && (
+                <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+              )}
             </div>
           </div>
 
           <div>
             <label className="block font-medium mb-1">
-              Address <span className="text-red-600">*</span>
+              Product Interest <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="productInterest"
+              required
+              value={form.productInterest}
+              onChange={handleChange}
+              className="form-input"
+            >
+              <option value="">Select product of interest</option>
+              {productInterests.map((interest) => (
+                <option key={interest} value={interest}>
+                  {interest}
+                </option>
+              ))}
+            </select>
+            {form.productInterest === "Other" && (
+              <input
+                name="productInterestOther"
+                type="text"
+                placeholder="Please specify..."
+                value={form.productInterestOther}
+                onChange={handleChange}
+                className="form-input mt-2"
+                maxLength={MAX_LENGTHS.shortText}
+              />
+            )}
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">
+              Intended Use Case <span className="text-red-600">*</span>
             </label>
             <textarea
-              name="address"
+              name="intendedUse"
               required
               rows={3}
-              value={form.address}
+              value={form.intendedUse}
               onChange={handleChange}
               className="form-input"
-              maxLength={MAX_LENGTHS.address}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label className="block font-medium mb-1">
-              Preferred Timeline <span className="text-red-600">*</span>
-            </label>
-            <input
-              name="deliveryTimeline"
-              required
-              type="date"
-              min={today}
-              value={form.deliveryTimeline}
-              onChange={handleChange}
-              className="form-input"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-1">Budget Range</label>
-            <input
-              name="budgetRange"
-              type="number"
-              min="0"
-              value={form.budgetRange}
-              onChange={handleChange}
-              className="form-input"
-              maxLength={MAX_LENGTHS.numbers}
+              placeholder="Describe how you plan to use the product..."
+              maxLength={MAX_LENGTHS.description}
             />
           </div>
 
           <div>
             <label className="block font-medium mb-1">
-              Drone Quantity <span className="text-red-600">*</span>
+              Specific Requirements & Features
             </label>
-            <input
-              name="droneQuantity"
-              required
-              type="number"
-              min="1"
-              value={form.droneQuantity}
+            <textarea
+              name="specificRequirements"
+              rows={4}
+              value={form.specificRequirements}
               onChange={handleChange}
               className="form-input"
-              maxLength={MAX_LENGTHS.numbers}
+              placeholder="Any specific technical requirements, features, or specifications..."
+              maxLength={MAX_LENGTHS.specifications}
             />
           </div>
-        </div>
 
-        <div>
-          <label className="block font-medium mb-1">
-            Additional Requirements or Notes
-          </label>
-          <textarea
-            name="additionalRequirements"
-            rows={4}
-            value={form.additionalRequirements}
-            onChange={handleChange}
-            className="form-input"
-            maxLength={MAX_LENGTHS.comments}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label className="block font-medium mb-1">
+                Quantity Required <span className="text-red-600">*</span>
+              </label>
+              <input
+                name="quantity"
+                required
+                type="number"
+                min="1"
+                value={form.quantity}
+                onChange={handleChange}
+                className="form-input"
+                maxLength={MAX_LENGTHS.numbers}
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">
+                Expected Timeline <span className="text-red-600">*</span>
+              </label>
+              <input
+                name="timeline"
+                required
+                type="date"
+                min={today}
+                value={form.timeline}
+                onChange={handleChange}
+                className="form-input"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">
+                Budget Range <span className="text-red-600">*</span>
+              </label>
+              <select
+                name="budget"
+                required
+                value={form.budget}
+                onChange={handleChange}
+                className="form-input"
+              >
+                <option value="">Select budget</option>
+                {budgetRanges.map((range) => (
+                  <option key={range} value={range}>
+                    {range}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">
+              Additional Information
+            </label>
+            <textarea
+              name="additionalInfo"
+              rows={4}
+              value={form.additionalInfo}
+              onChange={handleChange}
+              className="form-input"
+              placeholder="Any additional information or questions..."
+              maxLength={MAX_LENGTHS.comments}
+            />
+          </div>
+
+          <input
+            type="hidden"
+            name="querytype"
+            value="product-general-inquiry"
           />
-        </div>
 
-        <input type="hidden" name="querytype" value="product-general-form" />
-        {/* CAPTCHA Section */}
-        <div className="space-y-3">
-          <div>
-            <label className="block font-medium mb-3">
-              Security Verification ( may take a little time to render ){" "}
-              <span className="text-red-600">*</span>
-            </label>
-            <ReCaptcha
-              ref={captchaRef}
-              onVerify={handleCaptchaVerify}
-              onError={handleCaptchaError}
-              theme="light"
-            />
+          {/* CAPTCHA Section */}
+          <div className="space-y-3">
+            <div>
+              <label className="block font-medium mb-3">
+                Security Verification ( may take a little time to render ){" "}
+                <span className="text-red-600">*</span>
+              </label>
+              <ReCaptcha
+                ref={captchaRef}
+                onVerify={handleCaptchaVerify}
+                onError={handleCaptchaError}
+                theme="light"
+              />
+            </div>
+
+            {isCaptchaLoading && (
+              <div className="flex items-center justify-center text-blue-600 text-sm">
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Verifying CAPTCHA...
+              </div>
+            )}
+
+            {isCaptchaVerified && !isCaptchaLoading && (
+              <div className="flex items-center justify-center text-green-600 text-sm">
+                <svg
+                  className="h-4 w-4 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                CAPTCHA verified successfully
+              </div>
+            )}
+
+            {errors.captcha && (
+              <p className="text-red-600 text-sm text-center">
+                {errors.captcha}
+              </p>
+            )}
           </div>
 
-          {/* Same CAPTCHA status indicators as other forms */}
-        </div>
-        <div className="text-center">
-          <button
-            type="submit"
-            className="bg-[#1ba100] hover:bg-[#104a2f] text-white py-3 px-8 rounded-full transition hover:scale-105"
-          >
-            Submit Application
-          </button>
+          <div className="text-center">
+            <button
+              type="submit"
+              disabled={isSubmitting || !isCaptchaVerified}
+              className="bg-[#1ba100] hover:bg-[#104a2f] text-white py-3 px-8 rounded-full transition hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Sending verification email...
+                </span>
+              ) : (
+                "Submit Inquiry"
+              )}
+            </button>
 
-          {hasGeneralError && (
-            <p className="text-red-600 text-center mt-4">
-              There was some error in filling the form. Please recheck!
-            </p>
-          )}
-        </div>
+            {hasGeneralError && (
+              <p className="text-red-600 text-center mt-4">
+                There was some error in filling the form. Please recheck!
+              </p>
+            )}
 
-        {/* Add this inside the form, before the style jsx block */}
-        {errors.submit && (
-          <p className="text-red-600 text-center mt-4">{errors.submit}</p>
-        )}
+            {errors.submit && (
+              <p className="text-red-600 text-center mt-4">{errors.submit}</p>
+            )}
+          </div>
 
-        <style jsx>{`
-          .form-input {
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 0.5rem;
-            width: 100%;
-            background: ${colorPalette.whiteMint};
-            transition: box-shadow 0.3s ease;
-          }
-          .form-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px ${colorPalette.green3};
-          }
-          .form-checkbox {
-            margin-right: 0.5rem;
-          }
-        `}</style>
-      </form>
-    </div>
+          <style jsx>{`
+            .form-input {
+              padding: 0.75rem;
+              border: 1px solid #ccc;
+              border-radius: 0.5rem;
+              width: 100%;
+              background: ${colorPalette.whiteMint};
+              transition: box-shadow 0.3s ease;
+            }
+            .form-input:focus {
+              outline: none;
+              box-shadow: 0 0 0 2px ${colorPalette.green3};
+            }
+          `}</style>
+        </form>
+      </div>
+
+      {/* OTP Modal */}
+      <OTPModal
+        isOpen={showOTPModal}
+        onClose={() => {
+          setShowOTPModal(false);
+          setIsSubmitting(false);
+        }}
+        onVerify={handleVerifyOTP}
+        email={form.email}
+        onResendOTP={handleSendOTP}
+        isVerifying={isVerifyingOTP}
+      />
+    </>
   );
 }
