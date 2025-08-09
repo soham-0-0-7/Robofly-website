@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Linkedin } from "lucide-react";
-import sohamImage from "@/assets/soham-gandhi.jpg";
-import jayImage from "@/assets/jay-ashwin.jpg";
-import vyomImage from "@/assets/vyom-darji.jpg";
+import sohamImage from "@/developer/soham-gandhi.jpg";
+import jayImage from "@/developer/jay-ashwin.jpg";
+import vyomImage from "@/developer/vyom-darji.jpg";
 
 const developers = [
   {
