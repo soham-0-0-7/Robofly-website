@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
-import { videoSrc, colorPalette } from '@/utils/variables';
+import { videoSrc } from '@/utils/variables';
 import ContactButton from '@/components/global/ContactButton';
 
 export default function VideoSection() {

@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -43,13 +43,12 @@ export async function DELETE(
     const p = await params;
 
     const userId = parseInt(p.id);
-        if (userId === 1) {
+    if (userId === 1) {
       return NextResponse.json(
         { error: "The administrator account cannot be deleted" },
         { status: 403 }
       );
     }
-
 
     // Check if user is trying to delete themselves
     if (sessionData.id === userId) {
