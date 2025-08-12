@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { colorPalette } from "@/utils/variables";
+// import { colorPalette } from "@/utils/variables";
 import LoadingSpinner from "@/components/global/LoadingSpinner";
+import OTPModal from "@/components/common/OTPModal"; // Add this import
 import Image from "next/image";
 import {
   validateSessionData,
@@ -14,6 +15,14 @@ import {
 interface LoginFormData {
   identifier: string;
   password: string;
+}
+
+// Add interface for pending login data
+interface PendingLoginData {
+  identifier: string;
+  password: string;
+  email: string;
+  username: string;
 }
 
 export default function RoboflyAdminPage() {
@@ -26,9 +35,20 @@ export default function RoboflyAdminPage() {
     password: "",
   });
   const [message, setMessage] = useState<{
-    type: "success" | "error" | "info";
+    type: "success" | "error" | "info" | "warning";
     text: string;
   } | null>(null);
+
+  // Add OTP modal states
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [pendingLoginData, setPendingLoginData] =
+    useState<PendingLoginData | null>(null);
+  const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
+
+  // Add rate limiting states
+  const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null);
+  const [rateLimitResetTime, setRateLimitResetTime] = useState<string | null>(null);
+  const [isRateLimited, setIsRateLimited] = useState(false);
 
   // Session validation effect
   useEffect(() => {
@@ -102,6 +122,32 @@ export default function RoboflyAdminPage() {
     checkExistingSession();
   }, [router]);
 
+  // Rate limit countdown effect
+  useEffect(() => {
+    if (isRateLimited && rateLimitResetTime) {
+      const interval = setInterval(() => {
+        const resetTime = new Date(rateLimitResetTime).getTime();
+        const now = Date.now();
+        const timeRemaining = resetTime - now;
+
+        if (timeRemaining <= 0) {
+          setIsRateLimited(false);
+          setRateLimitResetTime(null);
+          setMessage(null);
+          clearInterval(interval);
+        } else {
+          const minutes = Math.ceil(timeRemaining / 60000);
+          setMessage({
+            type: "warning",
+            text: `Too many failed attempts. Try again in ${minutes} minute(s).`,
+          });
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isRateLimited, rateLimitResetTime]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -121,43 +167,91 @@ export default function RoboflyAdminPage() {
       return;
     }
 
+    if (isRateLimited) {
+      setMessage({
+        type: "warning",
+        text: "Please wait before trying again.",
+      });
+      return;
+    }
+
     setFormSubmitting(true);
     setMessage(null);
 
     try {
+      // First verify credentials without creating session
       const response = await fetch("/api/users/verify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          skipSession: true, // Add flag to skip session creation
+        }),
       });
 
       const data = await response.json();
 
+      if (response.status === 429) {
+        // Rate limited
+        setIsRateLimited(true);
+        setRateLimitResetTime(data.resetTime);
+        setRemainingAttempts(data.remainingAttempts);
+        setMessage({
+          type: "warning",
+          text: data.error || "Too many failed attempts. Please try again later.",
+        });
+        return;
+      }
+
       if (response.ok) {
-        // Validate the new session data
-        const isValidSession = validateSessionData(data.user);
+        // Credentials are valid, now send OTP
+        const otpResponse = await fetch("/api/send-otp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: data.user.email,
+            name: data.user.username,
+            purpose: "login", // Add purpose to distinguish from other OTPs
+          }),
+        });
 
-        if (isValidSession) {
-          setMessage({
-            type: "success",
-            text: "Login successful! Redirecting to dashboard...",
+        const otpData = await otpResponse.json();
+
+        if (otpResponse.ok) {
+          // Store pending login data and show OTP modal
+          setPendingLoginData({
+            identifier: formData.identifier,
+            password: formData.password,
+            email: data.user.email,
+            username: data.user.username,
           });
-
-          setTimeout(() => {
-            router.push("/robofly-admin/dashboard");
-          }, 1000);
+          setShowOTPModal(true);
+          setMessage({
+            type: "info",
+            text: "OTP sent to your email. Please check and enter the code.",
+          });
         } else {
           setMessage({
             type: "error",
-            text: "Login successful but session data is incomplete. Please contact administrator.",
+            text: otpData.error || "Failed to send OTP. Please try again.",
           });
         }
       } else {
+        // Handle login failure
+        setRemainingAttempts(data.remainingAttempts || null);
+        
+        let errorMessage = data.error || "Login failed. Please check your credentials.";
+        if (data.remainingAttempts !== undefined && data.remainingAttempts > 0) {
+          errorMessage += ` ${data.remainingAttempts} attempt(s) remaining.`;
+        }
+        
         setMessage({
           type: "error",
-          text: data.error || "Login failed. Please check your credentials.",
+          text: errorMessage,
         });
       }
     } catch (error) {
@@ -168,6 +262,148 @@ export default function RoboflyAdminPage() {
       });
     } finally {
       setFormSubmitting(false);
+    }
+  };
+
+  // Handle OTP verification
+  const handleOTPVerify = async (otp: string): Promise<boolean> => {
+    if (!pendingLoginData) return false;
+
+    setIsVerifyingOTP(true);
+
+    try {
+      // Verify OTP
+      const otpResponse = await fetch("/api/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: pendingLoginData.email,
+          otp: otp,
+        }),
+      });
+
+      const otpData = await otpResponse.json();
+
+      if (otpResponse.ok) {
+        // OTP verified, now complete login with session creation
+        const loginResponse = await fetch("/api/users/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            identifier: pendingLoginData.identifier,
+            password: pendingLoginData.password,
+            skipSession: false, // Create session this time
+          }),
+        });
+
+        const loginData = await loginResponse.json();
+
+        if (loginResponse.ok) {
+          // Validate the new session data
+          const isValidSession = validateSessionData(loginData.user);
+
+          if (isValidSession) {
+            setMessage({
+              type: "success",
+              text: "Login successful! Redirecting to dashboard...",
+            });
+
+            setShowOTPModal(false);
+            setPendingLoginData(null);
+            setRemainingAttempts(null);
+            setIsRateLimited(false);
+
+            setTimeout(() => {
+              router.push("/robofly-admin/dashboard");
+            }, 1000);
+            return true;
+          } else {
+            setMessage({
+              type: "error",
+              text: "Login successful but session data is incomplete. Please contact administrator.",
+            });
+            return false;
+          }
+        } else {
+          setMessage({
+            type: "error",
+            text:
+              loginData.error ||
+              "Failed to complete login after OTP verification.",
+          });
+          return false;
+        }
+      } else {
+        setMessage({
+          type: "error",
+          text: otpData.error || "Invalid OTP. Please try again.",
+        });
+        return false;
+      }
+    } catch (error) {
+      console.error("OTP verification error:", error);
+      setMessage({
+        type: "error",
+        text: "An error occurred during OTP verification. Please try again.",
+      });
+      return false;
+    } finally {
+      setIsVerifyingOTP(false);
+    }
+  };
+
+  // Handle OTP resend
+  const handleOTPResend = async (): Promise<boolean> => {
+    if (!pendingLoginData) return false;
+
+    try {
+      const response = await fetch("/api/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: pendingLoginData.email,
+          name: pendingLoginData.username,
+          purpose: "login",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          text: "New OTP sent to your email.",
+        });
+        return true;
+      } else {
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to resend OTP. Please try again.",
+        });
+        return false;
+      }
+    } catch (error) {
+      console.error("OTP resend error:", error);
+      setMessage({
+        type: "error",
+        text: "An error occurred while resending OTP. Please try again.",
+      });
+      return false;
+    }
+  };
+
+  // Handle OTP modal close
+  const handleOTPModalClose = () => {
+    setShowOTPModal(false);
+    setPendingLoginData(null);
+    if (!isRateLimited) {
+      setMessage(null);
     }
   };
 
@@ -190,86 +426,56 @@ export default function RoboflyAdminPage() {
       >
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto mb-4 relative">
+          <div className="mx-auto h-20 w-20 flex items-center justify-center bg-gradient-to-r from-amber-400 to-orange-500 mb-4">
             <Image
               src="/images/robofly.png"
               alt="Robofly Logo"
-              fill
-              sizes="80px"
-              style={{ objectFit: "contain" }}
+              width={100}
+              height={100}
             />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">
-            <span style={{ color: colorPalette.green3 }}>ROBOFLY</span>{" "}
-            <span style={{ color: colorPalette.blackMuted }}>ADMIN</span>
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Robofly Admin
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Sign in to access the admin dashboard
+            Sign in to access the dashboard
           </p>
         </div>
 
+        {/* Message Display */}
+        {message && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mb-4 p-4 rounded-md ${
+              message.type === "success"
+                ? "bg-green-50 border border-green-200 text-green-800"
+                : message.type === "error"
+                ? "bg-red-50 border border-red-200 text-red-800"
+                : message.type === "warning"
+                ? "bg-yellow-50 border border-yellow-200 text-yellow-800"
+                : "bg-blue-50 border border-blue-200 text-blue-800"
+            }`}
+          >
+            <p className="text-sm font-medium">{message.text}</p>
+          </motion.div>
+        )}
+
+        {/* Rate Limit Info */}
+        {remainingAttempts !== null && remainingAttempts <= 2 && !isRateLimited && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 p-3 rounded-md bg-orange-50 border border-orange-200"
+          >
+            <p className="text-sm text-orange-800">
+              ⚠️ Warning: {remainingAttempts} attempt(s) remaining before temporary lockout
+            </p>
+          </motion.div>
+        )}
+
         {/* Login Form */}
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {message && (
-            <div
-              className={`mb-4 p-3 rounded-md ${
-                message.type === "success"
-                  ? "bg-green-50 text-green-800 border border-green-200"
-                  : message.type === "info"
-                  ? "bg-blue-50 text-blue-800 border border-blue-200"
-                  : "bg-red-50 text-red-800 border border-red-200"
-              }`}
-            >
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  {message.type === "success" ? (
-                    <svg
-                      className="h-5 w-5 text-green-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : message.type === "info" ? (
-                    <svg
-                      className="h-5 w-5 text-blue-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="h-5 w-5 text-red-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium">{message.text}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
@@ -287,7 +493,10 @@ export default function RoboflyAdminPage() {
                   required
                   value={formData.identifier}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+                  disabled={isRateLimited}
+                  className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm ${
+                    isRateLimited ? "bg-gray-100 cursor-not-allowed" : ""
+                  }`}
                   placeholder="Enter your username or email"
                 />
               </div>
@@ -309,7 +518,10 @@ export default function RoboflyAdminPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+                  disabled={isRateLimited}
+                  className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm ${
+                    isRateLimited ? "bg-gray-100 cursor-not-allowed" : ""
+                  }`}
                   placeholder="Enter your password"
                 />
               </div>
@@ -318,15 +530,15 @@ export default function RoboflyAdminPage() {
             <div>
               <button
                 type="submit"
-                disabled={formSubmitting}
+                disabled={formSubmitting || isRateLimited}
                 className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 ${
-                  formSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                  formSubmitting || isRateLimited ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >
                 {formSubmitting ? (
                   <span className="flex items-center">
                     <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -347,6 +559,8 @@ export default function RoboflyAdminPage() {
                     </svg>
                     Signing in...
                   </span>
+                ) : isRateLimited ? (
+                  "Rate Limited - Please Wait"
                 ) : (
                   "Sign in"
                 )}
@@ -361,6 +575,16 @@ export default function RoboflyAdminPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* OTP Modal */}
+      <OTPModal
+        isOpen={showOTPModal}
+        onClose={handleOTPModalClose}
+        onVerify={handleOTPVerify}
+        email={pendingLoginData?.email || ""}
+        onResendOTP={handleOTPResend}
+        isVerifying={isVerifyingOTP}
+      />
     </div>
   );
 }

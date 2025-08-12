@@ -1,10 +1,10 @@
-// filepath: c:\Users\soham\OneDrive\Desktop\Robofly - internship\website\robofly-website\src\app\api\users\create\route.ts
 import { dbConnect } from "@/lib/dbConnect";
 import User from "@/models/user";
 import Logg from "@/models/logs";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { encrypt } from "@/utils/crypto"; // Import the encrypt function
+import { encrypt } from "@/utils/crypto";
+import { sendUserCreatedEmail } from "@/utils/emailCreds"; // Add this import
 
 export async function POST(request: Request) {
   try {
@@ -34,14 +34,19 @@ export async function POST(request: Request) {
 
     // Get the user data from the request
     const userData = await request.json();
-    
+
+    // Store original password for email
+    const originalPassword = userData.password;
+
     // Create a copy without requestedBy for saving to database
     const userDataWithoutRequestedBy = { ...userData };
     delete userDataWithoutRequestedBy.requestedBy;
-    
+
     // Encrypt the password before saving
     if (userDataWithoutRequestedBy.password) {
-      userDataWithoutRequestedBy.password = encrypt(userDataWithoutRequestedBy.password);
+      userDataWithoutRequestedBy.password = encrypt(
+        userDataWithoutRequestedBy.password
+      );
     }
 
     // Check if the ID, username, or email already exists
@@ -75,14 +80,37 @@ export async function POST(request: Request) {
     const newUser = new User(userDataWithoutRequestedBy);
     await newUser.save();
 
-    // Add log entry for user creation
+    // Send email with credentials
+    try {
+      const emailResult = await sendUserCreatedEmail(
+        userData.email,
+        userData.username,
+        originalPassword
+      );
+
+      if (!emailResult.success) {
+        console.error("Failed to send user created email:", emailResult.error);
+        // Log the email failure but don't fail the user creation
+      }
+    } catch (emailError) {
+      console.error("Error sending user created email:", emailError);
+      // Continue with user creation even if email fails
+    }
+
+    // Add log entry
     const log = new Logg({
       username: sessionData.username,
-      change: `Created user - ${newUser.id}`,
+      change: `Created user - ${userData.username} (ID: ${userData.id})`,
     });
     await log.save();
 
-    // Return success response
+    // Log the action with requestedBy information (for console only)
+    console.log(
+      `User created: ${userData.username} by ${
+        userData.requestedBy || "unknown"
+      }`
+    );
+
     return NextResponse.json({
       message: "User created successfully",
       user: {

@@ -5,11 +5,11 @@ import {
   checkRateLimit,
   getRemainingAttempts,
 } from "@/utils/otpUtils";
-import { sendOTPEmail } from "@/utils/emailService";
+import { sendOTPEmail, sendLoginOTPEmail } from "@/utils/emailService"; // Add sendLoginOTPEmail
 
 export async function POST(request: Request) {
   try {
-    const { email, name } = await request.json();
+    const { email, name, purpose = "general" } = await request.json(); // Add purpose parameter
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -49,8 +49,13 @@ export async function POST(request: Request) {
     const otp = generateOTP();
     await storeOTP(email, otp);
 
-    // Send email
-    const emailSent = await sendOTPEmail(email, otp, name);
+    // Send email based on purpose
+    let emailSent = false;
+    if (purpose === "login") {
+      emailSent = await sendLoginOTPEmail(email, otp, name);
+    } else {
+      emailSent = await sendOTPEmail(email, otp, name);
+    }
 
     if (!emailSent) {
       return NextResponse.json(
