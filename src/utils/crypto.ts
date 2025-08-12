@@ -28,7 +28,7 @@ export const encrypt = (text: string): string => {
 export const decrypt = (hash: string): string => {
   // Debug logging
   console.log("Attempting to decrypt:", hash);
-  
+
   // Check if the hash contains the IV separator - if not, it might be a plain password
   if (!hash || !hash.includes(":")) {
     console.log("Warning: Attempted to decrypt a non-encrypted password");
@@ -39,7 +39,7 @@ export const decrypt = (hash: string): string => {
     const [ivHex, encryptedHex] = hash.split(":");
     console.log("IV Hex:", ivHex);
     console.log("Encrypted Hex:", encryptedHex);
-    
+
     const iv = Buffer.from(ivHex, "hex");
     const encrypted = Buffer.from(encryptedHex, "hex");
 
@@ -63,7 +63,7 @@ export const decrypt = (hash: string): string => {
 // Helper function to check if a password is encrypted
 export const isEncrypted = (text: string): boolean => {
   if (!text) return false;
-  
+
   const result = text.includes(":") && text.split(":").length === 2;
   console.log(`isEncrypted check for '${text.substring(0, 10)}...': ${result}`);
   return result;

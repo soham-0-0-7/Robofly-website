@@ -2,8 +2,12 @@
 
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
+// =======
 import { videoSrc } from "@/utils/variables";
 import ContactButton from "@/components/global/ContactButton";
+
+// import { videoSrc } from "@/utils/variables";
+// import ContactButton from "@/components/global/ContactButton";
 
 export default function VideoSection() {
   const endRef = useRef<HTMLDivElement>(null);

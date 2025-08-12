@@ -592,7 +592,7 @@ export default function CreateUserPage() {
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Email Address
+                    Email Address ( the credentials on password update and user creation will be mailed on this email and user receives otp for login on this email as well )
                   </label>
                   <input
                     type="email"
