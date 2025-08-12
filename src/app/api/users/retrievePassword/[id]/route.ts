@@ -8,7 +8,7 @@ import { decrypt, isEncrypted } from "@/utils/crypto"; // Import the decrypt fun
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();

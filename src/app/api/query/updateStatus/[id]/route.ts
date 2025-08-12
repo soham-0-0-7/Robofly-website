@@ -7,7 +7,7 @@ import { ObjectId } from "mongodb";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -53,12 +53,9 @@ export async function PUT(
     }
 
     const query = await Query.findById(queryId);
-    
+
     if (!query) {
-      return NextResponse.json(
-        { error: "Query not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Query not found" }, { status: 404 });
     }
 
     const oldStatus = query.status;
@@ -76,8 +73,8 @@ export async function PUT(
       message: "Query status updated successfully",
       query: {
         id: query._id.toString(),
-        status: query.status
-      }
+        status: query.status,
+      },
     });
   } catch (error) {
     console.error("Error updating query status:", error);

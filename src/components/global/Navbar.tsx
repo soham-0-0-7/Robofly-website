@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -110,8 +111,18 @@ export default function Navbar() {
                 className="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black/10 z-50"
                 style={{ minWidth: 180 }}
               >
-                <DropdownLink href="/products" onClick={() => setCatalogOpen((open) => !open)}>Products</DropdownLink>
-                <DropdownLink href="/services" onClick={() => setCatalogOpen((open) => !open)}>Services</DropdownLink>
+                <DropdownLink
+                  href="/products"
+                  onClick={() => setCatalogOpen((open) => !open)}
+                >
+                  Products
+                </DropdownLink>
+                <DropdownLink
+                  href="/services"
+                  onClick={() => setCatalogOpen((open) => !open)}
+                >
+                  Services
+                </DropdownLink>
               </div>
             )}
           </div>
@@ -182,7 +193,7 @@ export default function Navbar() {
                   href="/products"
                   onClick={() => {
                     setCatalogOpen(false);
-                    setMobileOpen(false);                    
+                    setMobileOpen(false);
                   }}
                 >
                   Products

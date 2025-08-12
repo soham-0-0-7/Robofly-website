@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
-import { videoSrc, colorPalette } from '@/utils/variables';
-import ContactButton from '@/components/global/ContactButton';
+import { videoSrc } from "@/utils/variables";
+import ContactButton from "@/components/global/ContactButton";
 
 export default function VideoSection() {
   const endRef = useRef<HTMLDivElement>(null);
 
   const handleExploreClick = () => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -24,7 +24,7 @@ export default function VideoSection() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{
           duration: 2,
-          ease: [0.25, 0.46, 0.45, 0.94]
+          ease: [0.25, 0.46, 0.45, 0.94],
         }}
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
       >
@@ -40,7 +40,7 @@ export default function VideoSection() {
           transition={{
             duration: 1.2,
             delay: 1.2,
-            ease: [0.25, 0.46, 0.45, 0.94]
+            ease: [0.25, 0.46, 0.45, 0.94],
           }}
           className="text-3xl md:text-5xl font-bold max-w-3xl"
         >
@@ -54,7 +54,7 @@ export default function VideoSection() {
           transition={{
             duration: 1,
             delay: 1.8,
-            ease: [0.25, 0.46, 0.45, 0.94]
+            ease: [0.25, 0.46, 0.45, 0.94],
           }}
           className="mt-8 flex flex-col md:flex-row gap-4"
         >
@@ -65,22 +65,19 @@ export default function VideoSection() {
             onClick={handleExploreClick}
             disabled={false}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f1f1f1';
+              e.currentTarget.style.backgroundColor = "#f1f1f1";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.backgroundColor = "#ffffff";
             }}
             className={`inline-flex items-center justify-center gap-2 font-medium text-black transition-all duration-300 transform hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none rounded-lg px-6 py-3 text-base`}
-            style={{ backgroundColor: '#ffffff' }}
+            style={{ backgroundColor: "#ffffff" }}
           >
             Explore
           </motion.button>
 
           {/* Contact Us Button */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ContactButton />
           </motion.div>
         </motion.div>

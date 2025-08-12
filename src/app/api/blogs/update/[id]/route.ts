@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -54,10 +54,7 @@ export async function PUT(
     );
 
     if (!updatedBlog) {
-      return NextResponse.json(
-        { error: "Blog not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
     // Create log entry
