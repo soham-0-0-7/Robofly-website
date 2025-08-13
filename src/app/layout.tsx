@@ -34,7 +34,10 @@ export default function RootLayout({
     >
       <body>
         <Navbar />
-        <main className="min-h-screen pt-16">{children}</main>
+        {/* min-w-screen */}
+        <main className="min-h-screen overflow-x-hidden pt-16">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
