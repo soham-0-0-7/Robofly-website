@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis';
+import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -20,13 +20,13 @@ export async function storeOTP(email: string, otp: string): Promise<void> {
 export async function verifyOTP(email: string, otp: string): Promise<boolean> {
   const key = `otp:${email}`;
   const storedOTP = await redis.get(key);
-  
-  if (storedOTP === otp) {
+
+  if (storedOTP == otp) {
     // Delete the OTP after successful verification
     await redis.del(key);
     return true;
   }
-  
+
   return false;
 }
 
@@ -71,32 +71,36 @@ export async function checkLoginRateLimit(
   identifier: string, // username, email, or IP
   limit: number = 5,
   windowInSeconds: number = 900 // 15 minutes
-): Promise<{ allowed: boolean; remainingAttempts: number; resetTime?: number }> {
+): Promise<{
+  allowed: boolean;
+  remainingAttempts: number;
+  resetTime?: number;
+}> {
   const key = `login_rate:${identifier}`;
   const current = await redis.get(key);
 
   if (!current) {
     await redis.setex(key, windowInSeconds, 1);
-    return { 
-      allowed: true, 
-      remainingAttempts: limit - 1 
+    return {
+      allowed: true,
+      remainingAttempts: limit - 1,
     };
   }
 
   const count = parseInt(current as string);
   if (count >= limit) {
     const ttl = await redis.ttl(key);
-    return { 
-      allowed: false, 
+    return {
+      allowed: false,
       remainingAttempts: 0,
-      resetTime: Date.now() + (ttl * 1000)
+      resetTime: Date.now() + ttl * 1000,
     };
   }
 
   await redis.incr(key);
-  return { 
-    allowed: true, 
-    remainingAttempts: limit - count - 1 
+  return {
+    allowed: true,
+    remainingAttempts: limit - count - 1,
   };
 }
 
@@ -127,14 +131,14 @@ export async function getLoginRateLimitInfo(
 ): Promise<{ attempts: number; resetTime?: number }> {
   const key = `login_rate:${identifier}`;
   const current = await redis.get(key);
-  
+
   if (!current) {
     return { attempts: 0 };
   }
 
   const attempts = parseInt(current as string);
   const ttl = await redis.ttl(key);
-  const resetTime = ttl > 0 ? Date.now() + (ttl * 1000) : undefined;
+  const resetTime = ttl > 0 ? Date.now() + ttl * 1000 : undefined;
 
   return { attempts, resetTime };
 }

@@ -19,6 +19,7 @@ interface NavLinkProps {
   children: React.ReactNode;
   onClick?: () => void;
   asButton?: boolean;
+  isMobile?: boolean;
 }
 
 export default function Navbar() {
@@ -27,6 +28,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
+  const [mobileCatalogOpen, setMobileCatalogOpen] = useState(false);
   const catalogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,6 +57,19 @@ export default function Navbar() {
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [catalogOpen]);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+      setMobileCatalogOpen(false);
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [mobileOpen]);
 
   return (
     <nav
@@ -91,7 +106,12 @@ export default function Navbar() {
           <div className="relative" ref={catalogRef}>
             <button
               className="relative px-4 py-2 font-medium transition-all duration-300 rounded-lg hover:text-green-200 hover:shadow-lg group text-sm sm:text-base flex items-center gap-1"
-              style={{ background: "none", border: "none", outline: "none" }}
+              style={{
+                background: "none",
+                border: "none",
+                outline: "none",
+                color: colorPalette.white,
+              }}
               onClick={() => setCatalogOpen((open) => !open)}
               type="button"
               aria-haspopup="true"
@@ -113,13 +133,13 @@ export default function Navbar() {
               >
                 <DropdownLink
                   href="/products"
-                  onClick={() => setCatalogOpen((open) => !open)}
+                  onClick={() => setCatalogOpen(false)}
                 >
                   Products
                 </DropdownLink>
                 <DropdownLink
                   href="/services"
-                  onClick={() => setCatalogOpen((open) => !open)}
+                  onClick={() => setCatalogOpen(false)}
                 >
                   Services
                 </DropdownLink>
@@ -133,95 +153,129 @@ export default function Navbar() {
 
         {/* Mobile Hamburger */}
         <button
-          className="lg:hidden text-green5 hover:text-green6 transition-colors"
+          className="lg:hidden transition-colors p-2 rounded-lg hover:bg-white/20"
+          style={{ color: colorPalette.white }}
           onClick={() => setMobileOpen(true)}
           aria-label="Open menu"
         >
-          <FaBars size={26} />
+          <FaBars size={24} />
         </button>
       </div>
 
       {/* Mobile Drawer */}
       <div
-        className={`fixed inset-0 z-50 bg-black/60 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ${
           mobileOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
-        onClick={() => setMobileOpen(false)}
       >
+        {/* Backdrop */}
         <div
-          className={`absolute top-0 right-0 w-72 max-w-full h-full shadow-2xl flex flex-col p-6 gap-4 transition-transform duration-300 ${
+          className="absolute inset-0 bg-black/60"
+          onClick={() => setMobileOpen(false)}
+        />
+
+        {/* Mobile Menu */}
+        <div
+          className={`absolute top-0 right-0 w-80 max-w-[90vw] h-full shadow-2xl flex flex-col transition-transform duration-300 ${
             mobileOpen ? "translate-x-0" : "translate-x-full"
           }`}
           style={{
             background: `linear-gradient(135deg, #ffffff 0%, #f8fffe 25%, ${colorPalette.green1} 100%)`,
-            color: colorPalette.green5,
             borderLeft: `2px solid ${colorPalette.green5}`,
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <button
-            className="self-end mb-2 text-green5 hover:text-green6 transition-colors"
-            onClick={() => setMobileOpen(false)}
-            aria-label="Close menu"
-          >
-            <FaTimes size={26} />
-          </button>
-          <NavLink href="/home" onClick={() => setMobileOpen(false)}>
-            Home
-          </NavLink>
-          <div className="flex flex-col">
+          {/* Close Button */}
+          <div className="flex justify-end p-4 border-b border-white/20">
             <button
-              className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg hover:text-green-200 transition-colors"
-              onClick={() => setCatalogOpen((open) => !open)}
-              type="button"
-              aria-haspopup="true"
-              aria-expanded={catalogOpen}
+              className="p-2 rounded-lg transition-colors hover:bg-white/20"
+              style={{ color: colorPalette.white }}
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
             >
-              <span>Catalog</span>
-              <FaChevronDown
-                className={`transition-transform duration-200 ${
-                  catalogOpen ? "rotate-180" : ""
-                }`}
-                size={14}
-              />
+              <FaTimes size={24} />
             </button>
-            {catalogOpen && (
-              <div className="flex flex-col ml-4 mt-1">
-                <NavLink
-                  href="/products"
-                  onClick={() => {
-                    setCatalogOpen(false);
-                    setMobileOpen(false);
-                  }}
-                >
-                  Products
-                </NavLink>
-                <NavLink
-                  href="/services"
-                  onClick={() => {
-                    setCatalogOpen(false);
-                    setMobileOpen(false);
-                  }}
-                >
-                  Services
-                </NavLink>
-              </div>
-            )}
           </div>
-          <NavLink href="/blog" onClick={() => setMobileOpen(false)}>
-            Blog
-          </NavLink>
-          <NavLink href="/contact" onClick={() => setMobileOpen(false)}>
-            Contact
-          </NavLink>
-          <NavLink
-            href="/upcoming_services"
-            onClick={() => setMobileOpen(false)}
-          >
-            Upcoming Services
-          </NavLink>
+
+          {/* Mobile Navigation Links */}
+          <div className="flex flex-col p-4 space-y-2 overflow-y-auto">
+            <NavLink
+              href="/home"
+              onClick={() => setMobileOpen(false)}
+              isMobile={true}
+            >
+              Home
+            </NavLink>
+
+            {/* Mobile Catalog Dropdown */}
+            <div className="flex flex-col">
+              <button
+                className="flex items-center justify-between w-full px-4 py-3 font-medium rounded-lg transition-colors hover:bg-white/10 text-left"
+                style={{ color: colorPalette.white }}
+                onClick={() => setMobileCatalogOpen(!mobileCatalogOpen)}
+                type="button"
+                aria-haspopup="true"
+                aria-expanded={mobileCatalogOpen}
+              >
+                <span>Catalog</span>
+                <FaChevronDown
+                  className={`transition-transform duration-200 ${
+                    mobileCatalogOpen ? "rotate-180" : ""
+                  }`}
+                  size={14}
+                />
+              </button>
+
+              {mobileCatalogOpen && (
+                <div className="ml-4 mt-1 space-y-1">
+                  <NavLink
+                    href="/products"
+                    onClick={() => {
+                      setMobileCatalogOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    isMobile={true}
+                  >
+                    Products
+                  </NavLink>
+                  <NavLink
+                    href="/services"
+                    onClick={() => {
+                      setMobileCatalogOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    isMobile={true}
+                  >
+                    Services
+                  </NavLink>
+                </div>
+              )}
+            </div>
+
+            <NavLink
+              href="/blog"
+              onClick={() => setMobileOpen(false)}
+              isMobile={true}
+            >
+              Blog
+            </NavLink>
+            <NavLink
+              href="/contact"
+              onClick={() => setMobileOpen(false)}
+              isMobile={true}
+            >
+              Contact
+            </NavLink>
+            <NavLink
+              href="/upcoming_services"
+              onClick={() => setMobileOpen(false)}
+              isMobile={true}
+            >
+              Upcoming Services
+            </NavLink>
+          </div>
         </div>
       </div>
     </nav>
@@ -229,7 +283,13 @@ export default function Navbar() {
 }
 
 // Navigation Link Component
-function NavLink({ href, children, onClick, asButton }: NavLinkProps) {
+function NavLink({
+  href,
+  children,
+  onClick,
+  asButton,
+  isMobile,
+}: NavLinkProps) {
   const pathname = usePathname();
   const isActive = href && pathname === href;
 
@@ -239,11 +299,31 @@ function NavLink({ href, children, onClick, asButton }: NavLinkProps) {
         type="button"
         className="relative px-4 py-2 font-medium transition-all duration-300 rounded-lg hover:text-green-200 hover:shadow-lg group text-sm sm:text-base"
         onClick={onClick}
-        style={{ background: "none", border: "none", outline: "none" }}
+        style={{
+          background: "none",
+          border: "none",
+          outline: "none",
+          color: colorPalette.white,
+        }}
       >
         <span className="relative z-10">{children}</span>
         <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
       </button>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <Link
+        href={href || "#"}
+        onClick={onClick}
+        className={`block w-full px-4 py-3 font-medium transition-colors rounded-lg text-left ${
+          isActive ? "bg-white/20 text-white" : "hover:bg-white/10 text-white"
+        }`}
+        tabIndex={0}
+      >
+        {children}
+      </Link>
     );
   }
 
@@ -252,6 +332,7 @@ function NavLink({ href, children, onClick, asButton }: NavLinkProps) {
       href={href || "#"}
       onClick={onClick}
       className="relative px-4 py-2 font-medium transition-all duration-300 rounded-lg hover:text-green-200 hover:shadow-lg group text-sm sm:text-base"
+      style={{ color: colorPalette.white }}
       tabIndex={0}
     >
       <span className="relative z-10">{children}</span>
@@ -279,15 +360,9 @@ function DropdownLink({
     <Link
       href={href}
       onClick={onClick}
-      className="block px-5 py-3 transition-colors text-base font-medium rounded-lg"
+      className="block px-5 py-3 transition-colors text-base font-medium rounded-lg hover:bg-green-50"
       style={{
         color: colorPalette.green2,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = colorPalette.green4;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = "transparent";
       }}
     >
       {children}

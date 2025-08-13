@@ -31,7 +31,7 @@ const Developers = () => {
             OUR <span className="text-robofly-primary">DEVELOPERS</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-4">
-            Meet the innovative minds behind Robofly's cutting-edge drone technology solutions.
+            Meet the innovative minds behind Robofly&apos;s cutting-edge drone technology solutions.
           </p>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-16">
             Our dedicated team combines technical expertise with passion for aerial innovation.
