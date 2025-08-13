@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Poppins } from "next/font/google";
 import { colorPalette } from "@/utils/variables";
 import Link from "next/link";
-import { FaInstagram, FaLinkedin, FaEnvelope } from "react-icons/fa";
+import { FaLinkedin, FaEnvelope } from "react-icons/fa";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -93,7 +93,7 @@ export default function Footer() {
               Contact
             </h4>
             <div className="text-white/80 text-sm mb-2">
-              H523+F44, Udaini - Sampatchak Rd,
+              Udaini - Sampatchak Rd,
             </div>
             <div className="text-white/80 text-sm mb-2">
               Udaini, Bhelaura, Bihar
@@ -175,11 +175,11 @@ export default function Footer() {
               Connect
             </h4>
             <div className="flex flex-col gap-3">
-              <SocialLink
+              {/* <SocialLink
                 href="https://instagram.com/"
                 icon={<FaInstagram size={20} />}
                 label="Instagram"
-              />
+              /> */}
               <SocialLink
                 href="https://www.linkedin.com/company/robofly-technology/"
                 icon={<FaLinkedin size={20} />}

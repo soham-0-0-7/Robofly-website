@@ -84,7 +84,7 @@ export default function Navbar() {
     <>
       <nav
         className={`
-          fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 overflow-hidden
+          fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 overflow-visible
           ${show ? "translate-y-0" : "-translate-y-full"}
           ${isScrolled ? "shadow-lg backdrop-blur-sm" : ""}
         `}
@@ -94,7 +94,9 @@ export default function Navbar() {
           maxWidth: "100vw",
         }}
       >
-        <div className={`w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${poppins.className}`}>
+        <div
+          className={`w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${poppins.className}`}
+        >
           <div className="flex items-center justify-between h-16 lg:h-20 w-full">
             {/* Logo */}
             <div className="flex-shrink-0 min-w-0">
@@ -115,7 +117,7 @@ export default function Navbar() {
               <NavLink href="/home">Home</NavLink>
 
               {/* Desktop Catalog Dropdown */}
-              <div className="relative" ref={catalogRef}>
+              <div className="relative z-50" ref={catalogRef}>
                 <button
                   className="flex items-center px-2 xl:px-3 py-2 text-sm xl:text-base font-medium rounded-lg transition-all duration-300 hover:bg-white/10 whitespace-nowrap"
                   style={{ color: colorPalette.white }}
@@ -139,7 +141,7 @@ export default function Navbar() {
 
                 {/* Desktop Dropdown Menu */}
                 {catalogOpen && (
-                  <div className="absolute left-0 mt-1 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black/5 z-50">
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-[60] overflow-hidden">
                     <div className="py-1">
                       <NavLink
                         href="/products"
@@ -310,13 +312,11 @@ function NavLink({
       <Link
         href={href || "#"}
         onClick={onClick}
-        className={`block px-4 py-2 text-sm font-medium transition-colors ${
-          isActive ? "bg-green-50 border-l-4" : "hover:bg-green-50"
+        className={`block px-4 py-3 text-sm font-medium transition-all duration-200 hover:bg-gray-50 hover:text-gray-900 ${
+          isActive
+            ? "bg-gray-50 text-gray-900 border-l-4 border-green-500"
+            : "text-gray-700"
         }`}
-        style={{
-          color: isActive ? colorPalette.green5 : colorPalette.green2,
-          borderLeftColor: isActive ? colorPalette.green5 : "transparent",
-        }}
       >
         {children}
       </Link>
