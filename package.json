@@ -17,6 +17,7 @@
     "framer-motion": "^12.16.0",
     "ioredis": "^5.7.0",
     "lucide-react": "^0.518.0",
+    "mongoose": "^8.8.3",
     "next": "15.3.3",
     "next-cloudinary": "^6.16.0",
     "nodemailer": "^7.0.5",
