@@ -22,11 +22,11 @@ export async function POST(request: Request) {
       : request.headers.get("x-real-ip") || "unknown";
 
     // Check rate limits
-    const emailRateCheck = await checkRateLimit(`email:${email}`, 80);
-    const ipRateCheck = await checkRateLimit(`ip:${ip}`, 80);
+    const emailRateCheck = await checkRateLimit(`email:${email}`, 100);
+    const ipRateCheck = await checkRateLimit(`ip:${ip}`, 100);
 
     if (!emailRateCheck) {
-      const remaining = await getRemainingAttempts(`email:${email}`, 80);
+      const remaining = await getRemainingAttempts(`email:${email}`, 100);
       return NextResponse.json(
         {
           error: `Too many attempts. Try again later. Remaining attempts: ${remaining}`,
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     if (!ipRateCheck) {
-      const remaining = await getRemainingAttempts(`ip:${ip}`, 80);
+      const remaining = await getRemainingAttempts(`ip:${ip}`, 100);
       return NextResponse.json(
         {
           error: `Too many attempts. Try again later. Remaining attempts: ${remaining}`,

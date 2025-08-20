@@ -33,7 +33,7 @@ export async function verifyOTP(email: string, otp: string): Promise<boolean> {
 // Rate limiting for email and IP
 export async function checkRateLimit(
   identifier: string,
-  limit: number = 5
+  limit: number = 100
 ): Promise<boolean> {
   const key = `rate_limit:${identifier}`;
   const current = await redis.get(key);
@@ -55,7 +55,7 @@ export async function checkRateLimit(
 // Get remaining attempts
 export async function getRemainingAttempts(
   identifier: string,
-  limit: number = 5
+  limit: number = 100
 ): Promise<number> {
   const key = `rate_limit:${identifier}`;
   const current = await redis.get(key);
@@ -69,7 +69,7 @@ export async function getRemainingAttempts(
 // Login-specific rate limiting functions
 export async function checkLoginRateLimit(
   identifier: string, // username, email, or IP
-  limit: number = 5,
+  limit: number = 100,
   windowInSeconds: number = 900 // 15 minutes
 ): Promise<{
   allowed: boolean;

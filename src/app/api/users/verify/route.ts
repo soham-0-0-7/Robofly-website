@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     // Check rate limits for both identifier and IP
     const identifierRateCheck = await checkLoginRateLimit(
       `user:${identifier}`,
-      80,
+      100,
       900
     ); // 5 attempts per 15 minutes
     const ipRateCheck = await checkLoginRateLimit(`ip:${clientIP}`, 200, 3600); // 20 attempts per hour
