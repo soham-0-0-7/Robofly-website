@@ -42,7 +42,8 @@ export async function DELETE(
     }
 
     const p = await params;
-    const logId = parseInt(p.id);
+    const logId = p.id;
+    console.log(logId);
 
     // Validate that the ID is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(logId)) {

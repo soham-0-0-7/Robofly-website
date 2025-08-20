@@ -3,12 +3,12 @@ import User from "@/models/user";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { encrypt, decrypt } from "@/utils/crypto";
-import { 
-  checkLoginRateLimit, 
-  recordFailedLogin, 
+import {
+  checkLoginRateLimit,
+  recordFailedLogin,
   clearLoginRateLimit,
   getLoginRateLimitInfo,
-  calculateLoginDelay
+  calculateLoginDelay,
 } from "@/utils/otpUtils";
 
 // Helper function to get client IP
@@ -16,7 +16,7 @@ function getClientIP(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   const realIP = request.headers.get("x-real-ip");
   const remoteAddr = request.headers.get("remote-addr");
-  
+
   if (forwarded) {
     return forwarded.split(",")[0].trim();
   }
@@ -26,7 +26,7 @@ function getClientIP(request: Request): string {
   if (remoteAddr) {
     return remoteAddr.trim();
   }
-  
+
   return "unknown";
 }
 
@@ -35,33 +35,47 @@ export async function POST(request: Request) {
 
   const clientIP = getClientIP(request);
   let identifier = "";
-  
+
   try {
     await dbConnect();
     console.log("Database connected successfully");
 
     const requestData = await request.json();
-    const { identifier: loginIdentifier, password, skipSession = false } = requestData;
+    const {
+      identifier: loginIdentifier,
+      password,
+      skipSession = false,
+    } = requestData;
     identifier = loginIdentifier;
 
-    console.log(`Login attempt for identifier: ${identifier} from IP: ${clientIP}`);
+    console.log(
+      `Login attempt for identifier: ${identifier} from IP: ${clientIP}`
+    );
 
     // Check rate limits for both identifier and IP
-    const identifierRateCheck = await checkLoginRateLimit(`user:${identifier}`, 5, 900); // 5 attempts per 15 minutes
-    const ipRateCheck = await checkLoginRateLimit(`ip:${clientIP}`, 20, 3600); // 20 attempts per hour
+    const identifierRateCheck = await checkLoginRateLimit(
+      `user:${identifier}`,
+      80,
+      900
+    ); // 5 attempts per 15 minutes
+    const ipRateCheck = await checkLoginRateLimit(`ip:${clientIP}`, 200, 3600); // 20 attempts per hour
 
     // Check if identifier is rate limited
     if (!identifierRateCheck.allowed) {
-      const resetTime = identifierRateCheck.resetTime ? new Date(identifierRateCheck.resetTime) : new Date();
-      const minutesRemaining = Math.ceil((resetTime.getTime() - Date.now()) / 60000);
-      
+      const resetTime = identifierRateCheck.resetTime
+        ? new Date(identifierRateCheck.resetTime)
+        : new Date();
+      const minutesRemaining = Math.ceil(
+        (resetTime.getTime() - Date.now()) / 60000
+      );
+
       console.log(`Rate limit exceeded for identifier: ${identifier}`);
       return NextResponse.json(
         {
           error: `Too many failed login attempts. Try again in ${minutesRemaining} minute(s).`,
           rateLimited: true,
           resetTime: resetTime.toISOString(),
-          remainingAttempts: 0
+          remainingAttempts: 0,
         },
         { status: 429 }
       );
@@ -69,46 +83,51 @@ export async function POST(request: Request) {
 
     // Check if IP is rate limited
     if (!ipRateCheck.allowed) {
-      const resetTime = ipRateCheck.resetTime ? new Date(ipRateCheck.resetTime) : new Date();
-      const minutesRemaining = Math.ceil((resetTime.getTime() - Date.now()) / 60000);
-      
+      const resetTime = ipRateCheck.resetTime
+        ? new Date(ipRateCheck.resetTime)
+        : new Date();
+      const minutesRemaining = Math.ceil(
+        (resetTime.getTime() - Date.now()) / 60000
+      );
+
       console.log(`Rate limit exceeded for IP: ${clientIP}`);
       return NextResponse.json(
         {
           error: `Too many failed attempts from this location. Try again in ${minutesRemaining} minute(s).`,
           rateLimited: true,
           resetTime: resetTime.toISOString(),
-          remainingAttempts: 0
+          remainingAttempts: 0,
         },
         { status: 429 }
       );
     }
 
     // Find user by username or email
-    let user = await User.findOne({
+    const user = await User.findOne({
       $or: [{ username: identifier }, { email: identifier }],
     });
 
     if (!user) {
       console.log("User not found");
-      
+
       // Record failed attempt for both identifier and IP
       await recordFailedLogin(`user:${identifier}`);
       await recordFailedLogin(`ip:${clientIP}`);
-      
+
       // Get updated rate limit info for response
       const rateLimitInfo = await getLoginRateLimitInfo(`user:${identifier}`);
       const delay = calculateLoginDelay(rateLimitInfo.attempts);
-      
+
       if (delay > 0) {
         console.log(`Adding delay of ${delay}ms for repeated failures`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
-      
+
       return NextResponse.json(
         {
-          error: "Wrong credentials. Please contact the company to retrieve forgotten passwords",
-          remainingAttempts: Math.max(0, 5 - rateLimitInfo.attempts)
+          error:
+            "Wrong credentials. Please contact the company to retrieve forgotten passwords",
+          remainingAttempts: Math.max(0, 5 - rateLimitInfo.attempts),
         },
         { status: 401 }
       );
@@ -127,7 +146,9 @@ export async function POST(request: Request) {
       // Encrypt the password if it's still in plain text and skipSession is false
       if (!skipSession) {
         try {
-          console.log(`Encrypting password for user ${user.username} on successful login`);
+          console.log(
+            `Encrypting password for user ${user.username} on successful login`
+          );
           const encryptedPassword = encrypt(user.password);
           await User.updateOne(
             { _id: user._id },
@@ -148,6 +169,7 @@ export async function POST(request: Request) {
           passwordMatches = true;
         }
       } catch (decryptError) {
+        console.log(decryptError);
         console.log("Failed to decrypt password, trying direct comparison");
         // If decryption fails, try direct comparison as fallback
         if (user.password === password) {
@@ -157,7 +179,9 @@ export async function POST(request: Request) {
           // Encrypt the password if it's still in plain text and skipSession is false
           if (!skipSession) {
             try {
-              console.log(`Encrypting password for user ${user.username} on successful login`);
+              console.log(
+                `Encrypting password for user ${user.username} on successful login`
+              );
               const encryptedPassword = encrypt(user.password);
               await User.updateOne(
                 { _id: user._id },
@@ -165,7 +189,10 @@ export async function POST(request: Request) {
               );
               console.log("Password encrypted and updated successfully");
             } catch (encryptError) {
-              console.error("Failed to encrypt and update password:", encryptError);
+              console.error(
+                "Failed to encrypt and update password:",
+                encryptError
+              );
               // Continue with login even if encryption fails
             }
           }
@@ -175,24 +202,25 @@ export async function POST(request: Request) {
 
     if (!passwordMatches) {
       console.log("Authentication failed: Password mismatch");
-      
+
       // Record failed attempt for both identifier and IP
       await recordFailedLogin(`user:${identifier}`);
       await recordFailedLogin(`ip:${clientIP}`);
-      
+
       // Get updated rate limit info for response
       const rateLimitInfo = await getLoginRateLimitInfo(`user:${identifier}`);
       const delay = calculateLoginDelay(rateLimitInfo.attempts);
-      
+
       if (delay > 0) {
         console.log(`Adding delay of ${delay}ms for repeated failures`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
-      
+
       return NextResponse.json(
         {
-          error: "Wrong credentials. Please contact the company to retrieve forgotten passwords",
-          remainingAttempts: Math.max(0, 5 - rateLimitInfo.attempts)
+          error:
+            "Wrong credentials. Please contact the company to retrieve forgotten passwords",
+          remainingAttempts: Math.max(0, 5 - rateLimitInfo.attempts),
         },
         { status: 401 }
       );
@@ -246,13 +274,13 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Error during authentication:", error);
-    
+
     // Record failed attempt on server error as well (to prevent abuse)
     if (identifier) {
       await recordFailedLogin(`user:${identifier}`);
       await recordFailedLogin(`ip:${clientIP}`);
     }
-    
+
     return NextResponse.json(
       { error: "Authentication failed due to server error" },
       { status: 500 }

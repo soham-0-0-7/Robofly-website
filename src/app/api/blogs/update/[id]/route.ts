@@ -26,7 +26,7 @@ export async function PUT(
     const sessionData = JSON.parse(sessionCookie.value);
 
     // Check if user has permission to update blogs
-    if (!sessionData.permissions?.blog?.updateBlog) {
+    if (!sessionData.permissions?.blog?.updateBlogs) {
       return NextResponse.json(
         { error: "You don't have permission to update blogs" },
         { status: 403 }

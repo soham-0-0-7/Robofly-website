@@ -201,17 +201,17 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} Robofly. Crafted in India.
             </span>
             <div className="flex gap-4">
-              <Link
+              {/* <Link
                 href="/privacy"
                 className="text-xs text-white/60 hover:text-green-200 transition"
               >
                 Privacy Policy
-              </Link>
+              </Link> */}
               <Link
-                href="/terms"
+                href="/developers"
                 className="text-xs text-white/60 hover:text-green-200 transition"
               >
-                Terms of Service
+                Connect with the Website developers
               </Link>
             </div>
           </div>

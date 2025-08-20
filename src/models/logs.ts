@@ -11,7 +11,7 @@ export interface ILog extends Document {
 const LogSchema: Schema = new Schema<ILog>({
   username: { type: String, required: true },
   change: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now, expires: "30d" }, // Auto-delete after 30 days
+  createdAt: { type: Date, default: Date.now, expires: "10d" }, // Auto-delete after 10 days
 });
 
 const Logg = mongoose.models.Log || mongoose.model<ILog>("Log", LogSchema);
